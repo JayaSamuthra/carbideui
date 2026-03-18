@@ -56,6 +56,8 @@ git remote add upstream https://github.com/assistanz/carbideui.git
 
 # 4. Install dependencies (also sets up Husky git hooks)
 npm install
+or 
+npm ci  # For clean install
 
 # 5. Run Storybook for development
 npm run storybook
