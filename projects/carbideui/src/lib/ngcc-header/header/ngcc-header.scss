@@ -1,0 +1,9 @@
+// =============================================================================
+// NgccHeader — Enterprise Carbon Design System Header
+// All base styles come from @carbon/styles (cds--header, cds--skip-to-content, …)
+// This file adds project-level tokens and refinements.
+// =============================================================================
+
+:host {
+  display: block;
+}
