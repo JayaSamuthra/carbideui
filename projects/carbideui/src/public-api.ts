@@ -86,3 +86,16 @@ export * from './lib/ngcc-color-theme/tokens/index';
 
 // I18n
 export * from './lib/ngcc-i18n/index';
+
+// Header (UI Shell)
+export * from './lib/ngcc-header/ngcc-header.types';
+export * from './lib/ngcc-header/header/ngcc-header';
+export * from './lib/ngcc-header/header-name/ngcc-header-name';
+export * from './lib/ngcc-header/header-navigation/ngcc-header-navigation';
+export * from './lib/ngcc-header/header-navigation/header-item/ngcc-header-item';
+export * from './lib/ngcc-header/header-menu/ngcc-header-menu';
+export * from './lib/ngcc-header/header-menu/header-menu-item/ngcc-header-menu-item';
+export * from './lib/ngcc-header/header-global/ngcc-header-global';
+export * from './lib/ngcc-header/header-action/ngcc-header-action';
+export * from './lib/ngcc-header/header-panel/ngcc-header-panel';
+export * from './lib/ngcc-header/hamburger/ngcc-hamburger';

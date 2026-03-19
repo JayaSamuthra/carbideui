@@ -157,6 +157,21 @@ export const ICONS = {
     svg: `<path d="M16,18a5,5,0,1,1,5-5A5.0057,5.0057,0,0,1,16,18Zm0-8a3,3,0,1,0,3,3A3.0033,3.0033,0,0,0,16,10Z"></path><path d="M16,30,7.5645,20.0513c-.0479-.0571-.3482-.4515-.3482-.4515A10.8888,10.8888,0,0,1,5,13a11,11,0,0,1,22,0,10.8844,10.8844,0,0,1-2.2148,6.5973l-.0015.0025s-.3.3944-.3447.4474ZM8.8125,18.395c.001.0007.2334.3082.2866.3744L16,26.9079l6.91-8.15c.0439-.0552.2783-.3649.2788-.3657A8.901,8.901,0,0,0,25,13,9,9,0,1,0,7,13a8.9054,8.9054,0,0,0,1.8125,5.395Z"></path>`,
     viewBox: '0 0 32 32',
   },
+  /** Outlined circle with a lowercase i — general information */
+  information: {
+    svg: `<path d="M17 22v-8h-4v2h2v6h-2v2h6v-2h-2z"></path><path d="M16 7a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 16 7z"></path><path d="M16 2A14 14 0 1 0 30 16 14 14 0 0 0 16 2zm0 26A12 12 0 1 1 28 16 12 12 0 0 1 16 28z"></path>`,
+    viewBox: '0 0 32 32',
+  },
+  /** Three horizontal bars — hamburger / side-nav trigger */
+  menu: {
+    svg: `<rect x="4" y="6" width="24" height="2"></rect><rect x="4" y="15" width="24" height="2"></rect><rect x="4" y="24" width="24" height="2"></rect>`,
+    viewBox: '0 0 32 32',
+  },
+  /** 3×3 grid of squares — app / workspace switcher */
+  app_switcher: {
+    svg: `<path d="M4 6H8V10H4zM12 6H16V10H12zM20 6H24V10H20zM4 14H8V18H4zM12 14H16V18H12zM20 14H24V18H20zM4 22H8V26H4zM12 22H16V26H12zM20 22H24V26H20z"></path>`,
+    viewBox: '0 0 32 32',
+  },
 } as const;
 
 //  Extract a union type from keys

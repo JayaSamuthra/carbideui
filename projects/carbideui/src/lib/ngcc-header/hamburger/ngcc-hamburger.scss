@@ -1,0 +1,5 @@
+// Carbon handles all cds--header__action & cds--header__menu-trigger styling
+// Host is transparent so the button is a direct child of <header>
+:host {
+  display: contents;
+}

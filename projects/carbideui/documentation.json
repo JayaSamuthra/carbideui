@@ -82,6 +82,123 @@
     "interceptors": [],
     "classes": [
         {
+            "name": "HeaderWrapper",
+            "id": "class-HeaderWrapper-dcdf1c6238ef796d056ceb46e17f0770bf6b4b8988ee082c6f7f825b9d9b5b153079f24b166af3622598ea755ff12cb99e2d8e309f69abe4dc4eaa4cc60873d4",
+            "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "class",
+            "sourceCode": "import type { Meta, StoryObj } from '@storybook/angular';\nimport { applicationConfig, moduleMetadata } from '@storybook/angular';\n\nimport { NgccHeader } from './header/ngcc-header';\nimport { NgccHeaderName } from './header-name/ngcc-header-name';\nimport { NgccHeaderNavigation } from './header-navigation/ngcc-header-navigation';\nimport { NgccHeaderItem } from './header-navigation/header-item/ngcc-header-item';\nimport { NgccHeaderMenu } from './header-menu/ngcc-header-menu';\nimport { NgccHeaderMenuItem } from './header-menu/header-menu-item/ngcc-header-menu-item';\nimport { NgccHeaderGlobal } from './header-global/ngcc-header-global';\nimport { NgccHeaderAction } from './header-action/ngcc-header-action';\nimport { NgccHeaderPanel } from './header-panel/ngcc-header-panel';\nimport { NgccHamburger } from './hamburger/ngcc-hamburger';\n\nimport { NgccI18nPipe } from '../ngcc-i18n/pipe';\nimport { provideNgccI18n } from '../ngcc-i18n/provider';\nimport { NgccDropdown } from '../ngcc-dropdown/ngcc-dropdown';\nimport type { NgccDropdownItem } from '../ngcc-dropdown/ngcc-dropdown.types';\n\n// ─── Inline translations for Storybook (no HTTP loader needed) ───────────────\n\nconst EN_TRANSLATIONS: Record<string, string> = {\n  'header.search': 'Search',\n  'header.notifications': 'Notifications',\n  'header.appSwitcher': 'Switch applications',\n  'header.userProfile': 'User profile',\n  'header.quickAdd': 'Quick Add',\n  'header.openNav': 'Open navigation menu',\n  'header.closeNav': 'Close navigation menu',\n  'header.skipToContent': 'Skip to main content',\n  'header.settings': 'Settings',\n  'header.region': 'Region',\n};\n\n// ─── Storybook wrapper class ─────────────────────────────────────────────────\n\nclass HeaderWrapper {\n  ariaLabel = 'CarbideUI';\n  skipTo = 'main-content';\n  sideNavOpen = false;\n  searchOpen = false;\n  notifOpen = false;\n  switcherOpen = false;\n  settingsOpen = false;\n  currentPage = '/';\n  regionItems: NgccDropdownItem<string>[] = [\n    { label: 'Americas — US East', value: 'us-east' },\n    { label: 'Americas — US South', value: 'us-south' },\n    { label: 'Europe — Frankfurt', value: 'eu-de' },\n    { label: 'Europe — London', value: 'eu-gb' },\n    { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n    { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n  ];\n}\n\n// ─── Shared providers ────────────────────────────────────────────────────────\n\nconst withI18n = applicationConfig({\n  providers: [\n    provideNgccI18n({\n      defaultLanguage: 'en',\n      loader: { load: async () => ({}) },\n      cache: new Map([['en', EN_TRANSLATIONS]]),\n    }),\n  ],\n});\n\n// ─── Shared imports ──────────────────────────────────────────────────────────\n\nconst withHeaderModules = moduleMetadata({\n  imports: [\n    NgccHeader,\n    NgccHamburger,\n    NgccHeaderName,\n    NgccHeaderNavigation,\n    NgccHeaderItem,\n    NgccHeaderMenu,\n    NgccHeaderMenuItem,\n    NgccHeaderGlobal,\n    NgccHeaderAction,\n    NgccHeaderPanel,\n    NgccI18nPipe,\n    NgccDropdown,\n  ],\n});\n\n// ─── Meta ────────────────────────────────────────────────────────────────────\n\nconst meta: Meta<HeaderWrapper> = {\n  title: 'UI Shell/Header',\n  component: HeaderWrapper,\n  tags: ['autodocs'],\n  parameters: {\n    layout: 'fullscreen',\n    docs: {\n      description: {\n        component: `\nEnterprise Carbon Design System header shell built with Angular v20+ signal APIs.\n\n## Composition\nThe header is composed of individually importable components:\n\n| Selector | Purpose |\n|---|---|\n| \\`<ngcc-header>\\` | Root \\`<header role=\"banner\">\\` with skip link |\n| \\`<ngcc-hamburger>\\` | Left-side hamburger / close toggle |\n| \\`<ngcc-header-name>\\` | Brand prefix + product name link |\n| \\`<ngcc-header-navigation>\\` | \\`<nav>\\` + \\`<ul role=\"menubar\">\\` wrapper |\n| \\`<ngcc-header-item>\\` | Single nav link (\\`role=\"menuitem\"\\`) |\n| \\`<ngcc-header-menu>\\` | Flyout dropdown with full keyboard nav |\n| \\`<ngcc-header-menu-item>\\` | Item inside a dropdown |\n| \\`<ngcc-header-global>\\` | Right-side action button bar |\n| \\`<ngcc-header-action>\\` | Toggleable action button (search, bell, apps…) |\n| \\`<ngcc-header-panel>\\` | Slide-in panel linked to an action |\n\n## Icon integration\nPass the icon name via \\`iconName\\` input — \\`NgccButton\\` (ghost, icon-only) renders it internally.\nNo inline SVGs or \\`<ngcc-icon>\\` required in the parent template.\n\n## i18n integration\nAction button labels are translated via the \\`ngccI18n\\` pipe.\nProvide translations with \\`provideNgccI18n()\\` in \\`app.config.ts\\`.\n\n## Keyboard navigation\n- **Tab** — moves between interactive elements\n- **Enter / Space** — activates buttons, opens dropdowns\n- **Arrow Up / Down** — navigates within open dropdown\n- **Home / End** — jumps to first / last dropdown item\n- **Escape** — closes dropdowns and panels, returns focus to trigger\n        `,\n      },\n    },\n  },\n  decorators: [withI18n, withHeaderModules],\n  argTypes: {\n    ariaLabel: { control: 'text', description: 'Accessible label for the <header> landmark' },\n    skipTo: { control: 'text', description: 'ID of the main content skip-link target' },\n  },\n};\n\nexport default meta;\ntype Story = StoryObj<HeaderWrapper>;\n\n// ─── Layout helper ────────────────────────────────────────────────────────────\n\nconst PAGE_WRAP = `style=\"min-height:200px;padding-top:3rem;background:var(--cds-background,#f4f4f4);\"`;\nconst PAGE_WRAP_TALL = `style=\"min-height:400px;padding-top:3rem;background:var(--cds-background,#f4f4f4);\"`;\n\n// ─── 1. Brand Only ────────────────────────────────────────────────────────────\n\n/** Minimal header — brand name link only. Good starting point. */\nexport const BrandOnly: Story = {\n  args: { ariaLabel: 'CarbideUI', skipTo: 'main-content' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\" [skipTo]=\"skipTo\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">← Press Tab then Enter on the skip link above</p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 2. With Navigation ───────────────────────────────────────────────────────\n\n/** Header with horizontal navigation links. \\`isCurrentPage\\` highlights the active route. */\nexport const WithNavigation: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, currentPage: '/' },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"currentPage === '/'\">Dashboard</ngcc-header-item>\n            <ngcc-header-item href=\"/analytics\" [isCurrentPage]=\"currentPage === '/analytics'\">Analytics</ngcc-header-item>\n            <ngcc-header-item href=\"/reports\" [isCurrentPage]=\"currentPage === '/reports'\">Reports</ngcc-header-item>\n            <ngcc-header-item href=\"/settings\" [isCurrentPage]=\"currentPage === '/settings'\">Settings</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Active: {{ currentPage }}</p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 3. With Dropdown Menus ───────────────────────────────────────────────────\n\n/**\n * Navigation with flyout dropdowns.\n * Keyboard: **Enter/Space** opens, **Arrow Up/Down** navigates, **Escape** closes.\n */\nexport const WithDropdownMenus: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/deprecated\" [disabled]=\"true\">\n                Deprecated (disabled)\n              </ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/activity\">Activity Log</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-item href=\"/docs\">Docs</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Click or hover the nav menus above</p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 4. With Global Action Buttons ───────────────────────────────────────────\n\n/**\n * Right-side global action buttons using \\`iconName\\` prop and \\`ngccI18n\\` pipe for labels.\n */\nexport const WithGlobalActions: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, searchOpen: false, notifOpen: false, switcherOpen: false },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" [(active)]=\"notifOpen\" iconName=\"notification\" />\n            <ngcc-header-action [ariaLabel]=\"'header.appSwitcher' | ngccI18n\" [(active)]=\"switcherOpen\" iconName=\"app_switcher\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Search: {{ searchOpen }} | Notifications: {{ notifOpen }} | Switcher: {{ switcherOpen }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 5. With Header Panel ─────────────────────────────────────────────────────\n\n/**\n * Action button linked to a slide-in panel.\n * Click the search button to toggle the panel open / closed.\n */\nexport const WithPanel: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, searchOpen: false },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <ngcc-header-panel [expanded]=\"searchOpen\" [ariaLabel]=\"'header.search' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.search' | ngccI18n }}\n            </p>\n            <input\n              type=\"search\"\n              placeholder=\"Search…\"\n              class=\"cds--search-input\"\n              style=\"width:100%;padding:0.5rem;border:1px solid var(--cds-border-subtle-01);background:var(--cds-field-01);color:var(--cds-text-primary);\"\n            />\n            <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;margin-top:0.5rem;\">\n              Press Esc to close\n            </p>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Panel: {{ searchOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 6. Full Header ───────────────────────────────────────────────────────────\n\n/**\n * Complete enterprise header — all regions active:\n * hamburger → brand → navigation → global actions → panels.\n *\n * - Icons via \\`iconName\\` prop on \\`<ngcc-header-action>\\`\n * - Labels via \\`ngccI18n\\` pipe\n * - User profile panel includes a \\`<ngcc-dropdown>\\` region selector\n */\nexport const FullHeader: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: {\n      ...args,\n      sideNavOpen: false,\n      searchOpen: false,\n      notifOpen: false,\n      switcherOpen: false,\n      regionItems: [\n        { label: 'Americas — US East', value: 'us-east' },\n        { label: 'Americas — US South', value: 'us-south' },\n        { label: 'Europe — Frankfurt', value: 'eu-de' },\n        { label: 'Europe — London', value: 'eu-gb' },\n        { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n        { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n      ],\n    },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n\n          <!-- 1. Hamburger -->\n          <ngcc-hamburger\n            [(active)]=\"sideNavOpen\"\n            [label]=\"'header.openNav' | ngccI18n\"\n            [labelClose]=\"'header.closeNav' | ngccI18n\">\n          </ngcc-hamburger>\n\n          <!-- 2. Brand -->\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <!-- 3. Navigation -->\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/activity\">Activity Log</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-item href=\"/docs\">Docs</ngcc-header-item>\n          </ngcc-header-navigation>\n\n          <!-- 4. Global actions -->\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" [(active)]=\"notifOpen\" iconName=\"notification\" />\n            <ngcc-header-action [ariaLabel]=\"'header.appSwitcher' | ngccI18n\" [(active)]=\"switcherOpen\" iconName=\"app_switcher\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <!-- Search Panel -->\n        <ngcc-header-panel [expanded]=\"searchOpen\" [ariaLabel]=\"'header.search' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.search' | ngccI18n }}\n            </p>\n            <input type=\"search\" placeholder=\"Search…\"\n              style=\"width:100%;padding:0.5rem;border:1px solid var(--cds-border-subtle-01);background:var(--cds-field-01);color:var(--cds-text-primary);\" />\n          </div>\n        </ngcc-header-panel>\n\n        <!-- Notifications Panel -->\n        <ngcc-header-panel [expanded]=\"notifOpen\" [ariaLabel]=\"'header.notifications' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.notifications' | ngccI18n }}\n            </p>\n            <div style=\"padding:0.75rem 0;border-bottom:1px solid var(--cds-border-subtle-01);\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">Deployment succeeded</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">2 minutes ago</p>\n            </div>\n            <div style=\"padding:0.75rem 0;border-bottom:1px solid var(--cds-border-subtle-01);\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">New user signed up</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">15 minutes ago</p>\n            </div>\n            <div style=\"padding:0.75rem 0;\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">Storage limit at 85%</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">1 hour ago</p>\n            </div>\n          </div>\n        </ngcc-header-panel>\n\n        <!-- App Switcher / User Panel — includes NgccDropdown for region selection -->\n        <ngcc-header-panel [expanded]=\"switcherOpen\" [ariaLabel]=\"'header.appSwitcher' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:0.5rem;\">\n              Jane Smith\n            </p>\n            <p style=\"color:var(--cds-text-secondary);font-size:0.875rem;margin-bottom:1.5rem;\">\n              jane@company.com\n            </p>\n\n            <!-- Region picker via NgccDropdown -->\n            <ngcc-dropdown\n              [label]=\"'header.region' | ngccI18n\"\n              [items]=\"regionItems\"\n              placeholder=\"Select region…\"\n              size=\"sm\">\n            </ngcc-dropdown>\n\n            <div style=\"margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;\">\n              <a href=\"/profile\" style=\"color:var(--cds-link-primary);font-size:0.875rem;\">\n                Manage profile\n              </a>\n              <a href=\"/logout\" style=\"color:var(--cds-link-primary);font-size:0.875rem;\">\n                Sign out\n              </a>\n            </div>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:0.5rem;\">\n            Main content area\n          </p>\n          <p style=\"color:var(--cds-text-secondary);font-size:0.875rem;\">\n            Side nav: {{ sideNavOpen ? 'Open' : 'Closed' }} |\n            Search: {{ searchOpen ? 'Open' : 'Closed' }} |\n            Notifications: {{ notifOpen ? 'Open' : 'Closed' }} |\n            Switcher: {{ switcherOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 7. Mouseover Dropdowns ───────────────────────────────────────────────────\n\n/**\n * Dropdown menus that open on mouse hover instead of click.\n * Set \\`trigger=\"mouseover\"\\` on \\`<ngcc-header-menu>\\`.\n */\nexport const MouseoverDropdowns: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\" trigger=\"mouseover\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\" trigger=\"mouseover\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Hover the nav items to open dropdowns</p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 8. Fire-and-forget Action ────────────────────────────────────────────────\n\n/**\n * Action button with \\`[toggleable]=\"false\"\\` — fires a one-shot event without toggling state.\n * The \\`iconName=\"add\"\\` prop is used for a quick-add action.\n */\nexport const FireAndForgetAction: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, lastAction: 'none' },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <!-- toggleable (default) — retains active state -->\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" iconName=\"notification\" />\n\n            <!-- fire-and-forget — no active state retained -->\n            <ngcc-header-action\n              [ariaLabel]=\"'header.quickAdd' | ngccI18n\"\n              iconName=\"add\"\n              [toggleable]=\"false\"\n              (actionClick)=\"lastAction = 'quick-add'\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Last fire-and-forget action: {{ lastAction }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 9. No Skip Link ─────────────────────────────────────────────────────────\n\n/** Pass \\`skipTo=\"\"\\` to disable the skip-to-content link entirely. */\nexport const NoSkipLink: Story = {\n  args: { ariaLabel: 'CarbideUI', skipTo: '' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\" [skipTo]=\"skipTo\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\">Home</ngcc-header-item>\n            <ngcc-header-item href=\"/about\">About</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">skipTo is empty — no skip link rendered</p>\n        </main>\n      </div>\n    `,\n  }),\n};\n\n// ─── 10. With Dropdown Panel ──────────────────────────────────────────────────\n\n/**\n * Dedicated story showing \\`NgccDropdown\\` inside a header panel.\n * Click the settings button to open a preferences panel with a region picker.\n */\nexport const WithDropdownPanel: Story = {\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: {\n      ...args,\n      settingsOpen: false,\n      regionItems: [\n        { label: 'Americas — US East', value: 'us-east' },\n        { label: 'Americas — US South', value: 'us-south' },\n        { label: 'Europe — Frankfurt', value: 'eu-de' },\n        { label: 'Europe — London', value: 'eu-gb' },\n        { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n        { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n      ],\n    },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.settings' | ngccI18n\" [(active)]=\"settingsOpen\" iconName=\"configuration\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <!-- Preferences panel with NgccDropdown region picker -->\n        <ngcc-header-panel [expanded]=\"settingsOpen\" [ariaLabel]=\"'header.settings' | ngccI18n\">\n          <div style=\"padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin:0;\">\n              {{ 'header.settings' | ngccI18n }}\n            </p>\n\n            <ngcc-dropdown\n              [label]=\"'header.region' | ngccI18n\"\n              [items]=\"regionItems\"\n              placeholder=\"Select region…\"\n              size=\"md\">\n            </ngcc-dropdown>\n\n            <ngcc-dropdown\n              label=\"Theme\"\n              [items]=\"[\n                { label: 'White', value: 'white' },\n                { label: 'Gray 10', value: 'g10' },\n                { label: 'Gray 90', value: 'g90' },\n                { label: 'Gray 100', value: 'g100' }\n              ]\"\n              placeholder=\"Select theme…\"\n              size=\"md\">\n            </ngcc-dropdown>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Settings panel: {{ settingsOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n};\n",
+            "inputsClass": [],
+            "outputsClass": [],
+            "properties": [
+                {
+                    "name": "ariaLabel",
+                    "defaultValue": "'CarbideUI'",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 38
+                },
+                {
+                    "name": "currentPage",
+                    "defaultValue": "'/'",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 45
+                },
+                {
+                    "name": "notifOpen",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 42
+                },
+                {
+                    "name": "regionItems",
+                    "defaultValue": "[\n    { label: 'Americas — US East', value: 'us-east' },\n    { label: 'Americas — US South', value: 'us-south' },\n    { label: 'Europe — Frankfurt', value: 'eu-de' },\n    { label: 'Europe — London', value: 'eu-gb' },\n    { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n    { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n  ]",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgccDropdownItem<string>[]",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 46
+                },
+                {
+                    "name": "searchOpen",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 41
+                },
+                {
+                    "name": "settingsOpen",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 44
+                },
+                {
+                    "name": "sideNavOpen",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 40
+                },
+                {
+                    "name": "skipTo",
+                    "defaultValue": "'main-content'",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 39
+                },
+                {
+                    "name": "switcherOpen",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 43
+                }
+            ],
+            "methods": [],
+            "indexSignatures": [],
+            "extends": [],
+            "hostBindings": [],
+            "hostListeners": []
+        },
+        {
             "name": "ModalStoryWrapper",
             "id": "class-ModalStoryWrapper-d8d6c6354cd79ae1c1706c4765808b3e4d20a9e0462e8fe52d42e0ea291a63915c999f88b48979e49cfabdb3a9ed36e0d0383dbe763f3c859c1fe45e9c3cfd78",
             "file": "projects/carbideui/src/lib/ngcc-modal/ngcc-modal.stories.ts",
@@ -1502,6 +1619,18 @@
                 "defaultValue": "{\n  decorators: [\n    moduleMetadata({\n      imports: [BestPracticesComponent],\n    }),\n  ],\n  render: () => ({\n    template: `<ngcc-i18n-best-practices></ngcc-i18n-best-practices>`,\n  }),\n  parameters: {\n    docs: {\n      description: {\n        story: `\nFollow these best practices for effective i18n implementation.\n        `,\n      },\n    },\n  },\n}"
             },
             {
+                "name": "BrandOnly",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI', skipTo: 'main-content' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\" [skipTo]=\"skipTo\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">← Press Tab then Enter on the skip link above</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Minimal header — brand name link only. Good starting point.",
+                "description": "<p>Minimal header — brand name link only. Good starting point.</p>\n"
+            },
+            {
                 "name": "Colors",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -1922,6 +2051,16 @@
                 "defaultValue": "{\n  args: {\n    type: 'single',\n    label: 'Emit Date objects',\n    format: 'DD/MM/YYYY',\n    emitDateObjects: true,\n  },\n  argTypes: {\n    format: { control: 'select', options: ['MM/DD/YYYY', 'DD/MM/YYYY', 'YYYY-MM-DD'] },\n  },\n  render: (args) => {\n    const ctrl = new FormControl('');\n    return {\n      props: { ...args, ctrl },\n      template: `\n        <form>\n          <ngcc-date-picker [formControl]=\"ctrl\" label=\"Emit Date objects\"></ngcc-date-picker>\n          <p style=\"margin-top:10px\">Value: {{ ctrl.value }}</p>\n        </form>\n      `,\n    };\n  },\n}"
             },
             {
+                "name": "EN_TRANSLATIONS",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Record<string, string>",
+                "defaultValue": "{\n  'header.search': 'Search',\n  'header.notifications': 'Notifications',\n  'header.appSwitcher': 'Switch applications',\n  'header.userProfile': 'User profile',\n  'header.quickAdd': 'Quick Add',\n  'header.openNav': 'Open navigation menu',\n  'header.closeNav': 'Close navigation menu',\n  'header.skipToContent': 'Skip to main content',\n  'header.settings': 'Settings',\n  'header.region': 'Region',\n}"
+            },
+            {
                 "name": "EnterpriseDashboard",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -1952,6 +2091,18 @@
                 "defaultValue": "{\n  args: {\n    cfg: {\n      ...base,\n      type: 'error',\n      title: 'Error occurred',\n      subtitle: 'Please retry later.',\n    },\n  },\n}"
             },
             {
+                "name": "FireAndForgetAction",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, lastAction: 'none' },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <!-- toggleable (default) — retains active state -->\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" iconName=\"notification\" />\n\n            <!-- fire-and-forget — no active state retained -->\n            <ngcc-header-action\n              [ariaLabel]=\"'header.quickAdd' | ngccI18n\"\n              iconName=\"add\"\n              [toggleable]=\"false\"\n              (actionClick)=\"lastAction = 'quick-add'\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Last fire-and-forget action: {{ lastAction }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Action button with \\`[toggleable]=\"false\"\\` — fires a one-shot event without toggling state.\nThe \\`iconName=\"add\"\\` prop is used for a quick-add action.",
+                "description": "<p>Action button with `[toggleable]=&quot;false&quot;` — fires a one-shot event without toggling state.\nThe `iconName=&quot;add&quot;` prop is used for a quick-add action.</p>\n"
+            },
+            {
                 "name": "Fluid",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -1980,6 +2131,18 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    data: [\n      { group: 'value', value: 82 },\n      { group: 'delta', value: 3 },\n    ],\n    options: {\n      title: 'Memory Usage',\n      height: '260px',\n      width: '300px',\n      gauge: {\n        type: 'full',\n        status: 'warning',\n      },\n      theme: ChartTheme.WHITE,\n    },\n  },\n}"
+            },
+            {
+                "name": "FullHeader",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: {\n      ...args,\n      sideNavOpen: false,\n      searchOpen: false,\n      notifOpen: false,\n      switcherOpen: false,\n      regionItems: [\n        { label: 'Americas — US East', value: 'us-east' },\n        { label: 'Americas — US South', value: 'us-south' },\n        { label: 'Europe — Frankfurt', value: 'eu-de' },\n        { label: 'Europe — London', value: 'eu-gb' },\n        { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n        { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n      ],\n    },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n\n          <!-- 1. Hamburger -->\n          <ngcc-hamburger\n            [(active)]=\"sideNavOpen\"\n            [label]=\"'header.openNav' | ngccI18n\"\n            [labelClose]=\"'header.closeNav' | ngccI18n\">\n          </ngcc-hamburger>\n\n          <!-- 2. Brand -->\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <!-- 3. Navigation -->\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/activity\">Activity Log</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-item href=\"/docs\">Docs</ngcc-header-item>\n          </ngcc-header-navigation>\n\n          <!-- 4. Global actions -->\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" [(active)]=\"notifOpen\" iconName=\"notification\" />\n            <ngcc-header-action [ariaLabel]=\"'header.appSwitcher' | ngccI18n\" [(active)]=\"switcherOpen\" iconName=\"app_switcher\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <!-- Search Panel -->\n        <ngcc-header-panel [expanded]=\"searchOpen\" [ariaLabel]=\"'header.search' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.search' | ngccI18n }}\n            </p>\n            <input type=\"search\" placeholder=\"Search…\"\n              style=\"width:100%;padding:0.5rem;border:1px solid var(--cds-border-subtle-01);background:var(--cds-field-01);color:var(--cds-text-primary);\" />\n          </div>\n        </ngcc-header-panel>\n\n        <!-- Notifications Panel -->\n        <ngcc-header-panel [expanded]=\"notifOpen\" [ariaLabel]=\"'header.notifications' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.notifications' | ngccI18n }}\n            </p>\n            <div style=\"padding:0.75rem 0;border-bottom:1px solid var(--cds-border-subtle-01);\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">Deployment succeeded</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">2 minutes ago</p>\n            </div>\n            <div style=\"padding:0.75rem 0;border-bottom:1px solid var(--cds-border-subtle-01);\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">New user signed up</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">15 minutes ago</p>\n            </div>\n            <div style=\"padding:0.75rem 0;\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">Storage limit at 85%</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">1 hour ago</p>\n            </div>\n          </div>\n        </ngcc-header-panel>\n\n        <!-- App Switcher / User Panel — includes NgccDropdown for region selection -->\n        <ngcc-header-panel [expanded]=\"switcherOpen\" [ariaLabel]=\"'header.appSwitcher' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:0.5rem;\">\n              Jane Smith\n            </p>\n            <p style=\"color:var(--cds-text-secondary);font-size:0.875rem;margin-bottom:1.5rem;\">\n              jane@company.com\n            </p>\n\n            <!-- Region picker via NgccDropdown -->\n            <ngcc-dropdown\n              [label]=\"'header.region' | ngccI18n\"\n              [items]=\"regionItems\"\n              placeholder=\"Select region…\"\n              size=\"sm\">\n            </ngcc-dropdown>\n\n            <div style=\"margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;\">\n              <a href=\"/profile\" style=\"color:var(--cds-link-primary);font-size:0.875rem;\">\n                Manage profile\n              </a>\n              <a href=\"/logout\" style=\"color:var(--cds-link-primary);font-size:0.875rem;\">\n                Sign out\n              </a>\n            </div>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:0.5rem;\">\n            Main content area\n          </p>\n          <p style=\"color:var(--cds-text-secondary);font-size:0.875rem;\">\n            Side nav: {{ sideNavOpen ? 'Open' : 'Closed' }} |\n            Search: {{ searchOpen ? 'Open' : 'Closed' }} |\n            Notifications: {{ notifOpen ? 'Open' : 'Closed' }} |\n            Switcher: {{ switcherOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Complete enterprise header — all regions active:\nhamburger → brand → navigation → global actions → panels.\n\n- Icons via \\`iconName\\` prop on \\`<ngcc-header-action>\\`\n- Labels via \\`ngccI18n\\` pipe\n- User profile panel includes a \\`<ngcc-dropdown>\\` region selector",
+                "description": "<p>Complete enterprise header — all regions active:\nhamburger → brand → navigation → global actions → panels.</p>\n<ul>\n<li>Icons via `iconName` prop on `<ngcc-header-action>`</li>\n<li>Labels via `ngccI18n` pipe</li>\n<li>User profile panel includes a `<ngcc-dropdown>` region selector</li>\n</ul>\n"
             },
             {
                 "name": "generateDateSeries",
@@ -2187,6 +2350,16 @@
                 "name": "meta",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccButton>",
+                "defaultValue": "{\n  title: 'Components/Button',\n  component: NgccButton,\n  tags: ['autodocs'],\n  decorators: [\n    moduleMetadata({\n      imports: [NgccButton, NgccIcon],\n    }),\n  ],\n  argTypes: {\n    variant: {\n      control: { type: 'select' },\n      options: [\n        'primary',\n        'secondary',\n        'tertiary',\n        'ghost',\n        'danger',\n        'danger_tertiary',\n        'danger_ghost',\n      ],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['xs', 'sm', 'md', 'lg', 'xl'],\n    },\n    iconName: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    iconOnly: { control: 'boolean' },\n    disabled: { control: 'boolean' },\n    skeleton: { control: 'boolean' },\n    expressive: { control: 'boolean' },\n  },\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-charts/ngcc-charts-dashboard.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
@@ -2202,16 +2375,6 @@
                 "deprecationMessage": "",
                 "type": "Meta<NgccCharts>",
                 "defaultValue": "{\n  title: 'Components/Charts/NgccCharts',\n  component: NgccCharts,\n  tags: ['autodocs'],\n  parameters: {\n    docs: {\n      description: {\n        component: `\n# **NgccCharts (Enterprise Component)**\n\nSignal-driven Angular v20+ wrapper around **Carbon Charts**, supporting:\n- Dynamic theming (via NgccThemeService)\n- Axis, grid, legend, tooltip customization\n- Responsive resize handling\n- 6 chart types: **bar, stackedBar, line, area, pie, donut**\n\n---\n\n## 💡 Features\n- Works seamlessly with dark/light Carbon themes\n- Full reactivity — auto-updates on data, options, or theme change\n- Strongly typed options per chart type\n- Adaptive card-style dashboard ready\n\n---\n\n## 🧠 Usage Example\n\\`\\`\\`html\n<ngcc-charts\n  type=\"line\"\n  [data]=\"chartData\"\n  [options]=\"{\n    title: 'Trend',\n    axes: {\n      bottom: { mapsTo: 'key', scaleType: 'labels' },\n      left: { mapsTo: 'value', includeZero: true }\n    },\n    curve: 'curveMonotoneX',\n    grid: { x: { enabled: true }, y: { enabled: true } },\n  }\"\n/>\n\\`\\`\\`\n        `,\n      },\n    },\n  },\n  argTypes: {\n    type: {\n      control: 'select',\n      options: ['bar', 'stackedBar', 'line', 'area', 'pie', 'donut'],\n      description: 'Chart type to render',\n      table: {\n        category: 'General',\n        defaultValue: { summary: 'bar' },\n      },\n    },\n    data: {\n      control: 'object',\n      description: 'Dataset for the chart',\n      table: { category: 'Data' },\n    },\n    options: {\n      control: 'object',\n      description: 'Chart configuration options',\n      table: { category: 'Config' },\n    },\n    loading: {\n      control: 'boolean',\n      description: 'Shows skeleton while data loads',\n      table: { category: 'State' },\n    },\n    noDataMessage: {\n      control: 'text',\n      description: 'Message when data array is empty',\n      table: { category: 'State' },\n    },\n  },\n}"
-            },
-            {
-                "name": "meta",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "Meta<NgccButton>",
-                "defaultValue": "{\n  title: 'Components/Button',\n  component: NgccButton,\n  tags: ['autodocs'],\n  decorators: [\n    moduleMetadata({\n      imports: [NgccButton, NgccIcon],\n    }),\n  ],\n  argTypes: {\n    variant: {\n      control: { type: 'select' },\n      options: [\n        'primary',\n        'secondary',\n        'tertiary',\n        'ghost',\n        'danger',\n        'danger_tertiary',\n        'danger_ghost',\n      ],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['xs', 'sm', 'md', 'lg', 'xl'],\n    },\n    iconName: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    iconOnly: { control: 'boolean' },\n    disabled: { control: 'boolean' },\n    skeleton: { control: 'boolean' },\n    expressive: { control: 'boolean' },\n  },\n}"
             },
             {
                 "name": "meta",
@@ -2252,6 +2415,16 @@
                 "deprecationMessage": "",
                 "type": "Meta<NgccDropdown>",
                 "defaultValue": "{\n  title: 'Components/Dropdown',\n  component: NgccDropdown,\n  decorators: [\n    moduleMetadata({\n      imports: [NgccDropdown, NgccIcon, ReactiveFormsModule],\n    }),\n  ],\n  tags: ['autodocs'],\n  args: {\n    label: 'Select an option',\n    placeholder: 'Choose...',\n    size: 'md',\n    disabled: false,\n    multi: false,\n    required: false,\n    readonly: false,\n    skeleton: false,\n    helperText: '',\n    errorMessage: '',\n    invalid: undefined,\n    ariaLabel: '',\n    items: sampleItems,\n  },\n  argTypes: {\n    label: { control: 'text' },\n    placeholder: { control: 'text' },\n    size: { control: 'select', options: ['sm', 'md', 'lg'] },\n    disabled: { control: 'boolean' },\n    multi: { control: 'boolean' },\n    required: { control: 'boolean' },\n    readonly: { control: 'boolean' },\n    skeleton: { control: 'boolean' },\n    helperText: { control: 'text' },\n    errorMessage: { control: 'text' },\n    ariaLabel: { control: 'text' },\n    invalid: { control: 'boolean' },\n    valueChange: { action: 'valueChange' },\n  },\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<HeaderWrapper>",
+                "defaultValue": "{\n  title: 'UI Shell/Header',\n  component: HeaderWrapper,\n  tags: ['autodocs'],\n  parameters: {\n    layout: 'fullscreen',\n    docs: {\n      description: {\n        component: `\nEnterprise Carbon Design System header shell built with Angular v20+ signal APIs.\n\n## Composition\nThe header is composed of individually importable components:\n\n| Selector | Purpose |\n|---|---|\n| \\`<ngcc-header>\\` | Root \\`<header role=\"banner\">\\` with skip link |\n| \\`<ngcc-hamburger>\\` | Left-side hamburger / close toggle |\n| \\`<ngcc-header-name>\\` | Brand prefix + product name link |\n| \\`<ngcc-header-navigation>\\` | \\`<nav>\\` + \\`<ul role=\"menubar\">\\` wrapper |\n| \\`<ngcc-header-item>\\` | Single nav link (\\`role=\"menuitem\"\\`) |\n| \\`<ngcc-header-menu>\\` | Flyout dropdown with full keyboard nav |\n| \\`<ngcc-header-menu-item>\\` | Item inside a dropdown |\n| \\`<ngcc-header-global>\\` | Right-side action button bar |\n| \\`<ngcc-header-action>\\` | Toggleable action button (search, bell, apps…) |\n| \\`<ngcc-header-panel>\\` | Slide-in panel linked to an action |\n\n## Icon integration\nPass the icon name via \\`iconName\\` input — \\`NgccButton\\` (ghost, icon-only) renders it internally.\nNo inline SVGs or \\`<ngcc-icon>\\` required in the parent template.\n\n## i18n integration\nAction button labels are translated via the \\`ngccI18n\\` pipe.\nProvide translations with \\`provideNgccI18n()\\` in \\`app.config.ts\\`.\n\n## Keyboard navigation\n- **Tab** — moves between interactive elements\n- **Enter / Space** — activates buttons, opens dropdowns\n- **Arrow Up / Down** — navigates within open dropdown\n- **Home / End** — jumps to first / last dropdown item\n- **Escape** — closes dropdowns and panels, returns focus to trigger\n        `,\n      },\n    },\n  },\n  decorators: [withI18n, withHeaderModules],\n  argTypes: {\n    ariaLabel: { control: 'text', description: 'Accessible label for the <header> landmark' },\n    skipTo: { control: 'text', description: 'ID of the main content skip-link target' },\n  },\n}"
             },
             {
                 "name": "meta",
@@ -2416,6 +2589,18 @@
                 "defaultValue": "{\n  args: {\n    type: 'single',\n    label: 'Min/Max Example',\n    minDate: new Date(new Date().getFullYear(), new Date().getMonth(), 10),\n    maxDate: new Date(new Date().getFullYear(), new Date().getMonth(), 20),\n  },\n}"
             },
             {
+                "name": "MouseoverDropdowns",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\" trigger=\"mouseover\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\" trigger=\"mouseover\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Hover the nav items to open dropdowns</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Dropdown menus that open on mouse hover instead of click.\nSet \\`trigger=\"mouseover\"\\` on \\`<ngcc-header-menu>\\`.",
+                "description": "<p>Dropdown menus that open on mouse hover instead of click.\nSet `trigger=&quot;mouseover&quot;` on `<ngcc-header-menu>`.</p>\n"
+            },
+            {
                 "name": "MultiExpand",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -2434,6 +2619,38 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    items: sampleItems,\n    placeholder: 'Pick one or more',\n    multi: true,\n  },\n}"
+            },
+            {
+                "name": "NoSkipLink",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI', skipTo: '' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\" [skipTo]=\"skipTo\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\">Home</ngcc-header-item>\n            <ngcc-header-item href=\"/about\">About</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">skipTo is empty — no skip link rendered</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Pass \\`skipTo=\"\"\\` to disable the skip-to-content link entirely.",
+                "description": "<p>Pass `skipTo=&quot;&quot;` to disable the skip-to-content link entirely.</p>\n"
+            },
+            {
+                "name": "PAGE_WRAP",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "`style=\"min-height:200px;padding-top:3rem;background:var(--cds-background,#f4f4f4);\"`"
+            },
+            {
+                "name": "PAGE_WRAP_TALL",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "`style=\"min-height:400px;padding-top:3rem;background:var(--cds-background,#f4f4f4);\"`"
             },
             {
                 "name": "Pagination",
@@ -2940,6 +3157,30 @@
                 "defaultValue": "{\n  args: {\n    name: 'edit',\n    svgClass: 'custom-class',\n  },\n}"
             },
             {
+                "name": "WithDropdownMenus",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/deprecated\" [disabled]=\"true\">\n                Deprecated (disabled)\n              </ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/activity\">Activity Log</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-item href=\"/docs\">Docs</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Click or hover the nav menus above</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Navigation with flyout dropdowns.\nKeyboard: **Enter/Space** opens, **Arrow Up/Down** navigates, **Escape** closes.",
+                "description": "<p>Navigation with flyout dropdowns.\nKeyboard: <strong>Enter/Space</strong> opens, <strong>Arrow Up/Down</strong> navigates, <strong>Escape</strong> closes.</p>\n"
+            },
+            {
+                "name": "WithDropdownPanel",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: {\n      ...args,\n      settingsOpen: false,\n      regionItems: [\n        { label: 'Americas — US East', value: 'us-east' },\n        { label: 'Americas — US South', value: 'us-south' },\n        { label: 'Europe — Frankfurt', value: 'eu-de' },\n        { label: 'Europe — London', value: 'eu-gb' },\n        { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n        { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n      ],\n    },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.settings' | ngccI18n\" [(active)]=\"settingsOpen\" iconName=\"configuration\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <!-- Preferences panel with NgccDropdown region picker -->\n        <ngcc-header-panel [expanded]=\"settingsOpen\" [ariaLabel]=\"'header.settings' | ngccI18n\">\n          <div style=\"padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin:0;\">\n              {{ 'header.settings' | ngccI18n }}\n            </p>\n\n            <ngcc-dropdown\n              [label]=\"'header.region' | ngccI18n\"\n              [items]=\"regionItems\"\n              placeholder=\"Select region…\"\n              size=\"md\">\n            </ngcc-dropdown>\n\n            <ngcc-dropdown\n              label=\"Theme\"\n              [items]=\"[\n                { label: 'White', value: 'white' },\n                { label: 'Gray 10', value: 'g10' },\n                { label: 'Gray 90', value: 'g90' },\n                { label: 'Gray 100', value: 'g100' }\n              ]\"\n              placeholder=\"Select theme…\"\n              size=\"md\">\n            </ngcc-dropdown>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Settings panel: {{ settingsOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Dedicated story showing \\`NgccDropdown\\` inside a header panel.\nClick the settings button to open a preferences panel with a region picker.",
+                "description": "<p>Dedicated story showing `NgccDropdown` inside a header panel.\nClick the settings button to open a preferences panel with a region picker.</p>\n"
+            },
+            {
                 "name": "WithErrorMessage",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -2950,6 +3191,28 @@
                 "defaultValue": "{\n  args: {\n    invalid: true,\n    errorMessage: 'Custom error message',\n  },\n}"
             },
             {
+                "name": "WithGlobalActions",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, searchOpen: false, notifOpen: false, switcherOpen: false },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" [(active)]=\"notifOpen\" iconName=\"notification\" />\n            <ngcc-header-action [ariaLabel]=\"'header.appSwitcher' | ngccI18n\" [(active)]=\"switcherOpen\" iconName=\"app_switcher\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Search: {{ searchOpen }} | Notifications: {{ notifOpen }} | Switcher: {{ switcherOpen }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Right-side global action buttons using \\`iconName\\` prop and \\`ngccI18n\\` pipe for labels.",
+                "description": "<p>Right-side global action buttons using `iconName` prop and `ngccI18n` pipe for labels.</p>\n"
+            },
+            {
+                "name": "withHeaderModules",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "moduleMetadata({\n  imports: [\n    NgccHeader,\n    NgccHamburger,\n    NgccHeaderName,\n    NgccHeaderNavigation,\n    NgccHeaderItem,\n    NgccHeaderMenu,\n    NgccHeaderMenuItem,\n    NgccHeaderGlobal,\n    NgccHeaderAction,\n    NgccHeaderPanel,\n    NgccI18nPipe,\n    NgccDropdown,\n  ],\n})"
+            },
+            {
                 "name": "WithHelperText",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -2958,6 +3221,16 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    helperText: 'Select a fruit from the list',\n  },\n}"
+            },
+            {
+                "name": "withI18n",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "applicationConfig({\n  providers: [\n    provideNgccI18n({\n      defaultLanguage: 'en',\n      loader: { load: async () => ({}) },\n      cache: new Map([['en', EN_TRANSLATIONS]]),\n    }),\n  ],\n})"
             },
             {
                 "name": "WithIcon",
@@ -2978,6 +3251,30 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    label: 'Feedback',\n    placeholder: 'Type up to 200 characters...',\n    maxLength: 200,\n    helperText: 'You can enter up to 200 chars',\n  },\n}"
+            },
+            {
+                "name": "WithNavigation",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, currentPage: '/' },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"currentPage === '/'\">Dashboard</ngcc-header-item>\n            <ngcc-header-item href=\"/analytics\" [isCurrentPage]=\"currentPage === '/analytics'\">Analytics</ngcc-header-item>\n            <ngcc-header-item href=\"/reports\" [isCurrentPage]=\"currentPage === '/reports'\">Reports</ngcc-header-item>\n            <ngcc-header-item href=\"/settings\" [isCurrentPage]=\"currentPage === '/settings'\">Settings</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Active: {{ currentPage }}</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Header with horizontal navigation links. \\`isCurrentPage\\` highlights the active route.",
+                "description": "<p>Header with horizontal navigation links. `isCurrentPage` highlights the active route.</p>\n"
+            },
+            {
+                "name": "WithPanel",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, searchOpen: false },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <ngcc-header-panel [expanded]=\"searchOpen\" [ariaLabel]=\"'header.search' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.search' | ngccI18n }}\n            </p>\n            <input\n              type=\"search\"\n              placeholder=\"Search…\"\n              class=\"cds--search-input\"\n              style=\"width:100%;padding:0.5rem;border:1px solid var(--cds-border-subtle-01);background:var(--cds-field-01);color:var(--cds-text-primary);\"\n            />\n            <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;margin-top:0.5rem;\">\n              Press Esc to close\n            </p>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Panel: {{ searchOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                "rawdescription": "Action button linked to a slide-in panel.\nClick the search button to toggle the panel open / closed.",
+                "description": "<p>Action button linked to a slide-in panel.\nClick the search button to toggle the panel open / closed.</p>\n"
             },
             {
                 "name": "WithReactiveForms",
@@ -3017,6 +3314,17 @@
                 "name": "Story",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
+                "rawtype": "StoryObj<NgccButton>",
+                "file": "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "kind": 184
+            },
+            {
+                "name": "Story",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
                 "rawtype": "StoryObj<unknown>",
                 "file": "projects/carbideui/src/lib/ngcc-charts/ngcc-charts-dashboard.stories.ts",
                 "deprecated": false,
@@ -3030,17 +3338,6 @@
                 "subtype": "typealias",
                 "rawtype": "StoryObj<unknown>",
                 "file": "projects/carbideui/src/lib/ngcc-charts/ngcc-charts.stories.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "description": "",
-                "kind": 184
-            },
-            {
-                "name": "Story",
-                "ctype": "miscellaneous",
-                "subtype": "typealias",
-                "rawtype": "StoryObj<NgccButton>",
-                "file": "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -3096,6 +3393,17 @@
                 "subtype": "typealias",
                 "rawtype": "StoryObj<NgccDropdown>",
                 "file": "projects/carbideui/src/lib/ngcc-dropdown/ngcc-dropdown.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "kind": 184
+            },
+            {
+                "name": "Story",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
+                "rawtype": "StoryObj<HeaderWrapper>",
+                "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -3822,6 +4130,188 @@
                     "deprecationMessage": "",
                     "type": "StoryObj",
                     "defaultValue": "{\n  decorators: [\n    moduleMetadata({\n      imports: [SimpleTranslationComponent],\n    }),\n  ],\n  render: () => ({\n    template: `<ngcc-i18n-simple-example></ngcc-i18n-simple-example>`,\n  }),\n  parameters: {\n    docs: {\n      description: {\n        story: `\nSimple translation using the pipe. No parameters needed.\n\n**Template:**\n\\`\\`\\`html\n<p>{{ 'greeting' | ngccI18n }}</p>\n\\`\\`\\`\n\n**Translation file (en.json):**\n\\`\\`\\`json\n{\n  \"greeting\": \"Hello\",\n  \"page_title\": \"Home\"\n}\n\\`\\`\\`\n        `,\n      },\n    },\n  },\n}"
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts": [
+                {
+                    "name": "BrandOnly",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI', skipTo: 'main-content' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\" [skipTo]=\"skipTo\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">← Press Tab then Enter on the skip link above</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Minimal header — brand name link only. Good starting point.",
+                    "description": "<p>Minimal header — brand name link only. Good starting point.</p>\n"
+                },
+                {
+                    "name": "EN_TRANSLATIONS",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Record<string, string>",
+                    "defaultValue": "{\n  'header.search': 'Search',\n  'header.notifications': 'Notifications',\n  'header.appSwitcher': 'Switch applications',\n  'header.userProfile': 'User profile',\n  'header.quickAdd': 'Quick Add',\n  'header.openNav': 'Open navigation menu',\n  'header.closeNav': 'Close navigation menu',\n  'header.skipToContent': 'Skip to main content',\n  'header.settings': 'Settings',\n  'header.region': 'Region',\n}"
+                },
+                {
+                    "name": "FireAndForgetAction",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, lastAction: 'none' },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <!-- toggleable (default) — retains active state -->\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" iconName=\"notification\" />\n\n            <!-- fire-and-forget — no active state retained -->\n            <ngcc-header-action\n              [ariaLabel]=\"'header.quickAdd' | ngccI18n\"\n              iconName=\"add\"\n              [toggleable]=\"false\"\n              (actionClick)=\"lastAction = 'quick-add'\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Last fire-and-forget action: {{ lastAction }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Action button with \\`[toggleable]=\"false\"\\` — fires a one-shot event without toggling state.\nThe \\`iconName=\"add\"\\` prop is used for a quick-add action.",
+                    "description": "<p>Action button with `[toggleable]=&quot;false&quot;` — fires a one-shot event without toggling state.\nThe `iconName=&quot;add&quot;` prop is used for a quick-add action.</p>\n"
+                },
+                {
+                    "name": "FullHeader",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: {\n      ...args,\n      sideNavOpen: false,\n      searchOpen: false,\n      notifOpen: false,\n      switcherOpen: false,\n      regionItems: [\n        { label: 'Americas — US East', value: 'us-east' },\n        { label: 'Americas — US South', value: 'us-south' },\n        { label: 'Europe — Frankfurt', value: 'eu-de' },\n        { label: 'Europe — London', value: 'eu-gb' },\n        { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n        { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n      ],\n    },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n\n          <!-- 1. Hamburger -->\n          <ngcc-hamburger\n            [(active)]=\"sideNavOpen\"\n            [label]=\"'header.openNav' | ngccI18n\"\n            [labelClose]=\"'header.closeNav' | ngccI18n\">\n          </ngcc-hamburger>\n\n          <!-- 2. Brand -->\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <!-- 3. Navigation -->\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/activity\">Activity Log</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-item href=\"/docs\">Docs</ngcc-header-item>\n          </ngcc-header-navigation>\n\n          <!-- 4. Global actions -->\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" [(active)]=\"notifOpen\" iconName=\"notification\" />\n            <ngcc-header-action [ariaLabel]=\"'header.appSwitcher' | ngccI18n\" [(active)]=\"switcherOpen\" iconName=\"app_switcher\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <!-- Search Panel -->\n        <ngcc-header-panel [expanded]=\"searchOpen\" [ariaLabel]=\"'header.search' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.search' | ngccI18n }}\n            </p>\n            <input type=\"search\" placeholder=\"Search…\"\n              style=\"width:100%;padding:0.5rem;border:1px solid var(--cds-border-subtle-01);background:var(--cds-field-01);color:var(--cds-text-primary);\" />\n          </div>\n        </ngcc-header-panel>\n\n        <!-- Notifications Panel -->\n        <ngcc-header-panel [expanded]=\"notifOpen\" [ariaLabel]=\"'header.notifications' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.notifications' | ngccI18n }}\n            </p>\n            <div style=\"padding:0.75rem 0;border-bottom:1px solid var(--cds-border-subtle-01);\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">Deployment succeeded</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">2 minutes ago</p>\n            </div>\n            <div style=\"padding:0.75rem 0;border-bottom:1px solid var(--cds-border-subtle-01);\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">New user signed up</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">15 minutes ago</p>\n            </div>\n            <div style=\"padding:0.75rem 0;\">\n              <p style=\"color:var(--cds-text-primary);font-size:0.875rem;\">Storage limit at 85%</p>\n              <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;\">1 hour ago</p>\n            </div>\n          </div>\n        </ngcc-header-panel>\n\n        <!-- App Switcher / User Panel — includes NgccDropdown for region selection -->\n        <ngcc-header-panel [expanded]=\"switcherOpen\" [ariaLabel]=\"'header.appSwitcher' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:0.5rem;\">\n              Jane Smith\n            </p>\n            <p style=\"color:var(--cds-text-secondary);font-size:0.875rem;margin-bottom:1.5rem;\">\n              jane@company.com\n            </p>\n\n            <!-- Region picker via NgccDropdown -->\n            <ngcc-dropdown\n              [label]=\"'header.region' | ngccI18n\"\n              [items]=\"regionItems\"\n              placeholder=\"Select region…\"\n              size=\"sm\">\n            </ngcc-dropdown>\n\n            <div style=\"margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;\">\n              <a href=\"/profile\" style=\"color:var(--cds-link-primary);font-size:0.875rem;\">\n                Manage profile\n              </a>\n              <a href=\"/logout\" style=\"color:var(--cds-link-primary);font-size:0.875rem;\">\n                Sign out\n              </a>\n            </div>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:0.5rem;\">\n            Main content area\n          </p>\n          <p style=\"color:var(--cds-text-secondary);font-size:0.875rem;\">\n            Side nav: {{ sideNavOpen ? 'Open' : 'Closed' }} |\n            Search: {{ searchOpen ? 'Open' : 'Closed' }} |\n            Notifications: {{ notifOpen ? 'Open' : 'Closed' }} |\n            Switcher: {{ switcherOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Complete enterprise header — all regions active:\nhamburger → brand → navigation → global actions → panels.\n\n- Icons via \\`iconName\\` prop on \\`<ngcc-header-action>\\`\n- Labels via \\`ngccI18n\\` pipe\n- User profile panel includes a \\`<ngcc-dropdown>\\` region selector",
+                    "description": "<p>Complete enterprise header — all regions active:\nhamburger → brand → navigation → global actions → panels.</p>\n<ul>\n<li>Icons via `iconName` prop on `<ngcc-header-action>`</li>\n<li>Labels via `ngccI18n` pipe</li>\n<li>User profile panel includes a `<ngcc-dropdown>` region selector</li>\n</ul>\n"
+                },
+                {
+                    "name": "meta",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Meta<HeaderWrapper>",
+                    "defaultValue": "{\n  title: 'UI Shell/Header',\n  component: HeaderWrapper,\n  tags: ['autodocs'],\n  parameters: {\n    layout: 'fullscreen',\n    docs: {\n      description: {\n        component: `\nEnterprise Carbon Design System header shell built with Angular v20+ signal APIs.\n\n## Composition\nThe header is composed of individually importable components:\n\n| Selector | Purpose |\n|---|---|\n| \\`<ngcc-header>\\` | Root \\`<header role=\"banner\">\\` with skip link |\n| \\`<ngcc-hamburger>\\` | Left-side hamburger / close toggle |\n| \\`<ngcc-header-name>\\` | Brand prefix + product name link |\n| \\`<ngcc-header-navigation>\\` | \\`<nav>\\` + \\`<ul role=\"menubar\">\\` wrapper |\n| \\`<ngcc-header-item>\\` | Single nav link (\\`role=\"menuitem\"\\`) |\n| \\`<ngcc-header-menu>\\` | Flyout dropdown with full keyboard nav |\n| \\`<ngcc-header-menu-item>\\` | Item inside a dropdown |\n| \\`<ngcc-header-global>\\` | Right-side action button bar |\n| \\`<ngcc-header-action>\\` | Toggleable action button (search, bell, apps…) |\n| \\`<ngcc-header-panel>\\` | Slide-in panel linked to an action |\n\n## Icon integration\nPass the icon name via \\`iconName\\` input — \\`NgccButton\\` (ghost, icon-only) renders it internally.\nNo inline SVGs or \\`<ngcc-icon>\\` required in the parent template.\n\n## i18n integration\nAction button labels are translated via the \\`ngccI18n\\` pipe.\nProvide translations with \\`provideNgccI18n()\\` in \\`app.config.ts\\`.\n\n## Keyboard navigation\n- **Tab** — moves between interactive elements\n- **Enter / Space** — activates buttons, opens dropdowns\n- **Arrow Up / Down** — navigates within open dropdown\n- **Home / End** — jumps to first / last dropdown item\n- **Escape** — closes dropdowns and panels, returns focus to trigger\n        `,\n      },\n    },\n  },\n  decorators: [withI18n, withHeaderModules],\n  argTypes: {\n    ariaLabel: { control: 'text', description: 'Accessible label for the <header> landmark' },\n    skipTo: { control: 'text', description: 'ID of the main content skip-link target' },\n  },\n}"
+                },
+                {
+                    "name": "MouseoverDropdowns",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\" trigger=\"mouseover\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\" trigger=\"mouseover\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Hover the nav items to open dropdowns</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Dropdown menus that open on mouse hover instead of click.\nSet \\`trigger=\"mouseover\"\\` on \\`<ngcc-header-menu>\\`.",
+                    "description": "<p>Dropdown menus that open on mouse hover instead of click.\nSet `trigger=&quot;mouseover&quot;` on `<ngcc-header-menu>`.</p>\n"
+                },
+                {
+                    "name": "NoSkipLink",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI', skipTo: '' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\" [skipTo]=\"skipTo\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\">Home</ngcc-header-item>\n            <ngcc-header-item href=\"/about\">About</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">skipTo is empty — no skip link rendered</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Pass \\`skipTo=\"\"\\` to disable the skip-to-content link entirely.",
+                    "description": "<p>Pass `skipTo=&quot;&quot;` to disable the skip-to-content link entirely.</p>\n"
+                },
+                {
+                    "name": "PAGE_WRAP",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "`style=\"min-height:200px;padding-top:3rem;background:var(--cds-background,#f4f4f4);\"`"
+                },
+                {
+                    "name": "PAGE_WRAP_TALL",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "`style=\"min-height:400px;padding-top:3rem;background:var(--cds-background,#f4f4f4);\"`"
+                },
+                {
+                    "name": "WithDropdownMenus",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"true\">Dashboard</ngcc-header-item>\n\n            <ngcc-header-menu title=\"Catalog\">\n              <ngcc-header-menu-item href=\"/catalog/services\">Services</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/products\">Products</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/solutions\">Solutions</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/catalog/deprecated\" [disabled]=\"true\">\n                Deprecated (disabled)\n              </ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-menu title=\"Platform\">\n              <ngcc-header-menu-item href=\"/platform/overview\">Overview</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/activity\">Activity Log</ngcc-header-menu-item>\n              <ngcc-header-menu-item href=\"/platform/billing\">Billing</ngcc-header-menu-item>\n            </ngcc-header-menu>\n\n            <ngcc-header-item href=\"/docs\">Docs</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Click or hover the nav menus above</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Navigation with flyout dropdowns.\nKeyboard: **Enter/Space** opens, **Arrow Up/Down** navigates, **Escape** closes.",
+                    "description": "<p>Navigation with flyout dropdowns.\nKeyboard: <strong>Enter/Space</strong> opens, <strong>Arrow Up/Down</strong> navigates, <strong>Escape</strong> closes.</p>\n"
+                },
+                {
+                    "name": "WithDropdownPanel",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: {\n      ...args,\n      settingsOpen: false,\n      regionItems: [\n        { label: 'Americas — US East', value: 'us-east' },\n        { label: 'Americas — US South', value: 'us-south' },\n        { label: 'Europe — Frankfurt', value: 'eu-de' },\n        { label: 'Europe — London', value: 'eu-gb' },\n        { label: 'Asia Pacific — Tokyo', value: 'jp-tok' },\n        { label: 'Asia Pacific — Sydney', value: 'au-syd' },\n      ],\n    },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.settings' | ngccI18n\" [(active)]=\"settingsOpen\" iconName=\"configuration\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <!-- Preferences panel with NgccDropdown region picker -->\n        <ngcc-header-panel [expanded]=\"settingsOpen\" [ariaLabel]=\"'header.settings' | ngccI18n\">\n          <div style=\"padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin:0;\">\n              {{ 'header.settings' | ngccI18n }}\n            </p>\n\n            <ngcc-dropdown\n              [label]=\"'header.region' | ngccI18n\"\n              [items]=\"regionItems\"\n              placeholder=\"Select region…\"\n              size=\"md\">\n            </ngcc-dropdown>\n\n            <ngcc-dropdown\n              label=\"Theme\"\n              [items]=\"[\n                { label: 'White', value: 'white' },\n                { label: 'Gray 10', value: 'g10' },\n                { label: 'Gray 90', value: 'g90' },\n                { label: 'Gray 100', value: 'g100' }\n              ]\"\n              placeholder=\"Select theme…\"\n              size=\"md\">\n            </ngcc-dropdown>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Settings panel: {{ settingsOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Dedicated story showing \\`NgccDropdown\\` inside a header panel.\nClick the settings button to open a preferences panel with a region picker.",
+                    "description": "<p>Dedicated story showing `NgccDropdown` inside a header panel.\nClick the settings button to open a preferences panel with a region picker.</p>\n"
+                },
+                {
+                    "name": "WithGlobalActions",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, searchOpen: false, notifOpen: false, switcherOpen: false },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n            <ngcc-header-action [ariaLabel]=\"'header.notifications' | ngccI18n\" [(active)]=\"notifOpen\" iconName=\"notification\" />\n            <ngcc-header-action [ariaLabel]=\"'header.appSwitcher' | ngccI18n\" [(active)]=\"switcherOpen\" iconName=\"app_switcher\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Search: {{ searchOpen }} | Notifications: {{ notifOpen }} | Switcher: {{ switcherOpen }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Right-side global action buttons using \\`iconName\\` prop and \\`ngccI18n\\` pipe for labels.",
+                    "description": "<p>Right-side global action buttons using `iconName` prop and `ngccI18n` pipe for labels.</p>\n"
+                },
+                {
+                    "name": "withHeaderModules",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "moduleMetadata({\n  imports: [\n    NgccHeader,\n    NgccHamburger,\n    NgccHeaderName,\n    NgccHeaderNavigation,\n    NgccHeaderItem,\n    NgccHeaderMenu,\n    NgccHeaderMenuItem,\n    NgccHeaderGlobal,\n    NgccHeaderAction,\n    NgccHeaderPanel,\n    NgccI18nPipe,\n    NgccDropdown,\n  ],\n})"
+                },
+                {
+                    "name": "withI18n",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "applicationConfig({\n  providers: [\n    provideNgccI18n({\n      defaultLanguage: 'en',\n      loader: { load: async () => ({}) },\n      cache: new Map([['en', EN_TRANSLATIONS]]),\n    }),\n  ],\n})"
+                },
+                {
+                    "name": "WithNavigation",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, currentPage: '/' },\n    template: `\n      <div ${PAGE_WRAP}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-navigation ariaLabel=\"CarbideUI\">\n            <ngcc-header-item href=\"/\" [isCurrentPage]=\"currentPage === '/'\">Dashboard</ngcc-header-item>\n            <ngcc-header-item href=\"/analytics\" [isCurrentPage]=\"currentPage === '/analytics'\">Analytics</ngcc-header-item>\n            <ngcc-header-item href=\"/reports\" [isCurrentPage]=\"currentPage === '/reports'\">Reports</ngcc-header-item>\n            <ngcc-header-item href=\"/settings\" [isCurrentPage]=\"currentPage === '/settings'\">Settings</ngcc-header-item>\n          </ngcc-header-navigation>\n        </ngcc-header>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">Active: {{ currentPage }}</p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Header with horizontal navigation links. \\`isCurrentPage\\` highlights the active route.",
+                    "description": "<p>Header with horizontal navigation links. `isCurrentPage` highlights the active route.</p>\n"
+                },
+                {
+                    "name": "WithPanel",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  args: { ariaLabel: 'CarbideUI' },\n  render: (args) => ({\n    props: { ...args, searchOpen: false },\n    template: `\n      <div ${PAGE_WRAP_TALL}>\n        <ngcc-header [ariaLabel]=\"ariaLabel\">\n          <ngcc-header-name productName=\"[Platform]\" href=\"/\"></ngcc-header-name>\n\n          <ngcc-header-global>\n            <ngcc-header-action [ariaLabel]=\"'header.search' | ngccI18n\" [(active)]=\"searchOpen\" iconName=\"search\" />\n          </ngcc-header-global>\n        </ngcc-header>\n\n        <ngcc-header-panel [expanded]=\"searchOpen\" [ariaLabel]=\"'header.search' | ngccI18n\">\n          <div style=\"padding:1.5rem;\">\n            <p style=\"color:var(--cds-text-primary);font-weight:600;margin-bottom:1rem;\">\n              {{ 'header.search' | ngccI18n }}\n            </p>\n            <input\n              type=\"search\"\n              placeholder=\"Search…\"\n              class=\"cds--search-input\"\n              style=\"width:100%;padding:0.5rem;border:1px solid var(--cds-border-subtle-01);background:var(--cds-field-01);color:var(--cds-text-primary);\"\n            />\n            <p style=\"color:var(--cds-text-secondary);font-size:0.75rem;margin-top:0.5rem;\">\n              Press Esc to close\n            </p>\n          </div>\n        </ngcc-header-panel>\n\n        <main id=\"main-content\" style=\"padding:2rem;\">\n          <p style=\"color:var(--cds-text-primary)\">\n            Panel: {{ searchOpen ? 'Open' : 'Closed' }}\n          </p>\n        </main>\n      </div>\n    `,\n  }),\n}",
+                    "rawdescription": "Action button linked to a slide-in panel.\nClick the search button to toggle the panel open / closed.",
+                    "description": "<p>Action button linked to a slide-in panel.\nClick the search button to toggle the panel open / closed.</p>\n"
                 }
             ],
             "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts": [
@@ -4943,6 +5433,19 @@
                     "kind": 184
                 }
             ],
+            "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccButton>",
+                    "file": "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
             "projects/carbideui/src/lib/ngcc-charts/ngcc-charts-dashboard.stories.ts": [
                 {
                     "name": "Story",
@@ -4963,19 +5466,6 @@
                     "subtype": "typealias",
                     "rawtype": "StoryObj<unknown>",
                     "file": "projects/carbideui/src/lib/ngcc-charts/ngcc-charts.stories.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "description": "",
-                    "kind": 184
-                }
-            ],
-            "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts": [
-                {
-                    "name": "Story",
-                    "ctype": "miscellaneous",
-                    "subtype": "typealias",
-                    "rawtype": "StoryObj<NgccButton>",
-                    "file": "projects/carbideui/src/lib/ngcc-button/ngcc-button.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "description": "",
@@ -5041,6 +5531,19 @@
                     "subtype": "typealias",
                     "rawtype": "StoryObj<NgccDropdown>",
                     "file": "projects/carbideui/src/lib/ngcc-dropdown/ngcc-dropdown.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<HeaderWrapper>",
+                    "file": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "description": "",
@@ -5237,7 +5740,7 @@
         "children": []
     },
     "coverage": {
-        "count": 4,
+        "count": 8,
         "status": "low",
         "files": [
             {
@@ -6000,6 +6503,185 @@
             },
             {
                 "filePath": "projects/carbideui/src/lib/ngcc-dropdown/ngcc-dropdown.stories.ts",
+                "type": "type alias",
+                "linktype": "miscellaneous",
+                "linksubtype": "typealias",
+                "name": "Story",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "HeaderWrapper",
+                "coveragePercent": 0,
+                "coverageCount": "0/10",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "BrandOnly",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "EN_TRANSLATIONS",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "FireAndForgetAction",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "FullHeader",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "meta",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "MouseoverDropdowns",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "NoSkipLink",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "PAGE_WRAP",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "PAGE_WRAP_TALL",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "WithDropdownMenus",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "WithDropdownPanel",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "WithGlobalActions",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "withHeaderModules",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "withI18n",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "WithNavigation",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "WithPanel",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-header/ngcc-header.stories.ts",
                 "type": "type alias",
                 "linktype": "miscellaneous",
                 "linksubtype": "typealias",

@@ -1,0 +1,25 @@
+// Carbon handles cds--header-panel and cds--header-panel--expanded transition
+:host {
+  display: block;
+}
+
+.cds--header-panel {
+  // Ensure panel is positioned relative to the fixed header
+  position: fixed;
+  inset-block-start: var(--cds-spacing-09, 3rem); // header height (48px)
+  inset-inline-end: 0;
+  z-index: var(--cds-layer-overlay, 8000);
+  block-size: calc(100vh - var(--cds-spacing-09, 3rem));
+  overflow-y: auto;
+  background-color: var(--cds-layer-01, #f4f4f4);
+  color: var(--cds-text-primary, #161616);
+  width: 16rem; // 256px — standard Carbon panel width
+  border-inline-start: 1px solid var(--cds-border-subtle-01, #e0e0e0);
+  transform: translateX(100%);
+  transition: transform var(--cds-motion-moderate-01, 150ms)
+    var(--cds-motion-standard, cubic-bezier(0.2, 0, 0.38, 0.9));
+
+  &.cds--header-panel--expanded {
+    transform: translateX(0);
+  }
+}

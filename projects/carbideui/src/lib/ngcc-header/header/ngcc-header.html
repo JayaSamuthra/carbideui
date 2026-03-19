@@ -1,0 +1,23 @@
+<header class="cds--header" role="banner" [attr.aria-label]="ariaLabel() || null">
+  <!-- Skip-to-content link (visually hidden, becomes visible on focus) -->
+  @if (skipTo()) {
+    <a class="cds--skip-to-content" [attr.href]="'#' + skipTo()" tabindex="0">
+      Skip to main content
+    </a>
+  }
+
+  <!--
+    Named content slots — order matches Carbon's flexbox layout:
+      1. ngcc-hamburger        far-left mobile nav trigger
+      2. ngcc-header-name      brand / product name link
+      3. ngcc-header-navigation horizontal nav bar
+      4. ngcc-header-global    right-aligned action buttons
+  -->
+  <ng-content select="ngcc-hamburger" />
+  <ng-content select="ngcc-header-name" />
+  <ng-content select="ngcc-header-navigation" />
+  <ng-content select="ngcc-header-global" />
+
+  <!-- Catch-all slot for any additional projected content -->
+  <ng-content />
+</header>
