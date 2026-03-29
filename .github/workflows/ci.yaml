@@ -2,12 +2,10 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main, development]
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
-    branches:
-      - main
+    branches: [main, development]
     paths-ignore:
       - '.github/workflows/**'
       - '.github/dependabot.yml'
@@ -25,19 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
       - name: Lint code (ESLint)
         run: npm run lint:eslint
-
       - name: Lint formatting (Prettier)
         run: npm run lint:prettier
 
@@ -46,19 +40,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
-      - name: Run tests with coverage
-        run: npm run test:coverage
-
+      - name: Run library precheck (Build, Test, Lint, Audit)
+        run: npm run precheck
       - name: Upload coverage to Codecov
         if: github.event_name != 'merge_group'
         uses: codecov/codecov-action@v5
@@ -73,27 +63,57 @@ jobs:
     timeout-minutes: 10
     needs: [lint, test]
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build library
         run: npm run build:lib
-
       - name: Audit production dependencies
         run: npm run audit:prod
-
       - name: Audit licenses
         run: npm run audit:licenses
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-carbideui
+          path: dist/carbideui
+          retention-days: 1
 
+  integration:
+    name: Integration (Angular ${{ matrix.angular-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        angular-version: ['20', '21']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-carbideui
+          path: dist/carbideui
+      - name: Integration Tests (Angular ${{ matrix.angular-version }})
+        run: npm run integration:ng${{ matrix.angular-version }}
+
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [lint, test, build, integration]
+    if: always()
+    steps:
       - name: Job Summary
-        if: always()
         run: |
           echo "## CI Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -101,4 +121,5 @@ jobs:
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Lint (ESLint + Prettier) | ${{ needs.lint.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Tests | ${{ needs.test.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ needs.build.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Integration (all versions) | ${{ needs.integration.result == 'success' && '✅ Passed' || needs.integration.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
