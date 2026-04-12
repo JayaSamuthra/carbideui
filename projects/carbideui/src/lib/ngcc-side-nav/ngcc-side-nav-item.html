@@ -1,0 +1,18 @@
+<li [class]="itemClasses()">
+  <a
+    [class]="linkClasses()"
+    [href]="href()"
+    [attr.aria-current]="active() ? 'page' : null"
+    [attr.title]="title() || null"
+    (click)="onClick($event)"
+  >
+    @if (iconName()) {
+      <div class="cds--side-nav__icon">
+        <ngcc-icon [name]="iconName()!" [decorative]="true" size="md" />
+      </div>
+    }
+    <span class="cds--side-nav__link-text">
+      <ng-content />
+    </span>
+  </a>
+</li>

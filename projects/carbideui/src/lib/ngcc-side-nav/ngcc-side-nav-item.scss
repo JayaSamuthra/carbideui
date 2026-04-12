@@ -1,0 +1,4 @@
+// Host is transparent — the <li> inside carries Carbon's cds--side-nav__item styling.
+:host {
+  display: contents;
+}
