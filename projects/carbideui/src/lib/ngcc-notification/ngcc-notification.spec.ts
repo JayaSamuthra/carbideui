@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { NgccNotification } from './ngcc-notification';
 import { NgccNotificationConfig } from './ngcc-notification.types';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 describe('NgccNotification', () => {
   let fixture: ComponentFixture<NgccNotification>;
@@ -165,7 +165,7 @@ describe('NgccNotification', () => {
 
   describe('WCAG & Accessibility', () => {
     it('should have no accessibility violations (default notification)', async () => {
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -178,7 +178,7 @@ describe('NgccNotification', () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -190,7 +190,7 @@ describe('NgccNotification', () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 

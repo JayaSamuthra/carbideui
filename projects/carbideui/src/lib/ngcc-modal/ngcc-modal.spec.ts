@@ -2,8 +2,8 @@ import { Component, provideZonelessChangeDetection, viewChild } from '@angular/c
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NgccModal } from './ngcc-modal';
-import { axe } from 'vitest-axe';
 import { NgccModalVariant, NgccModalSize } from './ngcc-modal.types';
+import { runAxe } from '../../test-utils/a11y';
 
 @Component({
   standalone: true,
@@ -281,7 +281,7 @@ describe('NgccModal', () => {
     it('should have no accessibility violations', async () => {
       host.open = true;
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 

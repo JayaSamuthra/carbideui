@@ -4,7 +4,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccGaugeChart } from './ngcc-gauge-chart';
 import { NgccSkeleton } from '../../ngcc-skeleton/ngcc-skeleton';
 import { NgccThemeService } from '../../ngcc-theme-switcher/ngcc-theme.service';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../../test-utils/a11y';
 
 // Mock theme service for predictable output
 class MockThemeService {
@@ -281,7 +281,7 @@ describe('NgccGaugeChart – WCAG / Accessibility', () => {
     fixture.componentRef.setInput('data', [{ group: 'CPU', value: 85 }]);
     fixture.detectChanges();
 
-    const results = await axe(fixture.nativeElement, {
+    const results = await runAxe(fixture.nativeElement, {
       rules: {
         'aria-tooltip-name': { enabled: false },
         'nested-interactive': { enabled: false },

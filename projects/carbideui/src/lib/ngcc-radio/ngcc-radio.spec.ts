@@ -3,9 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { axe } from 'vitest-axe';
 import { NgccRadio } from './ngcc-radio';
 import { NgccRadioGroup } from './ngcc-radio-group';
+import { runAxe } from '../../test-utils/a11y';
 
 // ── Shared host components (state defined in template — avoids NG0100) ────────
 
@@ -1038,59 +1038,59 @@ describe('NgccRadio + NgccRadioGroup', () => {
   describe('WCAG accessibility (axe)', () => {
     it('should have no violations in default state', async () => {
       const { fixture } = await setup(DefaultHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations with a radio selected', async () => {
       const { fixture } = await setup(DefaultHostComponent);
       getRadioInputs(fixture)[0].click();
       fixture.detectChanges();
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations in disabled state (entire group)', async () => {
       const { fixture } = await setup(GroupDisabledHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations with a single disabled radio', async () => {
       const { fixture } = await setup(SingleDisabledHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations in read-only state', async () => {
       const { fixture } = await setup(ReadOnlyHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations in invalid state', async () => {
       const { fixture } = await setup(InvalidHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations in warning state', async () => {
       const { fixture } = await setup(WarnHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations with helper text', async () => {
       const { fixture } = await setup(HelperTextHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations in skeleton state', async () => {
       const { fixture } = await setup(SkeletonHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations in vertical orientation', async () => {
       const { fixture } = await setup(VerticalHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
 
     it('should have no violations with label-left placement', async () => {
       const { fixture } = await setup(LabelLeftHostComponent);
-      expect(await axe(fixture.nativeElement)).toHaveNoViolations();
+      expect(await runAxe(fixture.nativeElement)).toHaveNoViolations();
     });
   });
 });

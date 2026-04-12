@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccTextAreaComponent } from './ngcc-text-area';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../../test-utils/a11y';
 
 describe('NgccTextAreaComponent', () => {
   let component: NgccTextAreaComponent;
@@ -150,7 +150,7 @@ describe('NgccTextAreaComponent – WCAG / Accessibility', () => {
       fixture.componentRef.setInput('label', 'Comment');
       fixture.detectChanges();
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -158,7 +158,7 @@ describe('NgccTextAreaComponent – WCAG / Accessibility', () => {
       fixture.componentRef.setInput('ariaLabel', 'Comment input');
       fixture.detectChanges();
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
   });

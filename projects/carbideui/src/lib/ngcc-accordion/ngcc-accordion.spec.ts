@@ -5,7 +5,7 @@ import { NgccAccordion } from './ngcc-accordion';
 import { NgccAccordionItem } from './ngcc-accordion-item';
 import { CommonModule } from '@angular/common';
 import { AccordionAlign, AccordionSize } from './ngcc-accordion.types';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 @Component({
   standalone: true,
@@ -252,7 +252,7 @@ describe('NgccAccordion & NgccAccordionItem', () => {
         { title: 'Item 2', content: 'Content 2', defaultOpen: true },
       ];
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 

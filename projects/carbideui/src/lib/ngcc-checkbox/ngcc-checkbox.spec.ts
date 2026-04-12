@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { NgccCheckbox } from './ngcc-checkbox';
 import { FormsModule } from '@angular/forms';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 describe('NgccCheckbox', () => {
   let component: NgccCheckbox;
@@ -159,7 +159,7 @@ describe('NgccCheckbox', () => {
     expect(inputEl.indeterminate).toBe(true);
     expect(inputEl.getAttribute('aria-checked')).toBe('mixed');
 
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should expose required state accessibly', async () => {
@@ -171,7 +171,7 @@ describe('NgccCheckbox', () => {
 
     expect(inputEl.getAttribute('aria-required')).toBe('true');
 
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should have no WCAG violations when disabled', async () => {
@@ -179,7 +179,7 @@ describe('NgccCheckbox', () => {
     fixture.componentRef.setInput('disabled', true);
     fixture.detectChanges();
 
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should have no WCAG violations in invalid state', async () => {
@@ -188,7 +188,7 @@ describe('NgccCheckbox', () => {
     fixture.componentRef.setInput('errorMessage', 'This field is required');
     fixture.detectChanges();
 
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should have no WCAG violations with label and helper text', async () => {
@@ -196,11 +196,11 @@ describe('NgccCheckbox', () => {
     fixture.componentRef.setInput('helperText', 'You must accept before continuing');
     fixture.detectChanges();
 
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should have no WCAG violations (default)', async () => {
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should provide fallback aria-label when no label is set', () => {

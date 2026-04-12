@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccPagination } from './ngcc-pagination';
 import { NgccIcon } from '../ngcc-icons/ngcc-icon';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 describe('NgccPagination (zoneless)', () => {
   let fixture: ComponentFixture<NgccPagination>;
@@ -246,7 +246,7 @@ describe('NgccPagination (zoneless)', () => {
     describe('Axe – WCAG compliance', () => {
       it('should have no WCAG violations', async () => {
         const pagination = fixture.nativeElement;
-        const results = await axe(pagination);
+        const results = await runAxe(pagination);
         expect(results).toHaveNoViolations();
       });
     });
