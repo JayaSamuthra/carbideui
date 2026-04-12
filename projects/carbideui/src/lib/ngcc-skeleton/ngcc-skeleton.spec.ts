@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgccSkeleton } from './ngcc-skeleton';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 describe('NgccSkeleton', () => {
   let fixture: ComponentFixture<NgccSkeleton>;
@@ -263,10 +263,10 @@ describe('NgccSkeleton', () => {
   // WCAG Accessibility (Positive + Negative)
   // ───────────────────────────────────────────────────────────────
   describe('WCAG Accessibility', () => {
-    const runAxe = async () => axe(hostEl);
+    const testAxe = async () => runAxe(hostEl);
 
     it('should have no accessibility violations by default', async () => {
-      const results = await runAxe();
+      const results = await testAxe();
       expect(results).toHaveNoViolations();
     });
 
@@ -275,7 +275,7 @@ describe('NgccSkeleton', () => {
       fixture.componentRef.setInput('height', '50px');
       fixture.detectChanges();
 
-      const results = await runAxe();
+      const results = await testAxe();
       expect(results).toHaveNoViolations();
     });
 
@@ -285,7 +285,7 @@ describe('NgccSkeleton', () => {
       fixture.componentRef.setInput('height', '48px');
       fixture.detectChanges();
 
-      const results = await runAxe();
+      const results = await testAxe();
       expect(results).toHaveNoViolations();
     });
 
@@ -297,7 +297,7 @@ describe('NgccSkeleton', () => {
 
     it('should fail WCAG if invalid ARIA role is used (negative test)', async () => {
       hostEl.setAttribute('role', 'invalidrole');
-      const results = await axe(hostEl);
+      const results = await runAxe(hostEl);
       expect(results.violations.length).toBeGreaterThan(0);
     });
   });

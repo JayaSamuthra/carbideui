@@ -1,33 +1,26 @@
 import 'zone.js';
 import 'zone.js/testing';
+
 import { getTestBed } from '@angular/core/testing';
 import { destroyPlatform } from '@angular/core';
-import * as matchers from 'vitest-axe/matchers';
-import { expect } from 'vitest';
-import 'vitest-axe/extend-expect';
 import {
   BrowserTestingModule,
   platformBrowserTesting,
 } from '@angular/platform-browser/testing';
 
-// plugging axe into Vitest’s assertion engine
-expect.extend(matchers);
+import { expect } from 'vitest';
 
-declare module 'vitest' {
-  export interface Assertion<T = any> extends VitestAxeMatchers { }
-  export interface AsymmetricMatchersContaining extends VitestAxeMatchers { }
-}
+/**
+ * -------------------------------------------------------
+ * Angular Testing Environment Setup
+ * -------------------------------------------------------
+ */
 
-interface VitestAxeMatchers {
-  toHaveNoViolations(): void;
-}
-
-// Initialize Angular's testing environment for browser-based unit tests
-// Destroy any existing platform first to avoid conflicts in singleThread mode
+// Destroy existing Angular platform (important for Vitest single-thread mode)
 try {
   destroyPlatform();
 } catch {
-  // Ignore error if no platform exists
+  // Ignore if no platform exists
 }
 
 getTestBed().initTestEnvironment(
@@ -35,15 +28,61 @@ getTestBed().initTestEnvironment(
   platformBrowserTesting()
 );
 
-// Mock ResizeObserver (jsdom does not implement it)
+/**
+ * -------------------------------------------------------
+ * Custom Accessibility Matcher (axe-core)
+ * -------------------------------------------------------
+ */
+
+expect.extend({
+  toHaveNoViolations(results: any) {
+    const pass = results.violations.length === 0;
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? 'No accessibility violations'
+          : `Accessibility violations found:\n\n${JSON.stringify(
+              results.violations,
+              null,
+              2
+            )}`,
+    };
+  },
+});
+
+/**
+ * Extend Vitest typings for custom matcher
+ */
+declare module 'vitest' {
+  interface Assertion<T = any> {
+    toHaveNoViolations(): void;
+  }
+  interface AsymmetricMatchersContaining {
+    toHaveNoViolations(): void;
+  }
+}
+
+/**
+ * -------------------------------------------------------
+ * Global Mocks (JSDOM gaps)
+ * -------------------------------------------------------
+ */
+
+// ResizeObserver mock (used in charts, layout, tooltips)
 global.ResizeObserver = class ResizeObserver {
-  observe() { }
-  unobserve() { }
-  disconnect() { }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
 };
 
-// Mock SVG text measurement used by tooltips, charts, and layout logic
-Object.defineProperty(window.SVGElement.prototype, 'getComputedTextLength', {
-  value: () => 0,
-  writable: true,
-});
+// SVG text measurement mock
+Object.defineProperty(
+  window.SVGElement.prototype,
+  'getComputedTextLength',
+  {
+    value: () => 0,
+    writable: true,
+  }
+);
