@@ -1,0 +1,31 @@
+<li
+  class="cds--side-nav__item cds--side-nav__item--icon"
+  [class.cds--side-nav__item--active]="hasActiveChild()"
+>
+  <!-- Submenu trigger button -->
+  <button
+    class="cds--side-nav__submenu"
+    type="button"
+    aria-haspopup="true"
+    [attr.aria-expanded]="expanded()"
+    (click)="toggle()"
+  >
+    @if (iconName()) {
+      <div class="cds--side-nav__icon">
+        <ngcc-icon [name]="iconName()!" [decorative]="true" size="md" />
+      </div>
+    }
+
+    <span class="cds--side-nav__submenu-title">{{ title() }}</span>
+
+    <!-- Chevron rotates via Carbon CSS when aria-expanded="true" -->
+    <div class="cds--side-nav__icon cds--side-nav__icon--small cds--side-nav__submenu-chevron">
+      <ngcc-icon name="chevron_down" [decorative]="true" size="md" />
+    </div>
+  </button>
+
+  <!-- Submenu item list — shown/hidden by Carbon CSS via aria-expanded -->
+  <ul class="cds--side-nav__menu" role="list">
+    <ng-content />
+  </ul>
+</li>

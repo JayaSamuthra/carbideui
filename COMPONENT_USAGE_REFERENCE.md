@@ -759,9 +759,102 @@ breadcrumbs: NgccBreadcrumbItem[] = [
 
 ---
 
+## UI SHELL COMPONENTS
+
+### 17. NgccHeader
+
+**What it does**: Enterprise Carbon Design System header shell providing brand, navigation, and global actions.
+
+**When to use**:
+- Top-level application shell
+- Providing global navigation and context
+- Actions that persist across the entire application (search, notifications, user profile)
+
+**Key Features**:
+- **Hamburger toggle**: Opens/closes the side navigation
+- **Brand name**: Product or platform name link
+- **Navigation menus**: Horizontal nested menus (`<ngcc-header-menu>`) with keyboard support
+- **Global actions**: Right-side toggle buttons (`<ngcc-header-action>`)
+- **Slide-in panels**: Panels linked to global actions (`<ngcc-header-panel>`)
+- **i18n support**: Fully integrates with `NgccI18nPipe` for translation
+
+**Available Directives/Components**:
+- `NgccHeader`, `NgccHamburger`, `NgccHeaderName`
+- `NgccHeaderNavigation`, `NgccHeaderItem`
+- `NgccHeaderMenu`, `NgccHeaderMenuItem`
+- `NgccHeaderGlobal`, `NgccHeaderAction`, `NgccHeaderPanel`
+
+**Example**:
+```typescript
+<ngcc-header ariaLabel="CarbideUI" skipTo="main-content">
+  <ngcc-hamburger [(active)]="sideNavOpen" label="Open menu" labelClose="Close menu" />
+  <ngcc-header-name productName="My App" href="/"></ngcc-header-name>
+
+  <ngcc-header-navigation ariaLabel="Primary Navigation">
+    <ngcc-header-item href="/dashboard" [isCurrentPage]="true">Dashboard</ngcc-header-item>
+    <ngcc-header-menu title="Settings">
+      <ngcc-header-menu-item href="/settings/profile">Profile</ngcc-header-menu-item>
+      <ngcc-header-menu-item href="/settings/account">Account</ngcc-header-menu-item>
+    </ngcc-header-menu>
+  </ngcc-header-navigation>
+
+  <ngcc-header-global>
+    <ngcc-header-action ariaLabel="Search" iconName="search" [(active)]="searchOpen" />
+    <ngcc-header-action ariaLabel="Notifications" iconName="notification" />
+  </ngcc-header-global>
+</ngcc-header>
+
+<ngcc-header-panel [expanded]="searchOpen" ariaLabel="Search Panel">
+  <!-- Panel content (e.g., search input) -->
+</ngcc-header-panel>
+```
+
+---
+
+### 18. NgccSideNav
+
+**What it does**: Fixed left panel navigation for application routing and deep linking.
+
+**When to use**:
+- Companion to `NgccHeader` for application layout
+- Primary vertical navigation for large applications
+- Multi-level categorization using nested submenus
+
+**Key Features**:
+- **Expand/Collapse**: Two-way bindable state (`[(expanded)]`)
+- **Rail mode**: Compact icon-only configuration
+- **Nested menus**: Collapsible subcategories (`<ngcc-side-nav-menu>`)
+- **Auto-active state**: Menus expand automatically when a descendant item is active
+- **Footer toggle**: Optional built-in expand/collapse toggle (`[allowExpansion]`)
+- **Dividers**: Visual separation between item groups (`<ngcc-side-nav-divider>`)
+
+**Available Directives/Components**:
+- `NgccSideNav`, `NgccSideNavItem`
+- `NgccSideNavMenu`, `NgccSideNavMenuItem`
+- `NgccSideNavDivider`
+
+**Example**:
+```typescript
+<ngcc-side-nav ariaLabel="Side navigation" [(expanded)]="sideNavOpen" [allowExpansion]="true">
+  <ngcc-side-nav-item href="/home" iconName="home" [active]="true">
+    Home
+  </ngcc-side-nav-item>
+
+  <ngcc-side-nav-menu title="Compute" iconName="cpu">
+    <ngcc-side-nav-menu-item href="/compute/instances">Instances</ngcc-side-nav-menu-item>
+    <ngcc-side-nav-menu-item href="/compute/images">Images</ngcc-side-nav-menu-item>
+  </ngcc-side-nav-menu>
+
+  <ngcc-side-nav-divider />
+  <ngcc-side-nav-item href="/help" iconName="notification">Help</ngcc-side-nav-item>
+</ngcc-side-nav>
+```
+
+---
+
 ## DATA VISUALIZATION COMPONENTS (Requires @carbon/charts)
 
-### 17. NgccBaseChart
+### 19. NgccBaseChart
 
 **What it does**: Base directive/class that normalizes chart inputs and lifecycle for concrete chart components (bar, line, donut, gauge).
 
@@ -786,7 +879,7 @@ export class NgccBarChart extends NgccBaseChart<BarChartOptions> {
 **Notes**: Chart components require `@carbon/charts` in the consumer app to render. Use `NgccBaseChart` behavior when creating custom chart wrappers.
 
 
-### 18. NgccBarChart
+### 20. NgccBarChart
 
 **What it does**: Display data as vertical bars for comparison.
 
@@ -815,7 +908,7 @@ barChartData = {
 
 ---
 
-### 19. NgccLineChart
+### 21. NgccLineChart
 
 **What it does**: Display trends over time with connected points.
 
@@ -843,7 +936,7 @@ lineChartData = {
 
 ---
 
-### 20. NgccDonutChart
+### 22. NgccDonutChart
 
 **What it does**: Display composition as circular segments (percentage distribution).
 
@@ -869,7 +962,7 @@ donutData = {
 
 ---
 
-### 21. NgccGaugeChart
+### 23. NgccGaugeChart
 
 **What it does**: Circular gauge for showing single metric/percentage.
 
@@ -892,7 +985,7 @@ donutData = {
 
 ## THEMING COMPONENTS
 
-### 22. NgccColorThemeService
+### 24. NgccColorThemeService
 
 **What it does**: Programmatic theme switching and brand color customization.
 
@@ -929,7 +1022,7 @@ setBrandColor(color: string): void {
 
 ---
 
-### 23. NgccColorThemeSwitcher
+### 25. NgccColorThemeSwitcher
 
 **What it does**: Pre-built UI component for user theme selection.
 
@@ -947,7 +1040,7 @@ setBrandColor(color: string): void {
 
 ## ICONS
 
-### 24. NgccIcon
+### 26. NgccIcon
 
 **What it does**: Render Carbon Design System icons.
 
@@ -970,6 +1063,7 @@ setBrandColor(color: string): void {
 
 | Need | Component | Alternative |
 |------|-----------|-------------|
+| App navigation | NgccHeader / NgccSideNav | Tabs (if simple page) |
 | User text entry | NgccInput | NgccTextarea (if multi-line) |
 | Multi-line text | NgccTextarea | NgccInput (if single-line) |
 | Yes/No choice | NgccCheckbox | NgccDropdown (if single selection) |
