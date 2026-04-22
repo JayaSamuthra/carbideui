@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccToast } from './ngcc-toast';
 import { NgccToastConfig } from './ngcc-toast.types';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 describe('NgccToast', () => {
   let fixture: ComponentFixture<NgccToast>;
@@ -154,7 +154,7 @@ describe('NgccToast', () => {
     expect(el).not.toBeNull();
   });
   it('should have no WCAG violations (default toast)', async () => {
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should have no WCAG violations for error toast', async () => {
@@ -162,7 +162,7 @@ describe('NgccToast', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should have no WCAG violations in low contrast mode', async () => {
@@ -170,7 +170,7 @@ describe('NgccToast', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should have an accessible close button', async () => {
@@ -179,7 +179,7 @@ describe('NgccToast', () => {
     expect(closeBtn).not.toBeNull();
     expect(closeBtn.nativeElement.getAttribute('aria-label')).toBeTruthy();
 
-    const results = await axe(closeBtn.nativeElement);
+    const results = await runAxe(closeBtn.nativeElement);
     expect(results).toHaveNoViolations();
   });
   it('should expose correct ARIA attributes without WCAG violations', async () => {
@@ -192,7 +192,7 @@ describe('NgccToast', () => {
     expect(toastEl.getAttribute('role')).toBe('alert');
     expect(toastEl.getAttribute('aria-live')).toBe('assertive');
 
-    const results = await axe(toastEl);
+    const results = await runAxe(toastEl);
     expect(results).toHaveNoViolations();
   });
 });

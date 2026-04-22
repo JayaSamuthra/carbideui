@@ -48,7 +48,6 @@
     "@angular/core": ">=20 <22",
     "@angular/forms": ">=20 <22",
     "@angular/platform-browser": ">=20 <22",
-    "@angular/platform-browser-dynamic": ">=20 <22",
     "@angular/router": ">=20 <22",
     "@carbon/charts": "^1.27.3",
     "@carbon/styles": "^1.102.0"

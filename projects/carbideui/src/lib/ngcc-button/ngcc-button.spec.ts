@@ -5,9 +5,9 @@ import { CommonModule } from '@angular/common';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccButton } from './ngcc-button';
 import { NgccIcon } from '../ngcc-icons/ngcc-icon';
-import { axe } from 'vitest-axe';
 import { NgccButtonVariant, NgccButtonSize, NgccButtonType } from './ngcc-button.types';
 import { NgccIconNameType } from '../ngcc-icons/icons';
+import { runAxe } from '../../test-utils/a11y';
 
 @Component({
   template: `
@@ -213,7 +213,7 @@ describe('NgccButton', () => {
 
     it('should have no accessibility violations', async () => {
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -222,7 +222,7 @@ describe('NgccButton', () => {
       host.iconName = 'add';
       host.ariaLabel = 'Close';
       detectChanges();
-      const results = await axe(getButton().nativeElement);
+      const results = await runAxe(getButton().nativeElement);
       expect(results).toHaveNoViolations();
     });
     it('activates on Enter key', () => {
@@ -264,7 +264,7 @@ describe('NgccButton', () => {
       host.ariaLabel = undefined;
 
       detectChanges();
-      const results = await axe(getButton().nativeElement);
+      const results = await runAxe(getButton().nativeElement);
 
       expect(results.violations.length).toBeGreaterThan(0);
     });

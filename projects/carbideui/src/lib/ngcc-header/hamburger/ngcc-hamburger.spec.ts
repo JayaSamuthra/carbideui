@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { axe } from 'vitest-axe';
 
 import { NgccHamburger } from './ngcc-hamburger';
+import { runAxe } from '../../../test-utils/a11y';
 
 @Component({
   template: ` <ngcc-hamburger [(active)]="active" [label]="label" [labelClose]="labelClose" /> `,
@@ -114,14 +114,14 @@ describe('NgccHamburger', () => {
     it('should have no accessibility violations when inactive', async () => {
       host.active = false;
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
     it('should have no accessibility violations when active', async () => {
       host.active = true;
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
   });

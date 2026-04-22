@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Root project - Stays on Angular 20 for library build compatibility
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
@@ -7,6 +8,11 @@ updates:
     labels:
       - 'dependencies'
       - 'npm'
+    ignore:
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major'] # Stay on v20
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor'] # Align with v20
     groups:
       angular:
         patterns:
@@ -26,3 +32,29 @@ updates:
           - '@storybook/*'
           - 'storybook'
     open-pull-requests-limit: 10
+
+  # Integration project for Angular 20
+  - package-ecosystem: 'npm'
+    directory: '/integration/angular-20'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'integration'
+      - 'ng20'
+    ignore:
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major'] # Keep within v20 scope
+
+  # Integration project for Angular 21
+  - package-ecosystem: 'npm'
+    directory: '/integration/angular-21'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'integration'
+      - 'ng21'
+    ignore:
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major'] # Keep within v21 scope

@@ -5,11 +5,27 @@
 // Button
 export * from './lib/ngcc-button/ngcc-button';
 
+// Link
+export * from './lib/ngcc-link/ngcc-link';
+export * from './lib/ngcc-link/ngcc-link.types';
+
+// Toggle
+export * from './lib/ngcc-toggle/ngcc-toggle';
+export * from './lib/ngcc-toggle/ngcc-toggle.types';
+
+// Contained List
+export * from './lib/ngcc-contained-list/public-api';
+
 // Icons
 export * from './lib/ngcc-icons/ngcc-icon';
 
 // Checkbox
 export * from './lib/ngcc-checkbox/ngcc-checkbox';
+
+// Radio
+export * from './lib/ngcc-radio/ngcc-radio';
+export * from './lib/ngcc-radio/ngcc-radio-group';
+export * from './lib/ngcc-radio/ngcc-radio.types';
 
 // Datepicker
 export * from './lib/ngcc-datepicker/ngcc-date-picker';
@@ -99,3 +115,20 @@ export * from './lib/ngcc-header/header-global/ngcc-header-global';
 export * from './lib/ngcc-header/header-action/ngcc-header-action';
 export * from './lib/ngcc-header/header-panel/ngcc-header-panel';
 export * from './lib/ngcc-header/hamburger/ngcc-hamburger';
+
+// Breadcrumb
+export * from './lib/ngcc-breadcrumb/ngcc-breadcrumb';
+export * from './lib/ngcc-breadcrumb/ngcc-breadcrumb.types';
+export * from './lib/ngcc-breadcrumb/ngcc-breadcrumb-item';
+
+// Side Navigation (UI Shell)
+export * from './lib/ngcc-side-nav/ngcc-side-nav.types';
+export * from './lib/ngcc-side-nav/ngcc-side-nav';
+export * from './lib/ngcc-side-nav/ngcc-side-nav-item';
+export * from './lib/ngcc-side-nav/ngcc-side-nav-menu';
+export * from './lib/ngcc-side-nav/ngcc-side-nav-menu-item';
+export * from './lib/ngcc-side-nav/ngcc-side-nav-divider';
+
+// Code Snippet
+export * from './lib/ngcc-code-snippet/ngcc-code-snippet';
+export * from './lib/ngcc-code-snippet/ngcc-code-snippet.types';

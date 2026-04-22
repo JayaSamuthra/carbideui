@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccInputNumber } from './ngcc-input-number';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../../test-utils/a11y';
 
 // Host component for reactive-form validator tests
 @Component({
@@ -512,7 +512,7 @@ describe('NgccInputNumber – WCAG / Accessibility', () => {
       fixture.componentRef.setInput('helperText', 'Enter your age');
       fixture.detectChanges();
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
   });

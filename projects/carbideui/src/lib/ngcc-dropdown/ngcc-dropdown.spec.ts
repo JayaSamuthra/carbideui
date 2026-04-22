@@ -6,8 +6,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccDropdownItem } from './ngcc-dropdown.types';
 import { NgccIcon } from '../ngcc-icons/ngcc-icon';
 import { CommonModule } from '@angular/common';
-import { axe } from 'vitest-axe';
 import { NgccDropdown } from './ngcc-dropdown';
+import { runAxe } from '../../test-utils/a11y';
 
 // ---------- Host component for reactive-form validator tests ----------
 @Component({
@@ -244,7 +244,7 @@ describe('NgccDropdown (unit)', () => {
   }
   describe('WCAG / Accessibility', () => {
     it('should have no WCAG violations (default)', async () => {
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -255,7 +255,7 @@ describe('NgccDropdown (unit)', () => {
       const combobox = getCombobox();
       expect(combobox.getAttribute('aria-labelledby')).toBe('Select items');
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -267,7 +267,7 @@ describe('NgccDropdown (unit)', () => {
       const combobox = getCombobox();
       expect(combobox.getAttribute('aria-label')).toBe('Dropdown');
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -284,7 +284,7 @@ describe('NgccDropdown (unit)', () => {
       expect(trigger.getAttribute('aria-invalid')).toBe('true');
       expect(trigger.getAttribute('aria-describedby')).toBe('dropdown-error');
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -297,7 +297,7 @@ describe('NgccDropdown (unit)', () => {
         By.css('[data-testid="ngcc-dropdown-trigger"]'),
       ).nativeElement;
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -306,7 +306,7 @@ describe('NgccDropdown (unit)', () => {
       fixture.componentRef.setInput('disabled', true);
       fixture.detectChanges();
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -315,7 +315,7 @@ describe('NgccDropdown (unit)', () => {
       fixture.componentRef.setInput('indeterminate', true);
       fixture.detectChanges();
 
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
   });

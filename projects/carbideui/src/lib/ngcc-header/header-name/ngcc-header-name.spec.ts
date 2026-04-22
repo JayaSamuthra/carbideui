@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { axe } from 'vitest-axe';
 
 import { NgccHeaderName } from './ngcc-header-name';
+import { runAxe } from '../../../test-utils/a11y';
 @Component({
   template: ` <ngcc-header-name [brand]="brand" [productName]="productName" [href]="href" /> `,
   standalone: true,
@@ -97,7 +97,7 @@ describe('NgccHeaderName', () => {
   describe('WCAG & Accessibility', () => {
     it('should have no accessibility violations', async () => {
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
   });

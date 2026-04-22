@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccInput } from './ngcc-input';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../../test-utils/a11y';
 
 // --- Reactive Host Component for form tests ---
 @Component({
@@ -205,7 +205,7 @@ describe('NgccInput – WCAG / Accessibility', () => {
    * - Keyboard focusability
    * ------------------------------------------------------------------ */
   it('has no WCAG violations (axe)', async () => {
-    const results = await axe(fixture.nativeElement);
+    const results = await runAxe(fixture.nativeElement);
     expect(results).toHaveNoViolations();
   });
 

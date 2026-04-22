@@ -36,6 +36,10 @@ export const ICONS = {
     svg: `<path d="M26,4h-4V2h-2v2h-8V2h-2v2H6C4.9,4,4,4.9,4,6v20c0,1.1,0.9,2,2,2h20c1.1,0,2-0.9,2-2V6C28,4.9,27.1,4,26,4z M26,26H6V12h20 V26z M26,10H6V6h4v2h2V6h8v2h2V6h4V10z"></path>`,
     viewBox: '0 0 32 32',
   },
+  copy: {
+    svg: `<path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z"></path><path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z"></path>`,
+    viewBox: '0 0 32 32',
+  },
   chevron_left: {
     svg: `<polygon points="5,8 10,3 10.7,3.7 6.4,8 10.7,12.3 10,13 "></polygon>
 				<rect width="16" height="16" style="fill:none"></rect>`,
@@ -170,6 +174,11 @@ export const ICONS = {
   /** 3×3 grid of squares — app / workspace switcher */
   app_switcher: {
     svg: `<path d="M4 6H8V10H4zM12 6H16V10H12zM20 6H24V10H20zM4 14H8V18H4zM12 14H16V18H12zM20 14H24V18H20zM4 22H8V26H4zM12 22H16V26H12zM20 22H24V26H20z"></path>`,
+    viewBox: '0 0 32 32',
+  },
+  /** Three vertical dots — overflow / context menu */
+  overflow_menu_vertical: {
+    svg: `<circle cx="16" cy="8" r="2"></circle><circle cx="16" cy="16" r="2"></circle><circle cx="16" cy="24" r="2"></circle>`,
     viewBox: '0 0 32 32',
   },
 } as const;

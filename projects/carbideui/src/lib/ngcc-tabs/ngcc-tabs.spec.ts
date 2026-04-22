@@ -9,8 +9,8 @@ import { NgccTabs } from './ngcc-tabs';
 import { NgccTab } from './ngcc-tab';
 import { NgccTabHeaders } from './ngcc-tab-headers';
 import { NgccTabsSkeleton } from './ngcc-tab-skeleton';
-import { axe } from 'vitest-axe';
 import { NgccTabType, NgccTabPosition } from './ngcc-tabs.types';
+import { runAxe } from '../../test-utils/a11y';
 
 // ─────────────────────────────────────────────
 // Test Host Components
@@ -515,7 +515,7 @@ describe('NgccTabs', () => {
 
   describe('WCAG & Accessibility', () => {
     it('should have no accessibility violations (axe)', async () => {
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 

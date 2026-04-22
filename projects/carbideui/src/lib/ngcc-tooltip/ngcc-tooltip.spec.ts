@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { axe } from 'vitest-axe';
 import { NgccTooltip } from './ngcc-tooltip';
+import { runAxe } from '../../test-utils/a11y';
 
 describe('NgccTooltip', () => {
   let fixture: ComponentFixture<NgccTooltip>;
@@ -654,15 +654,15 @@ describe('NgccTooltip', () => {
    * --------------------------- */
 
   describe('WCAG Accessibility', () => {
-    const runAxe = async () => {
+    const testAxe = async () => {
       vi.useRealTimers();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       vi.useFakeTimers();
       return results;
     };
 
     it('should have no accessibility violations when closed', async () => {
-      const results = await runAxe();
+      const results = await testAxe();
       expect(results).toHaveNoViolations();
     });
 
@@ -671,7 +671,7 @@ describe('NgccTooltip', () => {
       fixture.detectChanges();
       await fixture.whenStable();
 
-      const results = await runAxe();
+      const results = await testAxe();
       expect(results).toHaveNoViolations();
     });
 

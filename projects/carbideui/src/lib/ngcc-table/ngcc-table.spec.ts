@@ -5,7 +5,7 @@ import { NgccTable } from './ngcc-table';
 import { NgccTableColumn, NgccTableConfig } from './ngcc-table.types';
 import { NgccTableService } from './ngcc-table.service';
 import { NgccTableSearchService } from './ngcc-table-search.service';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 interface User {
   id: number;
@@ -332,7 +332,7 @@ describe('NgccTable', () => {
       it('should have no WCAG violations for table container', async () => {
         const table = fixture.nativeElement.querySelector('.cds--data-table-wrapper');
 
-        const results = await axe(table);
+        const results = await runAxe(table);
         expect(results).toHaveNoViolations();
       });
     });

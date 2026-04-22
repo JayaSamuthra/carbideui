@@ -4,7 +4,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccCharts } from './ngcc-charts';
 import { NgccThemeService } from '../ngcc-theme-switcher/ngcc-theme.service';
 import { NgccChartType } from './ngcc-charts.types';
-import { axe } from 'vitest-axe';
+import { runAxe } from '../../test-utils/a11y';
 
 describe('NgccCharts', () => {
   let fixture: ComponentFixture<NgccCharts<NgccChartType>>;
@@ -324,7 +324,7 @@ describe('NgccCharts', () => {
         ]);
         fixture.detectChanges();
 
-        const results = await axe(fixture.nativeElement, {
+        const results = await runAxe(fixture.nativeElement, {
           rules: {
             'aria-tooltip-name': { enabled: false },
             'nested-interactive': { enabled: false },

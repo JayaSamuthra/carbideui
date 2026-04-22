@@ -163,9 +163,97 @@ countries: NgccDropdownItem<string>[] = [
 
 ---
 
+### 6. NgccRadioGroup / NgccRadio
+
+**What it does**: A group of mutually exclusive radio buttons for single-option selection from a set.
+
+**When to use**:
+- Selecting one option from a small, visible set (2–5 choices)
+- Settings pages (choose a plan, pick a preference)
+- Forms requiring a required single choice
+- When choices should all be visible at once (prefer over dropdown for ≤5 options)
+
+**Key Features**:
+- **ControlValueAccessor**: Works with `[(ngModel)]`, `[formControl]`, and `formControlName`
+- **Orientation**: `horizontal` (default) or `vertical` layout
+- **Label placement**: `right` (default) or `left`
+- **Validation states**: `invalid` + `invalidText`, `warn` + `warnText`
+- **Helper text**: Guidance shown below the group
+- **Legend**: Accessible fieldset caption
+- **Read-only**: Prevents changes without disabling
+- **Disabled**: Entire group or individual radio buttons
+- **Skeleton**: Loading placeholder state
+
+**NgccRadioGroup inputs**:
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `legend` | `string` | — | Fieldset caption |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction |
+| `labelPlacement` | `'right' \| 'left'` | `'right'` | Label position relative to radio |
+| `helperText` | `string` | — | Guidance text below the group |
+| `invalid` | `boolean` | `false` | Marks group as invalid |
+| `invalidText` | `string` | — | Error message when `invalid=true` |
+| `warn` | `boolean` | `false` | Marks group with a warning |
+| `warnText` | `string` | — | Warning message when `warn=true` |
+| `disabled` | `boolean` | `false` | Disables all radios in the group |
+| `readOnly` | `boolean` | `false` | Prevents selection changes |
+| `skeleton` | `boolean` | `false` | Shows skeleton loading state |
+| `ariaLabel` | `string` | — | `aria-label` on the fieldset |
+| `ariaLabelledby` | `string` | — | `aria-labelledby` on the fieldset |
+
+**NgccRadio inputs**:
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `value` | `T \| null` | `null` | Value emitted when this radio is selected |
+| `disabled` | `boolean` | `false` | Disables this individual radio |
+| `labelPlacement` | `'right' \| 'left'` | `'right'` | Overridden by group when inside a group |
+| `skeleton` | `boolean` | `false` | Skeleton state (overridden by group) |
+
+**Output** (`NgccRadioGroup`): `change` — emits `{ value, source: NgccRadio }` on selection.
+
+**Example — basic with ngModel**:
+```typescript
+<ngcc-radio-group
+  [(ngModel)]="selectedPlan"
+  legend="Select a plan"
+  helperText="You can change this later"
+>
+  <ngcc-radio value="starter">Starter</ngcc-radio>
+  <ngcc-radio value="pro">Pro</ngcc-radio>
+  <ngcc-radio value="enterprise">Enterprise</ngcc-radio>
+</ngcc-radio-group>
+```
+
+**Example — reactive form**:
+```typescript
+<ngcc-radio-group
+  formControlName="plan"
+  legend="Choose a plan"
+  [invalid]="form.get('plan')?.invalid && form.get('plan')?.touched"
+  invalidText="Please select an option to continue."
+>
+  <ngcc-radio value="starter">Starter</ngcc-radio>
+  <ngcc-radio value="pro">Pro</ngcc-radio>
+  <ngcc-radio value="enterprise">Enterprise</ngcc-radio>
+</ngcc-radio-group>
+```
+
+**Example — vertical layout with one disabled radio**:
+```typescript
+<ngcc-radio-group orientation="vertical" legend="Notification preference">
+  <ngcc-radio value="email">Email</ngcc-radio>
+  <ngcc-radio value="sms">SMS</ngcc-radio>
+  <ngcc-radio value="none" [disabled]="true">None (unavailable)</ngcc-radio>
+</ngcc-radio-group>
+```
+
+---
+
 ## ACTION COMPONENTS
 
-### 6. NgccButton
+### 7. NgccButton
 
 **What it does**: Clickable action trigger with multiple styles and sizes.
 
@@ -218,7 +306,7 @@ countries: NgccDropdownItem<string>[] = [
 
 ## DATA COMPONENTS
 
-### 7. NgccTable
+### 8. NgccTable
 
 **What it does**: Displays tabular data with sorting, pagination, and search.
 
@@ -268,7 +356,7 @@ tableConfig: NgccTableConfig = {
 
 ---
 
-### 8. NgccPagination
+### 9. NgccPagination
 
 **What it does**: Navigate between pages of data.
 
@@ -298,7 +386,7 @@ tableConfig: NgccTableConfig = {
 
 ## FEEDBACK COMPONENTS
 
-### 9. NgccNotification
+### 10. NgccNotification
 
 **What it does**: Display persistent notifications in top-right corner (via service).
 
@@ -345,7 +433,7 @@ showError(): void {
 
 ---
 
-### 10. NgccToast
+### 11. NgccToast
 
 **What it does**: Transient toast messages (similar to notifications but more temporary).
 
@@ -378,7 +466,7 @@ copyToClipboard(): void {
 
 ---
 
-### 11. NgccModal
+### 12. NgccModal
 
 **What it does**: Modal dialog for confirmations, alerts, or multi-step forms.
 
@@ -433,7 +521,7 @@ onDelete(): void {
 
 ---
 
-### 12. NgccTooltip
+### 13. NgccTooltip
 
 **What it does**: Hover-triggered helper text over elements.
 
@@ -467,7 +555,7 @@ onDelete(): void {
 
 ---
 
-### 13. NgccSkeleton
+### 14. NgccSkeleton
 
 **What it does**: Placeholder while loading content.
 
@@ -495,7 +583,7 @@ onDelete(): void {
 
 ## NAVIGATION COMPONENTS
 
-### 14. NgccTabs
+### 15. NgccTabs
 
 **What it does**: Tabbed content interface with switchable panels.
 
@@ -534,7 +622,7 @@ onDelete(): void {
 
 ---
 
-### 15. NgccAccordion
+### 16. NgccAccordion
 
 **What it does**: Expandable/collapsible sections for content organization.
 
@@ -570,9 +658,307 @@ onDelete(): void {
 
 ---
 
+### 16. NgccBreadcrumb
+
+**What it does**: Shows the user's current location within a site hierarchy as a navigable trail of links.
+
+**When to use**:
+- Multi-level page hierarchies (e.g. Home › Products › Details)
+- Help users understand where they are and navigate back
+- Any page that is more than one level deep in the IA
+
+**Key Features**:
+- **Sizes**: `sm`, `md` (default)
+- **No trailing slash**: `noTrailingSlash` removes the `/` after the last item
+- **Disabled items**: Individual items can be non-navigable (`disabled: true`)
+- **External links**: `target="_blank"` and `rel` per item
+- **Router links**: `routerLink` per item for SPA navigation
+- **Skeleton loading**: `skeleton` + `skeletonCount` for loading state
+- **Auto-current**: Last item in `items` array is automatically marked as current (non-link span)
+- **Custom current**: Override auto-detection with `current: true` on any item
+
+**Inputs — NgccBreadcrumbComponent**:
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `items` | `NgccBreadcrumbItem[]` | `[]` | Breadcrumb trail items |
+| `size` | `'sm' \| 'md'` | `'md'` | Compact or standard size |
+| `noTrailingSlash` | `boolean` | `false` | Hide separator after last item |
+| `skeleton` | `boolean` | `false` | Show skeleton loading state |
+| `skeletonCount` | `number` | `3` | Number of skeleton placeholders |
+| `ariaLabel` | `string` | `'Breadcrumb'` | `aria-label` on the `<nav>` |
+
+**NgccBreadcrumbItem interface**:
+```typescript
+interface NgccBreadcrumbItem {
+  label: string;
+  href?: string;               // Standard anchor href
+  routerLink?: string | string[]; // Angular router navigation
+  current?: boolean;           // Mark as current page (auto-set for last item)
+  disabled?: boolean;          // Non-navigable, greyed out
+  target?: string;             // e.g. '_blank' for external links
+  rel?: string;                // e.g. 'noopener noreferrer'
+}
+```
+
+**Examples**:
+
+```html
+<!-- Default -->
+<ngcc-breadcrumb [items]="breadcrumbs" />
+
+<!-- No trailing slash on current page -->
+<ngcc-breadcrumb [items]="breadcrumbs" [noTrailingSlash]="true" />
+
+<!-- Small size -->
+<ngcc-breadcrumb size="sm" [items]="breadcrumbs" />
+
+<!-- Skeleton loading state -->
+<ngcc-breadcrumb [skeleton]="isLoading()" [skeletonCount]="3" />
+
+<!-- Custom aria-label -->
+<ngcc-breadcrumb [items]="breadcrumbs" ariaLabel="Page navigation" />
+```
+
+```typescript
+// Component
+breadcrumbs: NgccBreadcrumbItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Products', href: '/products' },
+  { label: 'Details' },                    // Last item auto-marked as current
+];
+
+// With disabled item
+breadcrumbs: NgccBreadcrumbItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Restricted', href: '/restricted', disabled: true },
+  { label: 'Details' },
+];
+
+// With router navigation
+breadcrumbs: NgccBreadcrumbItem[] = [
+  { label: 'Home', routerLink: '/' },
+  { label: 'Products', routerLink: ['/products'] },
+  { label: 'Details' },
+];
+
+// With external links
+breadcrumbs: NgccBreadcrumbItem[] = [
+  { label: 'Home', href: 'https://example.com', target: '_blank', rel: 'noopener noreferrer' },
+  { label: 'Docs', href: 'https://docs.example.com', target: '_blank', rel: 'noopener noreferrer' },
+  { label: 'API' },
+];
+```
+
+**Notes**:
+- Import `NgccBreadcrumbComponent` — the item component is used internally
+- Add `provideRouter([])` to the app providers (required even if not using `routerLink`)
+- The last item renders as a `<span>` (not a link) — Carbon's pattern for the current page
+- `disabled` removes the `href`/`routerLink` and applies `cds--link--disabled` styling
+- `skeleton` on the container replaces all items; per-item skeleton is not exposed
+
+### 17. NgccCodeSnippet
+
+**What it does**: Displays formatted code with a one-click copy button, available in inline, single-line, and multi-line variants.
+
+**When to use**:
+- Show terminal commands or code samples in documentation
+- Embed short code references inline within prose (`inline`)
+- Display a single-line command with a copy button (`single`)
+- Display multi-line code blocks with expand/collapse (`multi`)
+
+**Key Features**:
+- **Variants**: `inline`, `single`, `multi`
+- **Copy to clipboard**: Clipboard API with `execCommand` fallback for non-secure contexts
+- **Expand/Collapse**: Multi-line blocks collapse to a configurable row limit with a Show more/Show less toggle
+- **Wrap text**: Optional word-wrap in multi-line variant
+- **Hide copy button**: `hideCopyButton` for read-only display
+- **Disabled state**: Prevents copy and expand interactions
+- **Custom feedback**: Configurable "Copied!" text and display duration
+- **Skeleton loading**: Per-variant loading placeholders
+- **Light theme**: `light` input for light-background contexts
+
+**Inputs**:
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `type` | `'inline' \| 'single' \| 'multi'` | `'single'` | Display variant |
+| `code` | `string` | `''` | Code string to display and copy |
+| `disabled` | `boolean` | `false` | Disables copy and expand |
+| `hideCopyButton` | `boolean` | `false` | Hides the copy button |
+| `wrapText` | `boolean` | `false` | Enables text wrapping (multi only) |
+| `light` | `boolean` | `false` | Light background variant |
+| `skeleton` | `boolean` | `false` | Show skeleton loading state |
+| `feedback` | `string` | `'Copied!'` | Text shown in copy tooltip |
+| `feedbackTimeout` | `number` | `2000` | Duration (ms) before tooltip hides |
+| `showMoreText` | `string` | `'Show more'` | Expand button label (multi only) |
+| `showLessText` | `string` | `'Show less'` | Collapse button label (multi only) |
+| `copyButtonDescription` | `string` | `'Copy to clipboard'` | Aria-label for the copy button |
+| `ariaLabel` | `string` | `''` | Aria-label for the code container |
+| `maxCollapsedNumberOfRows` | `number` | `15` | Max rows when collapsed (multi only, `0` = unlimited) |
+| `maxExpandedNumberOfRows` | `number` | `0` | Max rows when expanded (multi only, `0` = unlimited) |
+
+**Examples**:
+
+```html
+<!-- Single-line (default) -->
+<ngcc-code-snippet code="npm install @carbideui/ngcc" />
+
+<!-- Single — no copy button -->
+<ngcc-code-snippet code="npm install @carbideui/ngcc" [hideCopyButton]="true" />
+
+<!-- Inline within prose -->
+<p>
+  Run <ngcc-code-snippet type="inline" code="node --version" /> to check your Node.js version.
+</p>
+
+<!-- Multi-line with collapse -->
+<ngcc-code-snippet
+  type="multi"
+  [code]="codeBlock"
+  [maxCollapsedNumberOfRows]="8"
+/>
+
+<!-- Multi-line with wrap text -->
+<ngcc-code-snippet
+  type="multi"
+  [code]="codeBlock"
+  [wrapText]="true"
+/>
+
+<!-- Disabled -->
+<ngcc-code-snippet
+  [code]="codeBlock"
+  [disabled]="true"
+/>
+
+<!-- Custom copy feedback -->
+<ngcc-code-snippet
+  [code]="codeBlock"
+  feedback="Done!"
+  [feedbackTimeout]="3000"
+/>
+
+<!-- Skeleton loading -->
+<ngcc-code-snippet type="single" [skeleton]="isLoading()" />
+<ngcc-code-snippet type="multi" [skeleton]="isLoading()" />
+```
+
+```typescript
+// Component
+codeBlock = `import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  template: '<h1>Hello World</h1>',
+})
+export class AppComponent {}`;
+```
+
+**Notes**:
+- `inline` renders as a `<button>` — clicking anywhere on the snippet copies the code
+- `single` and `multi` render a separate icon-only copy button; the code area is read-only scrollable
+- The expand/collapse button is hidden automatically when the line count is within `maxCollapsedNumberOfRows`
+- Setting `maxCollapsedNumberOfRows` to `0` disables the row limit and hides the expand button entirely
+
+---
+
+## UI SHELL COMPONENTS
+
+### 17. NgccHeader
+
+**What it does**: Enterprise Carbon Design System header shell providing brand, navigation, and global actions.
+
+**When to use**:
+- Top-level application shell
+- Providing global navigation and context
+- Actions that persist across the entire application (search, notifications, user profile)
+
+**Key Features**:
+- **Hamburger toggle**: Opens/closes the side navigation
+- **Brand name**: Product or platform name link
+- **Navigation menus**: Horizontal nested menus (`<ngcc-header-menu>`) with keyboard support
+- **Global actions**: Right-side toggle buttons (`<ngcc-header-action>`)
+- **Slide-in panels**: Panels linked to global actions (`<ngcc-header-panel>`)
+- **i18n support**: Fully integrates with `NgccI18nPipe` for translation
+
+**Available Directives/Components**:
+- `NgccHeader`, `NgccHamburger`, `NgccHeaderName`
+- `NgccHeaderNavigation`, `NgccHeaderItem`
+- `NgccHeaderMenu`, `NgccHeaderMenuItem`
+- `NgccHeaderGlobal`, `NgccHeaderAction`, `NgccHeaderPanel`
+
+**Example**:
+```typescript
+<ngcc-header ariaLabel="CarbideUI" skipTo="main-content">
+  <ngcc-hamburger [(active)]="sideNavOpen" label="Open menu" labelClose="Close menu" />
+  <ngcc-header-name productName="My App" href="/"></ngcc-header-name>
+
+  <ngcc-header-navigation ariaLabel="Primary Navigation">
+    <ngcc-header-item href="/dashboard" [isCurrentPage]="true">Dashboard</ngcc-header-item>
+    <ngcc-header-menu title="Settings">
+      <ngcc-header-menu-item href="/settings/profile">Profile</ngcc-header-menu-item>
+      <ngcc-header-menu-item href="/settings/account">Account</ngcc-header-menu-item>
+    </ngcc-header-menu>
+  </ngcc-header-navigation>
+
+  <ngcc-header-global>
+    <ngcc-header-action ariaLabel="Search" iconName="search" [(active)]="searchOpen" />
+    <ngcc-header-action ariaLabel="Notifications" iconName="notification" />
+  </ngcc-header-global>
+</ngcc-header>
+
+<ngcc-header-panel [expanded]="searchOpen" ariaLabel="Search Panel">
+  <!-- Panel content (e.g., search input) -->
+</ngcc-header-panel>
+```
+
+---
+
+### 18. NgccSideNav
+
+**What it does**: Fixed left panel navigation for application routing and deep linking.
+
+**When to use**:
+- Companion to `NgccHeader` for application layout
+- Primary vertical navigation for large applications
+- Multi-level categorization using nested submenus
+
+**Key Features**:
+- **Expand/Collapse**: Two-way bindable state (`[(expanded)]`)
+- **Rail mode**: Compact icon-only configuration
+- **Nested menus**: Collapsible subcategories (`<ngcc-side-nav-menu>`)
+- **Auto-active state**: Menus expand automatically when a descendant item is active
+- **Footer toggle**: Optional built-in expand/collapse toggle (`[allowExpansion]`)
+- **Dividers**: Visual separation between item groups (`<ngcc-side-nav-divider>`)
+
+**Available Directives/Components**:
+- `NgccSideNav`, `NgccSideNavItem`
+- `NgccSideNavMenu`, `NgccSideNavMenuItem`
+- `NgccSideNavDivider`
+
+**Example**:
+```typescript
+<ngcc-side-nav ariaLabel="Side navigation" [(expanded)]="sideNavOpen" [allowExpansion]="true">
+  <ngcc-side-nav-item href="/home" iconName="home" [active]="true">
+    Home
+  </ngcc-side-nav-item>
+
+  <ngcc-side-nav-menu title="Compute" iconName="cpu">
+    <ngcc-side-nav-menu-item href="/compute/instances">Instances</ngcc-side-nav-menu-item>
+    <ngcc-side-nav-menu-item href="/compute/images">Images</ngcc-side-nav-menu-item>
+  </ngcc-side-nav-menu>
+
+  <ngcc-side-nav-divider />
+  <ngcc-side-nav-item href="/help" iconName="notification">Help</ngcc-side-nav-item>
+</ngcc-side-nav>
+```
+
+---
+
 ## DATA VISUALIZATION COMPONENTS (Requires @carbon/charts)
 
-### 16. NgccBaseChart
+### 19. NgccBaseChart
 
 **What it does**: Base directive/class that normalizes chart inputs and lifecycle for concrete chart components (bar, line, donut, gauge).
 
@@ -597,7 +983,7 @@ export class NgccBarChart extends NgccBaseChart<BarChartOptions> {
 **Notes**: Chart components require `@carbon/charts` in the consumer app to render. Use `NgccBaseChart` behavior when creating custom chart wrappers.
 
 
-### 16. NgccBarChart
+### 20. NgccBarChart
 
 **What it does**: Display data as vertical bars for comparison.
 
@@ -626,7 +1012,7 @@ barChartData = {
 
 ---
 
-### 17. NgccLineChart
+### 21. NgccLineChart
 
 **What it does**: Display trends over time with connected points.
 
@@ -654,7 +1040,7 @@ lineChartData = {
 
 ---
 
-### 18. NgccDonutChart
+### 22. NgccDonutChart
 
 **What it does**: Display composition as circular segments (percentage distribution).
 
@@ -680,7 +1066,7 @@ donutData = {
 
 ---
 
-### 19. NgccGaugeChart
+### 23. NgccGaugeChart
 
 **What it does**: Circular gauge for showing single metric/percentage.
 
@@ -703,7 +1089,7 @@ donutData = {
 
 ## THEMING COMPONENTS
 
-### 20. NgccColorThemeService
+### 24. NgccColorThemeService
 
 **What it does**: Programmatic theme switching and brand color customization.
 
@@ -740,7 +1126,7 @@ setBrandColor(color: string): void {
 
 ---
 
-### 21. NgccColorThemeSwitcher
+### 25. NgccColorThemeSwitcher
 
 **What it does**: Pre-built UI component for user theme selection.
 
@@ -758,7 +1144,7 @@ setBrandColor(color: string): void {
 
 ## ICONS
 
-### 22. NgccIcon
+### 26. NgccIcon
 
 **What it does**: Render Carbon Design System icons.
 
@@ -777,21 +1163,198 @@ setBrandColor(color: string): void {
 
 ---
 
+### 25. NgccLink
+
+**What it does**: Accessible hyperlink component for navigation with inline and standalone modes.
+
+**When to use**:
+- Navigation to other pages or sections
+- External website links (with `target="_blank"`)
+- Inline text links within paragraphs
+- Download links or anchor navigation
+- When you need Carbon Design System link styling with full accessibility
+
+**When NOT to use**:
+- Primary/secondary actions → use NgccButton instead
+- Form submissions → use NgccButton with `type="submit"`
+
+**Key Features**:
+- **Sizes**: `sm`, `md` (default), `lg`
+- **Inline mode**: Seamlessly embedded in running text (always underlined)
+- **Targets**: `_self`, `_blank`, `_parent`, `_top`
+- **Auto security**: Automatically adds `rel="noopener noreferrer"` when `target="_blank"`
+- **Visited state**: Style previously visited links via `[visited]`
+- **Disabled state**: Removes `href`, sets `aria-disabled`, removes from tab order
+- **Icon support**: Add any NgccIcon alongside link text (hidden when inline)
+- **ARIA support**: `ariaLabel`, `ariaCurrent` (`page`, `step`, `location`, `date`, `time`)
+- **Keyboard**: Enter activates link; Space intentionally not handled (native scroll)
+- **Output event**: `(linkClick)` emits `MouseEvent` on click
+
+**Inputs**:
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `href` | `string` | `''` | Navigation URL |
+| `target` | `'_self' \| '_blank' \| '_parent' \| '_top'` | `'_self'` | Link target |
+| `rel` | `string` | `''` | Custom rel — merged with auto noopener for `_blank` |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Link size |
+| `disabled` | `boolean` | `false` | Removes href, adds aria-disabled |
+| `inline` | `boolean` | `false` | Inline text link mode |
+| `visited` | `boolean` | `false` | Apply visited state styling |
+| `iconName` | `NgccIconNameType` | `undefined` | Icon shown alongside text (standalone only) |
+| `ariaLabel` | `string` | `undefined` | Accessible label override |
+| `ariaCurrent` | `'page' \| 'step' \| 'location' \| 'date' \| 'time' \| 'true' \| 'false'` | `undefined` | Current page/item indicator |
+| `className` | `string` | `''` | Extra CSS classes |
+
+**Output**:
+
+| Output | Payload | Description |
+|---|---|---|
+| `linkClick` | `MouseEvent` | Emits on click (suppressed when disabled) |
+
+**Example**:
+```html
+<!-- Basic link -->
+<ngcc-link href="/about">About Us</ngcc-link>
+
+<!-- External link — rel auto-added -->
+<ngcc-link href="https://carbondesignsystem.com" target="_blank" iconName="arrow_up">
+  Carbon Design System
+</ngcc-link>
+
+<!-- Inline within paragraph -->
+<p>
+  Read our
+  <ngcc-link href="/privacy" [inline]="true">privacy policy</ngcc-link>
+  for more information.
+</p>
+
+<!-- Sizes -->
+<ngcc-link href="/sm" size="sm">Small</ngcc-link>
+<ngcc-link href="/md" size="md">Medium</ngcc-link>
+<ngcc-link href="/lg" size="lg">Large</ngcc-link>
+
+<!-- Disabled -->
+<ngcc-link href="/restricted" [disabled]="!hasAccess">Restricted Content</ngcc-link>
+
+<!-- Current page indicator -->
+<ngcc-link href="/dashboard" ariaCurrent="page">Dashboard</ngcc-link>
+
+<!-- With click handler -->
+<ngcc-link href="/download" (linkClick)="trackDownload($event)">Download PDF</ngcc-link>
+```
+
+---
+
+### 26. NgccToggle
+
+**What it does**: Binary on/off switch that applies changes immediately without confirmation.
+
+**When to use**:
+- Enable/disable features or settings
+- Toggling modes (dark mode, notifications, auto-save)
+- Any immediate binary state change (no confirmation required)
+- When user should always see the current state
+
+**When NOT to use**:
+- When confirmation is required before applying → use Checkbox + submit button
+- Multiple related choices → use Radio buttons or Dropdown
+- Inside menus or modals where a checkbox is more appropriate
+
+**Toggle vs Checkbox**:
+| | Toggle | Checkbox |
+|---|---|---|
+| State change | Immediate | Often requires confirmation |
+| Use case | Settings, feature flags | Form selections, agreements |
+| Accessibility role | `switch` | `checkbox` |
+
+**Key Features**:
+- **Sizes**: `sm` (with checkmark when on), `md` (default)
+- **Controlled state**: `[toggled]` input + `(toggledChange)` output
+- **Disabled**: Fully inert, removed from tab order
+- **ReadOnly**: Focusable, screen-reader accessible, blocks interaction
+- **Skeleton**: Loading placeholder (circle + rectangle)
+- **Hide label**: Hides Off/On side labels; `labelText` acts as the only visible label
+- **Custom side labels**: `labelA` (Off state), `labelB` (On state)
+- **Keyboard**: Tab to focus, Space or Enter to toggle
+- **Mouse**: Click on switch OR label to toggle
+- **Screen reader**: `role="switch"` + `aria-checked` updated on every state change
+
+**Inputs**:
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `toggled` | `boolean` | `false` | Controlled on/off state |
+| `labelText` | `string` | `''` | Top label / screen reader label |
+| `labelA` | `string` | `'Off'` | Side label shown when off |
+| `labelB` | `string` | `'On'` | Side label shown when on |
+| `hideLabel` | `boolean` | `false` | Hides Off/On side labels |
+| `size` | `'sm' \| 'md'` | `'md'` | sm shows checkmark SVG when on |
+| `disabled` | `boolean` | `false` | Prevents all interaction |
+| `readOnly` | `boolean` | `false` | Focusable but not interactable |
+| `skeleton` | `boolean` | `false` | Loading placeholder state |
+| `ariaLabel` | `string` | `undefined` | Fallback when no `labelText` |
+| `ariaLabelledBy` | `string` | `undefined` | Points to external label element id |
+| `className` | `string` | `''` | Extra CSS classes on host |
+
+**Output**:
+
+| Output | Payload | Description |
+|---|---|---|
+| `toggledChange` | `boolean` | Emits new state after every toggle |
+
+**Example**:
+```html
+<!-- Basic controlled toggle -->
+<ngcc-toggle
+  labelText="Enable notifications"
+  [toggled]="notificationsEnabled"
+  (toggledChange)="notificationsEnabled = $event"
+></ngcc-toggle>
+
+<!-- Small size (shows checkmark when on) -->
+<ngcc-toggle labelText="Auto-save" size="sm" [toggled]="autoSave" (toggledChange)="autoSave = $event"></ngcc-toggle>
+
+<!-- Custom side labels -->
+<ngcc-toggle labelText="Status" labelA="Inactive" labelB="Active" [toggled]="isActive" (toggledChange)="isActive = $event"></ngcc-toggle>
+
+<!-- Disabled (both states) -->
+<ngcc-toggle labelText="Unavailable feature" [disabled]="true" [toggled]="false"></ngcc-toggle>
+<ngcc-toggle labelText="Unavailable (on)" [disabled]="true" [toggled]="true"></ngcc-toggle>
+
+<!-- ReadOnly — visible but not changeable -->
+<ngcc-toggle labelText="Locked setting" [readOnly]="true" [toggled]="true"></ngcc-toggle>
+
+<!-- Hide side labels -->
+<ngcc-toggle labelText="Dark mode" [hideLabel]="true" ariaLabel="Toggle dark mode"></ngcc-toggle>
+
+<!-- Skeleton loading state -->
+<ngcc-toggle [skeleton]="true" labelText="Loading"></ngcc-toggle>
+```
+
+---
+
 ## QUICK DECISION MATRIX
 
 | Need | Component | Alternative |
 |------|-----------|-------------|
+| App navigation | NgccHeader / NgccSideNav | Tabs (if simple page) |
 | User text entry | NgccInput | NgccTextarea (if multi-line) |
 | Multi-line text | NgccTextarea | NgccInput (if single-line) |
 | Yes/No choice | NgccCheckbox | NgccDropdown (if single selection) |
 | Select from list | NgccDropdown | NgccTabs (if navigation) |
 | Pick a date | NgccDatepicker | NgccInput (if raw date string) |
 | Trigger action | NgccButton | NgccModal (if confirmation needed) |
+| Navigate to page | NgccLink | NgccButton (if action, not navigation) |
+| Immediate on/off | NgccToggle | NgccCheckbox (if confirmation needed) |
 | Display list | NgccTable | Card grid (custom) |
 | Show feedback | NgccNotification (persistent) | NgccToast (temporary) |
 | Confirm action | NgccModal | NgccNotification (less intrusive) |
 | Multiple sections | NgccTabs | NgccAccordion (if space-saving) |
 | Hide/Show content | NgccAccordion | NgccTabs (if tab-like) |
+| Show page location | NgccBreadcrumb | NgccTabs (if section-level nav) |
+| Display code/commands | NgccCodeSnippet (single) | NgccCodeSnippet inline (if within prose) |
+| Multi-line code block | NgccCodeSnippet (multi) | NgccCodeSnippet (single) if one line |
 | Compare values | NgccBarChart | NgccLineChart (if over time) |
 | Show trend | NgccLineChart | NgccBarChart (if discrete) |
 | Show composition | NgccDonutChart | NgccBarChart (if comparison) |

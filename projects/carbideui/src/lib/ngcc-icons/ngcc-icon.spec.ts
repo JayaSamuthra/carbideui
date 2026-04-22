@@ -2,9 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component, provideZonelessChangeDetection } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { NgccIcon } from './ngcc-icon';
-import { axe } from 'vitest-axe';
 import { NgccIconNameType } from './icons';
 import { IconSize } from './ngcc-icon.types';
+import { runAxe } from '../../test-utils/a11y';
 
 @Component({
   standalone: true,
@@ -170,7 +170,7 @@ describe('NgccIcon', () => {
     it('should have no accessibility violations in standard mode', async () => {
       host.iconName = 'add';
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
 
@@ -178,7 +178,7 @@ describe('NgccIcon', () => {
       host.iconName = 'add';
       host.isDecorative = true;
       detectChanges();
-      const results = await axe(fixture.nativeElement);
+      const results = await runAxe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
   });
