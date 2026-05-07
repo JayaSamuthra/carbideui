@@ -31,12 +31,11 @@
   "angular-carbon-components",
   "carbideui"
   ],
-  "main": "./fesm2022/carbideui.mjs",
-  "module": "./fesm2022/carbideui.mjs",
+  "main": "./fesm2022/assistanz-carbideui.mjs",
+  "module": "./fesm2022/assistanz-carbideui.mjs",
   "types": "./index.d.ts",
   "exports": {
-    "./styles": "./styles/carbon.scss",
-    "./*": null
+    "./styles": "./styles/carbon.scss"
   },
   "files": [
     "fesm2022/",
