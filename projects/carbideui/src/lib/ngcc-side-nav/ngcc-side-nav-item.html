@@ -1,7 +1,12 @@
-<li [class]="itemClasses">
+<li [class]="itemClasses()">
   <a
-    [class]="linkClasses"
-    [href]="href"
+    [class]="linkClasses()"
+    [href]="routerLink ? null : linkHref()"
+    [routerLink]="routerLink ? linkHref() : null"
+    [routerLinkActive]="
+      routerLink ? 'cds--side-nav__link--current' : 'cds--side-nav__link--current'
+    "
+    [routerLinkActiveOptions]="{ exact: false }"
     [attr.aria-current]="active ? 'page' : null"
     [attr.title]="title || null"
     (click)="onClick($event)"
