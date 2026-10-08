@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { NgccHeaderMenuItem } from './ngcc-header-menu-item';
 import { runAxe } from '../../../../test-utils/a11y';
@@ -34,7 +35,7 @@ describe('NgccHeaderMenuItem', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TestHeaderMenuItemHost],
-      providers: [provideZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection(), provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHeaderMenuItemHost);

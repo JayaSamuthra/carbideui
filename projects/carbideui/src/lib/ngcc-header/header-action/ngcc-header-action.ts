@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,6 +13,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgccButton } from '../../ngcc-button/ngcc-button';
+import { NgccIcon } from '../../ngcc-icons/ngcc-icon';
 import type { NgccIconNameType } from '../../ngcc-icons/icons';
 
 /**
@@ -24,7 +26,7 @@ import type { NgccIconNameType } from '../../ngcc-icons/icons';
 @Component({
   selector: 'ngcc-header-action',
   standalone: true,
-  imports: [NgccButton],
+  imports: [CommonModule, NgccButton, NgccIcon],
   templateUrl: './ngcc-header-action.html',
   styleUrls: ['./ngcc-header-action.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +39,9 @@ export class NgccHeaderAction implements OnChanges {
     if (changes['toggleable']) this._toggleable.set(changes['toggleable'].currentValue ?? true);
     if (changes['active']) {
       this._active.set(changes['active'].currentValue ?? false);
+    }
+    if (changes['href']) {
+      this._href.set(changes['href'].currentValue ?? undefined);
     }
   }
 
@@ -51,6 +56,10 @@ export class NgccHeaderAction implements OnChanges {
   @Output() activeChange = new EventEmitter<boolean>();
   private readonly _active = signal(false);
 
+  /** Optional link target for actions that behave like anchors, e.g. “Switch to Legacy”. */
+  @Input() href?: string | null = null;
+  private readonly _href = signal<string | null>(null);
+
   /** Icon to display — any key from the NgccIcon registry */
   @Input() iconName: NgccIconNameType | undefined = undefined;
   private readonly _iconName = signal<NgccIconNameType | undefined>(undefined);
@@ -60,8 +69,14 @@ export class NgccHeaderAction implements OnChanges {
   private readonly _toggleable = signal(true);
 
   @Output() actionClick = new EventEmitter<MouseEvent>();
+  @Output() linkClick = new EventEmitter<MouseEvent>();
 
   onClick(event: MouseEvent): void {
+    if (this._href()) {
+      this.linkClick.emit(event);
+      return;
+    }
+
     this.actionClick.emit(event);
     if (this._toggleable()) {
       this._active.update((v) => !v);

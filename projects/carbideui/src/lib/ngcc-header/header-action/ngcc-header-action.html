@@ -1,9 +1,22 @@
-<ngcc-button
-  variant="ghost"
-  [iconOnly]="true"
-  [iconName]="iconName"
-  [ariaLabel]="ariaLabel"
-  [ariaExpanded]="active"
-  [className]="'cds--header__action' + (active ? ' cds--header__action--active' : '')"
-  (click)="onClick($event)"
-/>
+<ng-container *ngIf="href; else buttonTemplate">
+  <a
+    class="cds--header__action"
+    [href]="href"
+    [attr.aria-label]="ariaLabel || null"
+    [attr.aria-expanded]="active ? 'true' : 'false'"
+    (click)="onClick($event)"
+  >
+    <ngcc-icon [name]="iconName ?? 'add'" [decorative]="true" />
+  </a>
+</ng-container>
+<ng-template #buttonTemplate>
+  <ngcc-button
+    variant="ghost"
+    [iconOnly]="true"
+    [iconName]="iconName"
+    [ariaLabel]="ariaLabel"
+    [ariaExpanded]="active"
+    [className]="'cds--header__action' + (active ? ' cds--header__action--active' : '')"
+    (click)="onClick($event)"
+  />
+</ng-template>
