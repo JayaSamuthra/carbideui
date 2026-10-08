@@ -60,6 +60,8 @@ export class NgccTab {
   readonly cacheActive = signal<boolean>(false);
   readonly tabContent = input<TemplateRef<unknown> | null>(null);
   readonly templateContext = input<unknown>(null);
+  readonly queryParamKey = input<string | null>(null);
+  readonly queryParamValue = input<string | null>(null);
 
   readonly active = signal<boolean>(false);
 
