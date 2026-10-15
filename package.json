@@ -97,10 +97,11 @@
   },
   "overrides": {
     "picomatch": "^4.0.4",
-    "dompurify": "^3.3.2",
     "glob": "^13.0.1",
-    "immutable": "^5.1.5",
-    "undici": "^7.23.1"
+    "undici": "^7.23.1",
+    "dompurify": "^3.4.17",
+    "immutable": "^5.1.9",
+    "source-map-js": "^1.2.2"
   },
   "engines": {
     "node": ">=20",
