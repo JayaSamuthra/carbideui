@@ -9,6 +9,7 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 /**
  * A single navigation link inside <ngcc-header-navigation>.
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'ngcc-header-item',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './ngcc-header-item.html',
   styleUrls: ['./ngcc-header-item.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,7 @@ import {
 export class NgccHeaderItem implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['href']) this._href.set(changes['href'].currentValue ?? '/');
+    if (changes['routerLink']) this._routerLink.set(changes['routerLink'].currentValue ?? null);
     if (changes['isCurrentPage'])
       this._isCurrentPage.set(changes['isCurrentPage'].currentValue ?? false);
     if (changes['tabIndex']) this._tabIndex.set(changes['tabIndex'].currentValue ?? 0);
@@ -36,6 +38,9 @@ export class NgccHeaderItem implements OnChanges {
   /** Navigation URL */
   @Input() href: string = '/';
   private readonly _href = signal('/');
+  /** Angular Router route target. When provided, it takes precedence over href. */
+  @Input() routerLink?: string | string[] | null = null;
+  private readonly _routerLink = signal<string | string[] | null>(null);
   /** Marks this link as the active / current page */
   @Input() isCurrentPage = false;
   private readonly _isCurrentPage = signal(false);
@@ -50,6 +55,11 @@ export class NgccHeaderItem implements OnChanges {
       .filter(Boolean)
       .join(' '),
   );
+
+  readonly resolvedHref = computed(() => {
+    if (this._routerLink()) return this._routerLink();
+    return this._href();
+  });
 
   onClick(event: Event): void {
     this.itemClick.emit(event);

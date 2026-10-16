@@ -1,13 +1,27 @@
 <li role="none">
-  <a
-    [class]="linkClasses()"
-    role="menuitem"
-    [attr.href]="href"
-    [attr.tabindex]="tabIndex"
-    [attr.aria-current]="isCurrentPage ? 'page' : null"
-    (click)="onClick($event)"
-    (keydown)="onKeydown($event)"
-  >
-    <ng-content />
-  </a>
+  @if (routerLink) {
+    <a
+      [class]="linkClasses()"
+      role="menuitem"
+      [routerLink]="resolvedHref()"
+      [attr.tabindex]="tabIndex"
+      [attr.aria-current]="isCurrentPage ? 'page' : null"
+      (click)="onClick($event)"
+      (keydown)="onKeydown($event)"
+    >
+      <ng-content />
+    </a>
+  } @else {
+    <a
+      [class]="linkClasses()"
+      role="menuitem"
+      [href]="resolvedHref()"
+      [attr.tabindex]="tabIndex"
+      [attr.aria-current]="isCurrentPage ? 'page' : null"
+      (click)="onClick($event)"
+      (keydown)="onKeydown($event)"
+    >
+      <ng-content />
+    </a>
+  }
 </li>

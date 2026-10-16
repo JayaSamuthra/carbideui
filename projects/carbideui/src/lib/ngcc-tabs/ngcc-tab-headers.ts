@@ -27,7 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgTemplateOutlet } from '@angular/common';
 import { NgccTab } from './ngcc-tab';
 import { NgccBaseTabHeader } from './ngcc-base-tab-header';
-import { Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 
 @Component({
@@ -78,6 +78,9 @@ export class NgccTabHeaders
 
   // store cleanup handle for the effect
   private destroyEffect?: EffectRef;
+
+  // Inject ActivatedRoute optionally, in case routerIntegration is used without Angular Router
+  private readonly activatedRoute = inject(ActivatedRoute, { optional: true });
 
   constructor() {
     super();
@@ -149,27 +152,31 @@ export class NgccTabHeaders
     const headers = this.allTabHeaders.toArray();
     const tabs = this.tabsArray;
 
-    headers.forEach((el, i) => {
-      const link = el.nativeElement.querySelector('a[routerLink]');
-      if (!(link instanceof HTMLAnchorElement)) return;
+    const activeTab = tabs.find((tab, index) => {
+      const routeLink = headers[index]?.nativeElement.querySelector('a[routerLink]');
+      const href = routeLink instanceof HTMLAnchorElement ? routeLink.getAttribute('href') : null;
 
-      const href = link.getAttribute('href');
-
-      if (
-        href &&
-        this.router.isActive(href, {
+      if (href) {
+        return this.router.isActive(href, {
           paths: 'exact',
           queryParams: 'ignored',
           fragment: 'ignored',
           matrixParams: 'ignored',
-        })
-      ) {
-        // Found active route - select this tab
-        if (tabs[i] && !tabs[i].disabled()) {
-          this.selectTab(tabs[i], i);
-        }
+        });
       }
+
+      const queryParamKey = tab.queryParamKey?.() ?? null;
+      const queryParamValue = tab.queryParamValue?.() ?? null;
+      if (!queryParamKey || !this.activatedRoute) return false;
+
+      const paramValue = this.activatedRoute.snapshot.queryParamMap.get(queryParamKey);
+      return paramValue !== null && queryParamValue !== null && paramValue === queryParamValue;
     });
+
+    const targetIndex = activeTab ? tabs.indexOf(activeTab) : -1;
+    if (targetIndex >= 0 && !tabs[targetIndex].disabled()) {
+      this.selectTab(tabs[targetIndex], targetIndex);
+    }
   }
 
   protected setFirstTab(): void {

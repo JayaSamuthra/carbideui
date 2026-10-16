@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { NgccTabs } from './ngcc-tabs';
 import { NgccTab } from './ngcc-tab';
@@ -849,5 +849,44 @@ describe('Router Integration', () => {
 
     const tabs = routerFixture.debugElement.query(By.css('ngcc-tabs')).componentInstance.tabs();
     expect(tabs[0].active()).toBe(true); // Should still be first tab
+  });
+
+  it('should sync active tab when query param matches', async () => {
+    const queryRoute = {
+      snapshot: {
+        queryParamMap: {
+          get: vi.fn((key: string) => (key === 'view' ? 'bss' : null)),
+        },
+      },
+    };
+
+    @Component({
+      template: `
+        <ngcc-tabs [routerIntegration]="true" [aria-label]="'Query tabs'">
+          <ngcc-tab heading="BSS" [queryParamKey]="'view'" [queryParamValue]="'bss'" />
+          <ngcc-tab heading="OSS" [queryParamKey]="'view'" [queryParamValue]="'oss'" />
+        </ngcc-tabs>
+      `,
+      standalone: true,
+      imports: [NgccTabs, NgccTab],
+    })
+    class QueryParamTabsHost {}
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [QueryParamTabsHost],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: queryRoute },
+      ],
+    });
+
+    const queryFixture = TestBed.createComponent(QueryParamTabsHost);
+    queryFixture.detectChanges();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const tabs = queryFixture.debugElement.query(By.css('ngcc-tabs')).componentInstance.tabs();
+    expect(tabs[0].active()).toBe(true);
   });
 });

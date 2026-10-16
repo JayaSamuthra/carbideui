@@ -1,13 +1,28 @@
 <li role="none">
-  <a
-    [class]="linkClasses()"
-    role="menuitem"
-    [attr.href]="disabled ? null : href"
-    [attr.aria-disabled]="disabled ? true : null"
-    [attr.aria-current]="isCurrentPage ? 'page' : null"
-    (click)="onClick($event)"
-    (keydown)="onKeydown($event)"
-  >
-    <ng-content />
-  </a>
+  @if (routerLink) {
+    <a
+      [class]="linkClasses()"
+      role="menuitem"
+      [attr.href]="disabled ? null : null"
+      [routerLink]="disabled ? null : resolvedHref()"
+      [attr.aria-disabled]="disabled ? true : null"
+      [attr.aria-current]="isCurrentPage ? 'page' : null"
+      (click)="onClick($event)"
+      (keydown)="onKeydown($event)"
+    >
+      <ng-content />
+    </a>
+  } @else {
+    <a
+      [class]="linkClasses()"
+      role="menuitem"
+      [attr.href]="disabled ? null : resolvedHref()"
+      [attr.aria-disabled]="disabled ? true : null"
+      [attr.aria-current]="isCurrentPage ? 'page' : null"
+      (click)="onClick($event)"
+      (keydown)="onKeydown($event)"
+    >
+      <ng-content />
+    </a>
+  }
 </li>

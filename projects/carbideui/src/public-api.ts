@@ -18,6 +18,7 @@ export * from './lib/ngcc-contained-list/public-api';
 
 // Icons
 export * from './lib/ngcc-icons/ngcc-icon';
+export * from './lib/ngcc-icons/icons';
 
 // Checkbox
 export * from './lib/ngcc-checkbox/ngcc-checkbox';
@@ -128,7 +129,11 @@ export * from './lib/ngcc-side-nav/ngcc-side-nav-item';
 export * from './lib/ngcc-side-nav/ngcc-side-nav-menu';
 export * from './lib/ngcc-side-nav/ngcc-side-nav-menu-item';
 export * from './lib/ngcc-side-nav/ngcc-side-nav-divider';
+export * from './lib/ngcc-side-nav/ngcc-side-nav-section';
 
 // Code Snippet
 export * from './lib/ngcc-code-snippet/ngcc-code-snippet';
 export * from './lib/ngcc-code-snippet/ngcc-code-snippet.types';
+
+// Content Switcher
+export * from './lib/ngcc-content-switcher/public-api';

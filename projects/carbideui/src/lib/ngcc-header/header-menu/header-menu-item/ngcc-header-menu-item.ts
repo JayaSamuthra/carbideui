@@ -9,6 +9,7 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 /**
  * A single item inside an <ngcc-header-menu> dropdown.
@@ -17,7 +18,7 @@ import {
 @Component({
   selector: 'ngcc-header-menu-item',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './ngcc-header-menu-item.html',
   styleUrls: ['./ngcc-header-menu-item.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +27,7 @@ import {
 export class NgccHeaderMenuItem implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['href']) this._href.set(changes['href'].currentValue ?? '/');
+    if (changes['routerLink']) this._routerLink.set(changes['routerLink'].currentValue ?? null);
     if (changes['isCurrentPage'])
       this._isCurrentPage.set(changes['isCurrentPage'].currentValue ?? false);
     if (changes['disabled']) this._disabled.set(changes['disabled'].currentValue ?? false);
@@ -33,6 +35,8 @@ export class NgccHeaderMenuItem implements OnChanges {
 
   @Input() href = '/';
   private readonly _href = signal('/');
+  @Input() routerLink?: string | string[] | null = null;
+  private readonly _routerLink = signal<string | string[] | null>(null);
   @Input() isCurrentPage = false;
   private readonly _isCurrentPage = signal(false);
   @Input() disabled = false;
@@ -45,6 +49,11 @@ export class NgccHeaderMenuItem implements OnChanges {
       .filter(Boolean)
       .join(' '),
   );
+
+  readonly resolvedHref = computed(() => {
+    if (this._routerLink()) return this._routerLink();
+    return this._href();
+  });
 
   onClick(event: Event): void {
     if (this._disabled()) {
