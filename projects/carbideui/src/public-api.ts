@@ -146,3 +146,6 @@ export * from './lib/ngcc-stat-tile/public-api';
 
 // Tag
 export * from './lib/ngcc-tag/public-api';
+
+// Progress Bar
+export * from './lib/ngcc-progress-bar/public-api';
