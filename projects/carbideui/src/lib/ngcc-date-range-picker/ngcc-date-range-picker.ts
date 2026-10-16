@@ -21,7 +21,8 @@ export interface NgccDatePreset {
   range?: (today: Date) => { start: Date; end: Date };
 }
 
-const day = (d: Date, offset = 0): Date => new Date(d.getFullYear(), d.getMonth(), d.getDate() + offset);
+const day = (d: Date, offset = 0): Date =>
+  new Date(d.getFullYear(), d.getMonth(), d.getDate() + offset);
 
 export const NGCC_DEFAULT_DATE_PRESETS: NgccDatePreset[] = [
   { key: 'today', label: 'Today', range: (t) => ({ start: day(t), end: day(t) }) },

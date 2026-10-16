@@ -1,0 +1,73 @@
+.ngcc-fb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ngcc-fb__box {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  min-block-size: 2.5rem;
+  padding: 0 1rem;
+  background: var(--cds-field);
+  border-block-end: 1px solid var(--cds-border-strong);
+  color: var(--cds-text-primary);
+}
+.ngcc-fb__box:focus-within {
+  outline: 2px solid var(--cds-focus);
+  outline-offset: -2px;
+}
+.ngcc-fb__input {
+  flex: 1;
+  min-inline-size: 8rem;
+  block-size: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.875rem;
+  color: inherit;
+  outline: none;
+}
+.ngcc-fb__input::placeholder {
+  color: var(--cds-text-placeholder);
+}
+.ngcc-fb__clear {
+  padding: 0.5rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--cds-link-primary);
+  cursor: pointer;
+}
+.ngcc-fb__clear:focus-visible {
+  outline: 2px solid var(--cds-focus);
+}
+.ngcc-fb__list {
+  position: absolute;
+  inset-inline: 0;
+  z-index: var(--cds-layer-overlay, 9000);
+  max-block-size: 15rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--cds-layer-01);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.ngcc-fb__option {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--cds-text-primary);
+  cursor: pointer;
+}
+.ngcc-fb__option--active,
+.ngcc-fb__option:hover {
+  background: var(--cds-layer-hover-01);
+}
+.ngcc-fb__field {
+  color: var(--cds-text-secondary);
+}

@@ -164,3 +164,6 @@ export * from './lib/ngcc-notification-list/public-api';
 
 // Date Range Picker
 export * from './lib/ngcc-date-range-picker/public-api';
+
+// Filter Bar
+export * from './lib/ngcc-filter-bar/public-api';
