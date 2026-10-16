@@ -149,3 +149,6 @@ export * from './lib/ngcc-tag/public-api';
 
 // Progress Bar
 export * from './lib/ngcc-progress-bar/public-api';
+
+// Empty State
+export * from './lib/ngcc-empty-state/public-api';
