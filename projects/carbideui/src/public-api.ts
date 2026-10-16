@@ -143,3 +143,6 @@ export * from './lib/ngcc-tile/public-api';
 
 // Stat Tile
 export * from './lib/ngcc-stat-tile/public-api';
+
+// Tag
+export * from './lib/ngcc-tag/public-api';
