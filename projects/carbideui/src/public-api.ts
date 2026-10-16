@@ -158,3 +158,6 @@ export * from './lib/ngcc-activity-feed/public-api';
 
 // Structured List
 export * from './lib/ngcc-structured-list/public-api';
+
+// Notification List
+export * from './lib/ngcc-notification-list/public-api';
