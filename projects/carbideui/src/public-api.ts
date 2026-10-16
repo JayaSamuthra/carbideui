@@ -152,3 +152,6 @@ export * from './lib/ngcc-progress-bar/public-api';
 
 // Empty State
 export * from './lib/ngcc-empty-state/public-api';
+
+// Activity Feed / Timeline
+export * from './lib/ngcc-activity-feed/public-api';
