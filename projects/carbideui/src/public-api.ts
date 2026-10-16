@@ -155,3 +155,6 @@ export * from './lib/ngcc-empty-state/public-api';
 
 // Activity Feed / Timeline
 export * from './lib/ngcc-activity-feed/public-api';
+
+// Structured List
+export * from './lib/ngcc-structured-list/public-api';
