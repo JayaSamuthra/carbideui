@@ -3,6 +3,7 @@ import { setCompodocJson } from "@storybook/addon-docs/angular";
 import docJson from "../projects/carbideui/documentation.json";
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { provideZonelessChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import {initNgccTheme} from '../projects/carbideui/src/lib/ngcc-theme-switcher/ngcc-theme-init';
 
 setCompodocJson(docJson);
@@ -21,6 +22,7 @@ const preview: Preview = {
     applicationConfig({
       providers: [
         provideZonelessChangeDetection(), // zoneless mode
+        provideRouter([]), // required by routerLink / ActivatedRoute in components
       ],
     }),
     withThemeByDataAttribute({

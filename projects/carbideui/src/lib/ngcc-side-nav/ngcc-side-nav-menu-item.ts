@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 /**
  * A navigable link nested inside <ngcc-side-nav-menu>.
@@ -18,7 +19,7 @@ import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from 
 @Component({
   selector: 'ngcc-side-nav-menu-item',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './ngcc-side-nav-menu-item.html',
   styleUrls: ['./ngcc-side-nav-menu-item.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,12 +28,21 @@ import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from 
 export class NgccSideNavMenuItem {
   /** Navigation URL */
   @Input() href = '#';
+  /** Angular Router route target. When provided, it takes precedence over href. */
+  @Input() routerLink?: string | string[] | null = null;
   /** Marks this link as the active / current page */
   @Input() active = false;
   /** Optional title attribute for the anchor */
   @Input() title = '';
 
   @Output() itemClick = new EventEmitter<Event>();
+
+  readonly linkHref = (): string => {
+    if (this.routerLink) {
+      return Array.isArray(this.routerLink) ? this.routerLink.join('/') : this.routerLink;
+    }
+    return this.href ?? '#';
+  };
 
   onClick(event: Event): void {
     this.itemClick.emit(event);

@@ -658,7 +658,7 @@ onDelete(): void {
 
 ---
 
-### 16. NgccBreadcrumb
+### 17. NgccBreadcrumb
 
 **What it does**: Shows the user's current location within a site hierarchy as a navigable trail of links.
 
@@ -757,7 +757,7 @@ breadcrumbs: NgccBreadcrumbItem[] = [
 - `disabled` removes the `href`/`routerLink` and applies `cds--link--disabled` styling
 - `skeleton` on the container replaces all items; per-item skeleton is not exposed
 
-### 17. NgccCodeSnippet
+### 18. NgccCodeSnippet
 
 **What it does**: Displays formatted code with a one-click copy button, available in inline, single-line, and multi-line variants.
 
@@ -936,21 +936,17 @@ export class AppComponent {}`;
 - `NgccSideNav`, `NgccSideNavItem`
 - `NgccSideNavMenu`, `NgccSideNavMenuItem`
 - `NgccSideNavDivider`
+- `NgccSideNavSection`
 
 **Example**:
 ```typescript
 <ngcc-side-nav ariaLabel="Side navigation" [(expanded)]="sideNavOpen" [allowExpansion]="true">
-  <ngcc-side-nav-item href="/home" iconName="home" [active]="true">
-    Home
-  </ngcc-side-nav-item>
+  <ngcc-side-nav-section label="BSS" />
+  <ngcc-side-nav-item routerLink="/billing" iconName="home">Billing</ngcc-side-nav-item>
+  <ngcc-side-nav-item routerLink="/reports" iconName="chart">Reports</ngcc-side-nav-item>
 
-  <ngcc-side-nav-menu title="Compute" iconName="cpu">
-    <ngcc-side-nav-menu-item href="/compute/instances">Instances</ngcc-side-nav-menu-item>
-    <ngcc-side-nav-menu-item href="/compute/images">Images</ngcc-side-nav-menu-item>
-  </ngcc-side-nav-menu>
-
-  <ngcc-side-nav-divider />
-  <ngcc-side-nav-item href="/help" iconName="notification">Help</ngcc-side-nav-item>
+  <ngcc-side-nav-section label="OSS" />
+  <ngcc-side-nav-item routerLink="/inventory" iconName="services">Inventory</ngcc-side-nav-item>
 </ngcc-side-nav>
 ```
 

@@ -1,0 +1,14 @@
+.ngcc-drp {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.ngcc-drp__custom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-block-start: 1rem;
+}
+.ngcc-drp__field {
+  flex: 1 1 10rem;
+}

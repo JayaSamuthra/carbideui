@@ -1,0 +1,27 @@
+.ngcc-tile__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.ngcc-tile__heading {
+  margin: 0;
+  font-size: var(--cds-heading-compact-01-font-size, 0.875rem);
+  font-weight: 600;
+}
+.ngcc-tile__footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--cds-border-subtle);
+}
+.ngcc-tile__header:not(:has(*)) {
+  display: none;
+}
+.ngcc-tile__footer:not(:has(*)) {
+  display: none;
+}
+.cds--tile--clickable {
+  width: 100%;
+  text-align: start;
+}

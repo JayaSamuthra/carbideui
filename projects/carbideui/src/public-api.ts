@@ -18,6 +18,7 @@ export * from './lib/ngcc-contained-list/public-api';
 
 // Icons
 export * from './lib/ngcc-icons/ngcc-icon';
+export * from './lib/ngcc-icons/icons';
 
 // Checkbox
 export * from './lib/ngcc-checkbox/ngcc-checkbox';
@@ -128,7 +129,44 @@ export * from './lib/ngcc-side-nav/ngcc-side-nav-item';
 export * from './lib/ngcc-side-nav/ngcc-side-nav-menu';
 export * from './lib/ngcc-side-nav/ngcc-side-nav-menu-item';
 export * from './lib/ngcc-side-nav/ngcc-side-nav-divider';
+export * from './lib/ngcc-side-nav/ngcc-side-nav-section';
 
 // Code Snippet
 export * from './lib/ngcc-code-snippet/ngcc-code-snippet';
 export * from './lib/ngcc-code-snippet/ngcc-code-snippet.types';
+
+// Content Switcher
+export * from './lib/ngcc-content-switcher/public-api';
+
+// Tile
+export * from './lib/ngcc-tile/public-api';
+
+// Stat Tile
+export * from './lib/ngcc-stat-tile/public-api';
+
+// Tag
+export * from './lib/ngcc-tag/public-api';
+
+// Progress Bar
+export * from './lib/ngcc-progress-bar/public-api';
+
+// Empty State
+export * from './lib/ngcc-empty-state/public-api';
+
+// Activity Feed / Timeline
+export * from './lib/ngcc-activity-feed/public-api';
+
+// Structured List
+export * from './lib/ngcc-structured-list/public-api';
+
+// Notification List
+export * from './lib/ngcc-notification-list/public-api';
+
+// Date Range Picker
+export * from './lib/ngcc-date-range-picker/public-api';
+
+// Filter Bar
+export * from './lib/ngcc-filter-bar/public-api';
+
+// Overflow Menu
+export * from './lib/ngcc-overflow-menu/public-api';

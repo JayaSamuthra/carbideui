@@ -13,12 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          sparse-checkout: .github/labeler.yml
-          sparse-checkout-cone-mode: false
-
+      # No checkout: this runs on pull_request_target with a write token, so it
+      # must never fetch fork code. labeler@v5 reads its config from the base
+      # repo via the API.
       - uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}

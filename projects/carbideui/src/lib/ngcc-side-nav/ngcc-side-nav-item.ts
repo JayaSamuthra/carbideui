@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+} from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgccIcon } from '../ngcc-icons/ngcc-icon';
 import type { NgccIconNameType } from '../ngcc-icons/icons';
 
@@ -21,7 +29,7 @@ import type { NgccIconNameType } from '../ngcc-icons/icons';
 @Component({
   selector: 'ngcc-side-nav-item',
   standalone: true,
-  imports: [NgccIcon],
+  imports: [NgccIcon, RouterLink, RouterLinkActive],
   templateUrl: './ngcc-side-nav-item.html',
   styleUrls: ['./ngcc-side-nav-item.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +38,8 @@ import type { NgccIconNameType } from '../ngcc-icons/icons';
 export class NgccSideNavItem {
   /** Navigation URL */
   @Input() href = '#';
+  /** Angular Router route target. When provided, it takes precedence over href. */
+  @Input() routerLink?: string | string[] | null = null;
   /** Marks this link as the active / current page */
   @Input() active = false;
   /** Optional title attribute for the anchor */
@@ -39,15 +49,21 @@ export class NgccSideNavItem {
 
   @Output() itemClick = new EventEmitter<Event>();
 
-  get itemClasses(): string {
-    return ['cds--side-nav__item'].filter(Boolean).join(' ');
-  }
+  readonly itemClasses = computed(() => 'cds--side-nav__item');
 
-  get linkClasses(): string {
-    return ['cds--side-nav__link', this.active ? 'cds--side-nav__link--current' : '']
+  readonly linkClasses = computed(() => {
+    const isCurrent = this.active || false;
+    return ['cds--side-nav__link', isCurrent ? 'cds--side-nav__link--current' : '']
       .filter(Boolean)
       .join(' ');
-  }
+  });
+
+  readonly linkHref = computed(() => {
+    if (this.routerLink) {
+      return Array.isArray(this.routerLink) ? this.routerLink.join('/') : this.routerLink;
+    }
+    return this.href ?? '#';
+  });
 
   onClick(event: Event): void {
     this.itemClick.emit(event);

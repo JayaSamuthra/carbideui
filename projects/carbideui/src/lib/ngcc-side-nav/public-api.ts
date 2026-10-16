@@ -13,3 +13,6 @@ export * from './ngcc-side-nav-menu-item';
 
 // Divider
 export * from './ngcc-side-nav-divider';
+
+// Section label
+export * from './ngcc-side-nav-section';
