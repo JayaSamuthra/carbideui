@@ -1,0 +1,14 @@
+.ngcc-overflow__menu {
+  position: fixed;
+  inset-block-start: var(--ngcc-overflow-top, auto);
+  inset-block-end: var(--ngcc-overflow-bottom, auto);
+  inset-inline-start: var(--ngcc-overflow-left, auto);
+  inset-inline-end: var(--ngcc-overflow-right, auto);
+  z-index: var(--cds-layer-overlay, 9000);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ngcc-overflow__divider {
+  border-block-start: 1px solid var(--cds-border-subtle);
+}
