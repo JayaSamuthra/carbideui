@@ -35,16 +35,7 @@ export const NGCC_STATUS_TAG = {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: inline-flex' },
-  styles: `
-    .ngcc-tag__dot {
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 50%;
-      background: currentColor;
-      margin-inline-end: 0.375rem;
-      flex: none;
-    }
-  `,
+  styleUrl: './ngcc-tag.scss',
   template: `
     <span [class]="classes()" [attr.aria-disabled]="disabled() || null">
       @if (dot()) {

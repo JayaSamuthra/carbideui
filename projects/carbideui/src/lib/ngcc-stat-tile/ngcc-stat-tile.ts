@@ -16,43 +16,7 @@ export type NgccStatTrendSentiment = 'positive-up' | 'positive-down' | 'neutral'
   imports: [NgccIcon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: block' },
-  styles: `
-    .ngcc-stat {
-      border-inline-start: 4px solid var(--ngcc-stat-accent, transparent);
-    }
-    .ngcc-stat__label {
-      margin: 0;
-      color: var(--cds-text-secondary);
-      font-size: var(--cds-label-01-font-size, 0.75rem);
-    }
-    .ngcc-stat__value {
-      margin: 0.5rem 0 0;
-      font-size: 2rem;
-      line-height: 1.2;
-      font-weight: 300;
-      color: var(--cds-text-primary);
-    }
-    .ngcc-stat__unit {
-      font-size: 1rem;
-      margin-inline-start: 0.25rem;
-      color: var(--cds-text-secondary);
-    }
-    .ngcc-stat__delta {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      margin-top: 0.5rem;
-      font-size: 0.875rem;
-      color: var(--ngcc-stat-delta, var(--cds-text-secondary));
-    }
-    .ngcc-stat__delta ngcc-icon {
-      fill: currentColor;
-    }
-    .ngcc-stat__caption {
-      margin-inline-start: 0.25rem;
-      color: var(--cds-text-secondary);
-    }
-  `,
+  styleUrl: './ngcc-stat-tile.scss',
   template: `
     <div
       class="cds--tile ngcc-stat"
