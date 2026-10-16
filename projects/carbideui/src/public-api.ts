@@ -137,3 +137,9 @@ export * from './lib/ngcc-code-snippet/ngcc-code-snippet.types';
 
 // Content Switcher
 export * from './lib/ngcc-content-switcher/public-api';
+
+// Tile
+export * from './lib/ngcc-tile/public-api';
+
+// Stat Tile
+export * from './lib/ngcc-stat-tile/public-api';
