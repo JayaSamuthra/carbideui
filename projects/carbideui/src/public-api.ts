@@ -56,9 +56,14 @@ export * from './lib/ngcc-tabs/ngcc-tab-skeleton';
 
 // Theme
 export * from './lib/ngcc-theme-switcher/ngcc-theme-init';
+export * from './lib/ngcc-theme-switcher/ngcc-theme.types';
+export * from './lib/ngcc-theme-switcher/ngcc-theme.service';
+export * from './lib/ngcc-theme-switcher/ngcc-theme-switcher';
 
 // Charts
 export * from './lib/ngcc-charts/ngcc-charts';
+export * from './lib/ngcc-charts/ngcc-charts.types';
+export * from './lib/ngcc-charts/ngcc-chart-state';
 export * from './lib/ngcc-charts/ngcc-gauge-chart/ngcc-gauge-chart';
 
 // Accordion
@@ -98,6 +103,9 @@ export * from './lib/ngcc-pagination/ngcc-pagination';
 export * from './lib/ngcc-color-theme/ngcc-color-theme.service';
 export * from './lib/ngcc-color-theme/ngcc-color-theme-switcher';
 export * from './lib/ngcc-color-theme/ngcc-color-theme.types';
+export * from './lib/ngcc-color-theme/ngcc-color-theme.presets';
+export * from './lib/ngcc-color-theme/ngcc-theme.providers';
+export * from './lib/ngcc-color-theme/ngcc-color-theme.presets';
 export * from './lib/ngcc-color-theme/utils/wcag-color-utils';
 export * from './lib/ngcc-color-theme/tokens/index';
 
