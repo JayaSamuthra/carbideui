@@ -101,6 +101,9 @@ export * from './lib/ngcc-pagination/ngcc-pagination';
 export * from './lib/ngcc-color-theme/ngcc-color-theme.service';
 export * from './lib/ngcc-color-theme/ngcc-color-theme-switcher';
 export * from './lib/ngcc-color-theme/ngcc-color-theme.types';
+export * from './lib/ngcc-color-theme/ngcc-color-theme.presets';
+export * from './lib/ngcc-color-theme/ngcc-theme.providers';
+export * from './lib/ngcc-color-theme/ngcc-color-theme.presets';
 export * from './lib/ngcc-color-theme/utils/wcag-color-utils';
 export * from './lib/ngcc-color-theme/tokens/index';
 
