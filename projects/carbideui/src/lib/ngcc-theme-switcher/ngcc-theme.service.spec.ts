@@ -230,18 +230,17 @@ describe('NgccThemeService', () => {
 
   it('syncs from other tabs via the storage event', () => {
     const service = create();
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'ngcc-theme',
-        newValue: JSON.stringify({
-          version: 2,
-          theme: 'g90',
-          followSystem: false,
-          cornerStyle: 'curved',
-          buttonAlign: 'centered',
-        }),
+    const event = Object.assign(new Event('storage'), {
+      key: 'ngcc-theme',
+      newValue: JSON.stringify({
+        version: 2,
+        theme: 'g90',
+        followSystem: false,
+        cornerStyle: 'curved',
+        buttonAlign: 'centered',
       }),
-    );
+    });
+    window.dispatchEvent(event);
     expect(service.theme()).toBe('g90');
     expect(service.cornerStyle()).toBe('curved');
     expect(service.buttonAlign()).toBe('centered');

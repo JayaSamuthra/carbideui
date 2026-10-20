@@ -62,6 +62,8 @@ export * from './lib/ngcc-theme-switcher/ngcc-theme-switcher';
 
 // Charts
 export * from './lib/ngcc-charts/ngcc-charts';
+export * from './lib/ngcc-charts/ngcc-charts.types';
+export * from './lib/ngcc-charts/ngcc-chart-state';
 export * from './lib/ngcc-charts/ngcc-gauge-chart/ngcc-gauge-chart';
 
 // Accordion
