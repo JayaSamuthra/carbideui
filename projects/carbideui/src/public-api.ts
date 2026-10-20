@@ -56,6 +56,9 @@ export * from './lib/ngcc-tabs/ngcc-tab-skeleton';
 
 // Theme
 export * from './lib/ngcc-theme-switcher/ngcc-theme-init';
+export * from './lib/ngcc-theme-switcher/ngcc-theme.types';
+export * from './lib/ngcc-theme-switcher/ngcc-theme.service';
+export * from './lib/ngcc-theme-switcher/ngcc-theme-switcher';
 
 // Charts
 export * from './lib/ngcc-charts/ngcc-charts';
