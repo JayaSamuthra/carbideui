@@ -20,6 +20,8 @@ import {
 } from './tokens/index';
 import { NGCC_COLOR_THEME_PRESETS, NgccColorThemePreset } from './ngcc-color-theme.presets';
 
+type NgccColorThemeTab = 'colors' | 'brand' | 'a11y' | 'output';
+
 @Component({
   selector: 'ngcc-color-theme-switcher',
   standalone: true,
@@ -72,7 +74,22 @@ export class NgccColorThemeSwitcher {
 
   /** Search over color names, descriptions and CSS token names. */
   protected readonly filter = signal('');
-  private readonly opened = signal<ReadonlySet<string>>(new Set(['brand', 'surface', 'status']));
+
+  protected readonly tab = signal<NgccColorThemeTab>('colors');
+  protected readonly tabs = computed(() => {
+    const all: { id: NgccColorThemeTab; label: string; show: boolean }[] = [
+      { id: 'colors', label: 'Colors', show: this.showThemeColors() },
+      { id: 'brand', label: 'Brand', show: true },
+      { id: 'a11y', label: 'Accessibility', show: this.showAccessibility() },
+      { id: 'output', label: 'Export', show: this.showAdvanced() },
+    ];
+    return all.filter((t) => t.show);
+  });
+  /** The chosen tab, or the first one still shown if it was switched off. */
+  protected readonly activeTab = computed(() => {
+    const tabs = this.tabs();
+    return tabs.find((t) => t.id === this.tab())?.id ?? tabs[0].id;
+  });
 
   /** Every customizable color of the active base theme, with whether it has been changed. */
   private readonly allRows = computed(() => {
@@ -106,19 +123,8 @@ export class NgccColorThemeSwitcher {
     }).filter((c) => c.rows.length > 0);
   });
 
-  protected readonly brandVisible = computed(() => {
-    const q = this.filter().trim().toLowerCase();
-    return (
-      !q ||
-      ['brand', 'primary', 'button', 'interactive', 'chart', 'highlight'].some((w) =>
-        w.includes(q),
-      ) ||
-      this.brandTokens.some((t) => t.includes(q))
-    );
-  });
-
   protected readonly nothingMatches = computed(
-    () => !!this.filter().trim() && !this.brandVisible() && this.categories().length === 0,
+    () => !!this.filter().trim() && this.categories().length === 0,
   );
 
   protected readonly modifiedCount = computed(
@@ -126,19 +132,42 @@ export class NgccColorThemeSwitcher {
   );
   protected readonly themeHasOverrides = computed(() => this.modifiedCount() > 0);
 
-  protected isOpen(id: string): boolean {
-    return !!this.filter().trim() || this.opened().has(id);
-  }
+  /** The color being edited on the right. Falls back to the first listed color. */
+  protected readonly selectedKey = signal<NgccThemeColorToken | null>(null);
+  protected readonly selectedRow = computed(() => {
+    const visible = this.categories().flatMap((c) => c.rows);
+    return visible.find((r) => r.key === this.selectedKey()) ?? visible[0] ?? null;
+  });
 
-  protected onToggle(id: string, event: Event): void {
-    if (this.filter().trim()) return; // searching expands everything; don't record that
-    const open = (event.target as HTMLDetailsElement).open;
-    this.opened.update((set) => {
-      const next = new Set(set);
-      if (open) next.add(id);
-      else next.delete(id);
-      return next;
-    });
+  /** A paste-ready override for the selected color (static colors only). */
+  protected readonly selectedSnippet = computed(() => {
+    const row = this.selectedRow();
+    if (!row) return '';
+    const lines = row.cssVars.map((v) => `  ${v}: ${row.value};`).join('\n');
+    return `:root[data-carbon-theme='${this.baseTheme()}'] {\n${lines}\n}`;
+  });
+
+  /** Arrow keys move between tabs (roving tabindex). */
+  protected onTabKeydown(event: KeyboardEvent): void {
+    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
+    if (!keys.includes(event.key)) return;
+    event.preventDefault();
+    const tabs = this.tabs();
+    const at = tabs.findIndex((t) => t.id === this.activeTab());
+    const next =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? tabs.length - 1
+          : (at + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+    this.tab.set(tabs[next].id);
+    queueMicrotask(() =>
+      (
+        (event.currentTarget as HTMLElement).parentElement?.querySelector(
+          `#ngcc-cts-tab-${tabs[next].id}`,
+        ) as HTMLElement | null
+      )?.focus(),
+    );
   }
 
   /** Text field draft; follows the real brand color whenever it changes elsewhere. */
@@ -228,6 +257,10 @@ export class NgccColorThemeSwitcher {
 
   protected async copyToken(name: string): Promise<void> {
     await this.copy(name, `${name} copied`);
+  }
+
+  protected async copySnippet(): Promise<void> {
+    await this.copy(this.selectedSnippet(), 'CSS copied');
   }
 
   protected async copyCss(): Promise<void> {
