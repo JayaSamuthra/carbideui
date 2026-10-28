@@ -156,6 +156,9 @@ export * from './lib/ngcc-sparkline/public-api';
 // Page header
 export * from './lib/ngcc-page-header/public-api';
 
+// stepper
+export * from './lib/ngcc-stepper/public-api';
+
 // avatar
 export * from './lib/ngcc-avatar/public-api';
 
