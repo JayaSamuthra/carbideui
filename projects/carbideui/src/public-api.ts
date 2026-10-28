@@ -153,6 +153,12 @@ export * from './lib/ngcc-tile/public-api';
 export * from './lib/ngcc-stat-tile/public-api';
 export * from './lib/ngcc-sparkline/public-api';
 
+// Page header
+export * from './lib/ngcc-page-header/public-api';
+
+// layout
+export * from './lib/ngcc-layout/public-api';
+
 // Tag
 export * from './lib/ngcc-tag/public-api';
 
