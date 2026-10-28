@@ -159,6 +159,9 @@ export * from './lib/ngcc-page-header/public-api';
 // avatar
 export * from './lib/ngcc-avatar/public-api';
 
+// popover
+export * from './lib/ngcc-popover/public-api';
+
 // layout
 export * from './lib/ngcc-layout/public-api';
 
