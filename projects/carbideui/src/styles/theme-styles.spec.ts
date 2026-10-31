@@ -106,3 +106,24 @@ describe('theme-button-align', () => {
     expect(css).not.toContain('border-radius');
   });
 });
+
+describe('content-switcher', () => {
+  const css = compile('_content-switcher.scss');
+
+  it('styles wrapped options by position, not by Carbon sibling selectors', () => {
+    expect(css).toMatch(
+      /ngcc-content-switcher-option:first-child > \.cds--content-switcher-btn \{/,
+    );
+    expect(css).toMatch(/ngcc-content-switcher-option:last-child > \.cds--content-switcher-btn \{/);
+  });
+
+  it('restores the divider between neighbours', () => {
+    expect(css).toMatch(
+      /ngcc-content-switcher-option:not\(:first-child\) > \.cds--content-switcher-btn::before \{\s*background-color: var\(--cds-border-subtle\)/,
+    );
+  });
+
+  it('does not use !important', () => {
+    expect(css).not.toContain('!important');
+  });
+});

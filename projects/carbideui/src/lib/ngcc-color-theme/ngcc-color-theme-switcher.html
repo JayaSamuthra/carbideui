@@ -20,9 +20,9 @@
         <button
           type="button"
           class="ngcc--chip ngcc-seg__btn"
-          [class.ngcc-seg__btn--on]="activePreset() === ''"
-          [attr.aria-pressed]="activePreset() === ''"
-          (click)="resetOverrides()"
+          [class.ngcc-seg__btn--on]="activePreset() === 'carbon'"
+          [attr.aria-pressed]="activePreset() === 'carbon'"
+          (click)="selectCarbon()"
         >
           Carbon
         </button>

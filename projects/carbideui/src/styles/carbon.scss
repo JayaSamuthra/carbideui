@@ -4,4 +4,5 @@
 // supports the legacy data-carbon-theme="rounded|curved|centered" values) comes last.
 @use 'theme-corners';
 @use 'theme-button-align';
+@use 'content-switcher';
 @use 'custom-themes' as *;

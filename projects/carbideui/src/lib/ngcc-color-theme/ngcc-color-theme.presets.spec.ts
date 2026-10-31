@@ -214,6 +214,32 @@ describe('NGCC_COLOR_THEME_PRESETS', () => {
       expect(second.brandColor()).toBe('#0f62fe');
     });
 
+    it('reports the default preset as active on load, not Carbon', () => {
+      expect(create({ defaultPreset: 'ocean' }).activePresetId()).toBe('ocean');
+      expect(create({}).activePresetId()).toBe('carbon');
+    });
+
+    it('resetToCarbon reaches plain Carbon even with a default preset, and survives reload', () => {
+      const first = create({ defaultPreset: 'ocean' });
+      first.resetToCarbon();
+      expect(first.brandColor()).toBe('#0f62fe');
+      expect(first.themeColorOverrides()).toEqual({});
+      expect(first.activePresetId()).toBe('carbon');
+      TestBed.tick();
+      vi.advanceTimersByTime(300);
+
+      const second = create({ defaultPreset: 'ocean' });
+      expect(second.activePresetId()).toBe('carbon');
+      second.resetOverrides();
+      expect(second.activePresetId()).toBe('ocean');
+    });
+
+    it('activePresetId is empty once the colors are customized', () => {
+      const color = create({ defaultPreset: 'ocean' });
+      color.updateBrandColor('#d02670');
+      expect(color.activePresetId()).toBe('');
+    });
+
     it('reset returns to the default preset, not to Carbon', () => {
       const color = create({ defaultPreset: 'ember' });
       color.setThemeColor('g90', 'background', '#222222');
