@@ -1,0 +1,27 @@
+// Tab sizing for enterprise screens. Carbon grows every tab to fill the row (`flex: 1 0 auto`),
+// which gives uneven widths for few tabs and no cap for long labels.
+$tab-min: 7rem;
+$tab-max: 20rem;
+
+.ngcc--tabs__list {
+  // 2–4 tabs: equal widths. The minimum keeps labels readable; below it the list scrolls
+  // instead of squeezing the labels.
+  &.ngcc--tabs__list--equal .cds--tabs__nav-item {
+    flex: 1 1 0;
+    min-inline-size: $tab-min;
+  }
+
+  // 5+ tabs: width follows the label, and the list scrolls when it does not fit.
+  &:not(.ngcc--tabs__list--equal) .cds--tabs__nav-item {
+    flex: 0 0 auto;
+    max-inline-size: $tab-max;
+  }
+
+  // A long label never wraps; it is cut with an ellipsis (full text shown as a tooltip).
+  .cds--tabs__nav-text {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

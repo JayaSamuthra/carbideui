@@ -277,6 +277,30 @@ export class NgccColorThemeService {
     return true;
   }
 
+  /** Plain Carbon: Carbon's blue and no customization, whatever default the app configured. */
+  resetToCarbon(): void {
+    this.brandColor.set(NgccColorThemeService.FALLBACK_BRAND_COLOR);
+    this.themeColorOverrides.set({});
+  }
+
+  /**
+   * Which starting point the current colors match: a preset id, `'carbon'` for plain Carbon, or
+   * `''` once customized. Follows the real state, so it is right on load and after a reload.
+   */
+  readonly activePresetId = computed<string>(() => {
+    const brand = this.brandColor();
+    const overrides = this.themeColorOverrides();
+    if (brand === NgccColorThemeService.FALLBACK_BRAND_COLOR && this.sameOverrides(overrides, {})) {
+      return 'carbon';
+    }
+    const match = NGCC_COLOR_THEME_PRESETS.find(
+      (p) =>
+        normalizeHexColor(p.brandColor) === brand &&
+        this.sameOverrides(overrides, this.sanitizeOverrides(p.themeColors)),
+    );
+    return match?.id ?? '';
+  });
+
   /** Remove one override (token given) or every override of a theme. */
   resetThemeColors(theme: CarbonThemeName, token?: NgccThemeColorToken): void {
     this.themeColorOverrides.update((all) => {

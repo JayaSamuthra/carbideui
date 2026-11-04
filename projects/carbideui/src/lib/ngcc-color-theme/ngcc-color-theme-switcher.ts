@@ -69,7 +69,7 @@ export class NgccColorThemeSwitcher {
 
   /** Built-in color themes offered as one-click starting points. */
   protected readonly colorPresets = NGCC_COLOR_THEME_PRESETS;
-  protected readonly activePreset = signal('');
+  protected readonly activePreset = this.colorService.activePresetId;
   protected readonly brandTokens = NGCC_BRAND_TOKEN_NAMES;
 
   /** Search over color names, descriptions and CSS token names. */
@@ -245,13 +245,16 @@ export class NgccColorThemeSwitcher {
 
   protected resetOverrides(): void {
     this.colorService.resetOverrides();
-    this.activePreset.set('');
     this.announce('Color theme reset to defaults');
+  }
+
+  protected selectCarbon(): void {
+    this.colorService.resetToCarbon();
+    this.announce('Carbon color theme applied');
   }
 
   protected applyColorPreset(preset: NgccColorThemePreset): void {
     if (!this.colorService.applyPreset(preset)) return;
-    this.activePreset.set(preset.id);
     this.announce(`${preset.name} color theme applied`);
   }
 
