@@ -626,21 +626,24 @@ onDelete(): void {
 - **Router support**: Optional route binding
 - **Keyboard navigation**: Arrow keys to switch tabs
 - **Tab order**: Tab key navigation
+- **Sizing (1.4.1)**: 2–4 tabs share the row in equal widths; 5 or more size to their label. A list that does
+  not fit scrolls horizontally (labels are never squeezed below 7rem), labels never wrap, and a label longer
+  than 20rem is cut with an ellipsis and shown in full as a tooltip.
 
 **Example**:
 ```typescript
 <ngcc-tabs>
-  <ngcc-tab label="Overview">
+  <ngcc-tab heading="Overview">
     <h3>Overview Content</h3>
     <p>Main information here</p>
   </ngcc-tab>
   
-  <ngcc-tab label="Details">
+  <ngcc-tab heading="Details">
     <h3>Details</h3>
     <p>Detailed information</p>
   </ngcc-tab>
   
-  <ngcc-tab label="Settings">
+  <ngcc-tab heading="Settings">
     <h3>Settings</h3>
     <p>Configuration options</p>
   </ngcc-tab>
