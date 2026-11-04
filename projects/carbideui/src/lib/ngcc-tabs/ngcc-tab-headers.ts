@@ -35,6 +35,7 @@ import { filter } from 'rxjs';
   standalone: true,
   imports: [NgTemplateOutlet],
   templateUrl: './ngcc-tab-headers.html',
+  styleUrl: './ngcc-tab-headers.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(keydown)': 'onKeyDown($event)',
@@ -97,6 +98,18 @@ export class NgccTabHeaders
         });
       }
     });
+  }
+
+  /**
+   * Shows the full label as a tooltip only when it is cut off.
+   */
+  protected onTabHover(event: MouseEvent, tab: NgccTab): void {
+    const button = event.currentTarget as HTMLElement;
+    const text = button.querySelector<HTMLElement>('.cds--tabs__nav-text');
+    const heading = tab.heading();
+    if (!text || typeof heading !== 'string') return;
+    if (text.scrollWidth > text.clientWidth) button.setAttribute('title', heading.trim());
+    else button.removeAttribute('title');
   }
 
   ngOnInit(): void {

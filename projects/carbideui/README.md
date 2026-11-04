@@ -25,6 +25,7 @@ An independent, community-driven Angular component library inspired by the [Carb
   - [Tooltip & Skeleton](#tooltip--skeleton)
   - [Navigation — Tabs & Accordion](#navigation--tabs--accordion)
   - [Charts](#charts)
+  - [Layout & Display](#layout--display)
   - [Theming](#theming)
 - [Reactive Forms](#reactive-forms)
 - [Accessibility](#accessibility)
@@ -54,10 +55,11 @@ Add the following to your global stylesheet (`src/styles.scss`):
 );
 
 @use '@carbon/styles';
-@use '@assistanz/carbideui/styles';
+@use '@assistanz/carbideui/styles/carbon';
 ```
 
-> Without this, components will render unstyled.
+> Without this, components will render unstyled. The path is `styles/carbon`; `@assistanz/carbideui/styles`
+> alone does not resolve.
 
 ---
 
@@ -111,6 +113,54 @@ import { NgccInput } from '@assistanz/carbideui';
   helperText="We'll never share your email"
 />
 ```
+---
+
+### Layout & Display
+
+New in 1.4.0: `ngcc-page-header` (breadcrumbs, title, actions), `ngcc-stepper` (multi-step progress),
+`ngcc-avatar`, `ngcc-popover` (non-modal), `ngcc-page-grid` with `ngccGridSpan`, and `ngcc-panel-grid`.
+
+```html
+<ngcc-stepper [steps]="steps" [(current)]="step" ariaLabel="Create client" />
+
+<ngcc-popover label="Cluster details" placement="bottom-start">
+  <button ngccPopoverTrigger class="cds--btn cds--btn--ghost">Details</button>
+  <p>Region eu-west-1, 12 nodes</p>
+</ngcc-popover>
+
+<ngcc-avatar name="Ada Lovelace" size="lg" />
+```
+
+Charts also gain `stackedArea`, `combo`, `horizontalBar` and `heatmap` types, threshold lines, and
+`ngcc-sparkline` / `[sparkline]` trends on `ngcc-stat-tile`. Tables gain status cells, expandable rows and
+single-row selection. Tabs use equal widths for 2–4 tabs, content width with horizontal scrolling from 5, and
+show a tooltip when a label is cut off.
+
+### Theming
+
+Three independent settings, each an attribute on `<html>`, owned by `NgccThemeService`:
+
+| Setting                | Values                             |
+| ---------------------- | ---------------------------------- |
+| Color theme            | `white`, `g10`, `g90`, `g100`      |
+| Corner style           | `square`, `rounded`, `curved`      |
+| Button label alignment | `left`, `centered`                 |
+
+Apply a theme at start-up, with an optional ready-made color theme (`ocean`, `royal` or `ember`):
+
+```typescript
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideNgccTheme({ defaultTheme: 'white' }),
+    provideNgccColorTheme({ defaultPreset: 'ocean' }),
+  ],
+});
+```
+
+Users can change these at runtime with `<ngcc-theme-switcher />` and `<ngcc-color-theme-switcher />`; their
+choice is saved and wins over your defaults. See the
+[V1.4.0 usage reference](https://github.com/assistanz/carbideui/blob/main/docs/V1.4.0_USAGE_REFERENCE.md).
+
 ---
 
 ## Reactive Forms
@@ -183,11 +233,10 @@ bootstrapApplication(AppComponent);
 ```
 
 **Theme does not change**
-Use the signal setter — direct assignment does not trigger reactivity:
+Use `NgccThemeService`, which is the only owner of the theme attributes. Do not set `data-carbon-theme` yourself.
 
 ```typescript
-this.themeService.baseTheme.set('g90');  // correct
-this.themeService.baseTheme = 'g90';     // does not work
+inject(NgccThemeService).setTheme('g90');
 ```
 
 ---
@@ -196,8 +245,8 @@ this.themeService.baseTheme = 'g90';     // does not work
 
 | Dependency      | Version            |
 | --------------- | ------------------ |
-| Angular         | ^20.0.0            |
-| @carbon/styles  | ^1.98.0            |
+| Angular         | >=20 <22           |
+| @carbon/styles  | ^1.102.0           |
 | @carbon/charts  | ^1.27.0            |
 | TypeScript      | ~5.9               |
 | Node.js         | >=20               |
@@ -208,7 +257,8 @@ this.themeService.baseTheme = 'g90';     // does not work
 
 - [GitHub Repository](https://github.com/assistanz/carbideui)
 - [Storybook / Interactive Docs](https://assistanz.github.io/carbideui)
-- [Component Usage Reference](https://github.com/assistanz/carbideui/blob/main/COMPONENT_USAGE_REFERENCE.md)
+- [Component Usage Reference](https://github.com/assistanz/carbideui/blob/main/docs/COMPONENT_USAGE_REFERENCE.md)
+- [Release Notes 1.4.0](https://github.com/assistanz/carbideui/blob/main/docs/RELEASE_NOTES_1.4.0.md)
 - [Changelog](https://github.com/assistanz/carbideui/blob/main/CHANGELOG.md)
 - [Issue Tracker](https://github.com/assistanz/carbideui/issues)
 - [Contributing Guide](https://github.com/assistanz/carbideui/blob/main/.github/CONTRIBUTING.md)
