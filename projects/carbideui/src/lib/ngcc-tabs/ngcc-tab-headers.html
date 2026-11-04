@@ -27,7 +27,8 @@
 <!-- TAB LIST -->
 <div
   #tabList
-  class="cds--tab--list"
+  class="cds--tab--list ngcc--tabs__list"
+  [class.ngcc--tabs__list--equal]="tabsArray.length <= 4"
   role="tablist"
   [attr.aria-label]="ariaLabel()"
   (scroll)="handleScroll()"
@@ -51,6 +52,7 @@
       [attr.id]="tab.id() + '-header'"
       (click)="selectTab(tab, i)"
       (focus)="onTabFocus(i)"
+      (mouseenter)="onTabHover($event, tab)"
     >
       <!-- ROUTER-LINK / CUSTOM TEMPLATE SUPPORT -->
       @if (tab.headingIsTemplate()) {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,21 @@ import { NgccTabHeaders } from './ngcc-tab-headers';
 import { NgccTabsSkeleton } from './ngcc-tab-skeleton';
 import { NgccTabType, NgccTabPosition } from './ngcc-tabs.types';
 import { runAxe } from '../../test-utils/a11y';
+
+@Component({
+  template: `
+    <ngcc-tabs [aria-label]="'Sized tabs'">
+      @for (h of headings(); track h) {
+        <ngcc-tab [heading]="h">Content</ngcc-tab>
+      }
+    </ngcc-tabs>
+  `,
+  standalone: true,
+  imports: [CommonModule, NgccTabs, NgccTab],
+})
+class SizedTabsTestHost {
+  headings = signal(['One', 'Two', 'Three']);
+}
 
 // ─────────────────────────────────────────────
 // Test Host Components
@@ -366,6 +381,39 @@ describe('NgccTabs', () => {
 
       const tabs = getTabsElement().componentInstance.tabs();
       expect(tabs[1].active()).toBe(true);
+    });
+  });
+
+  describe('Sizing', () => {
+    const list = (f: ComponentFixture<SizedTabsTestHost>): HTMLElement =>
+      f.nativeElement.querySelector('.ngcc--tabs__list');
+
+    it('uses equal widths for 2-4 tabs and content width from 5', () => {
+      const f = TestBed.createComponent(SizedTabsTestHost);
+      f.detectChanges();
+      expect(list(f).classList).toContain('ngcc--tabs__list--equal');
+      f.componentInstance.headings.set(['A', 'B', 'C', 'D']);
+      f.detectChanges();
+      expect(list(f).classList).toContain('ngcc--tabs__list--equal');
+      f.componentInstance.headings.set(['A', 'B', 'C', 'D', 'E']);
+      f.detectChanges();
+      expect(list(f).classList).not.toContain('ngcc--tabs__list--equal');
+    });
+
+    it('adds a tooltip only when the label is cut off', () => {
+      const f = TestBed.createComponent(SizedTabsTestHost);
+      f.detectChanges();
+      const button: HTMLElement = f.nativeElement.querySelector('[role="tab"]');
+      const text = button.querySelector<HTMLElement>('.cds--tabs__nav-text')!;
+      const size = (scroll: number, client: number): void => {
+        Object.defineProperty(text, 'scrollWidth', { configurable: true, value: scroll });
+        Object.defineProperty(text, 'clientWidth', { configurable: true, value: client });
+        button.dispatchEvent(new MouseEvent('mouseenter'));
+      };
+      size(200, 100);
+      expect(button.getAttribute('title')).toBe('One');
+      size(80, 100);
+      expect(button.hasAttribute('title')).toBe(false);
     });
   });
 
