@@ -37,6 +37,9 @@ export class NgccDropdown<T = unknown> implements ControlValueAccessor, OnChange
 
   private static idCounter = 0;
   readonly inputId = `ngcc-dropdown-${NgccDropdown.idCounter++}`;
+  protected readonly labelId = `${this.inputId}-label`;
+  protected readonly errorId = `${this.inputId}-error`;
+  protected readonly listboxId = `${this.inputId}-listbox`;
 
   // === @Input properties ===
   @Input() label: string | undefined = undefined;
