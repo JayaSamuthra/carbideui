@@ -943,6 +943,22 @@ export class AppComponent {}`;
 </ngcc-header-panel>
 ```
 
+**Panel options (1.5.0)**: the panel is a non-modal `dialog`. `width` (or `--ngcc-header-panel-width`) sets
+its width (default 16rem, capped to the viewport). Escape and an outside click emit `(closed)`; set `expanded`
+to false in response (`[closeOnOutsideClick]="false"` turns the click off). Focus returns to the opener, and a
+collapsed panel is `inert`.
+
+**Notification list (1.5.0)**: `<ngcc-notification-list [items]="items" [labels]="{ markAllRead: '…' }" />`.
+`labels` translates every fixed string (`markAllRead`, `clearAll`, `unread`, `unreadCount` with `{count}`,
+`dismiss` with `{title}`, `severityInfo|Success|Warning|Error`). The header actions collapse to icons in a
+narrow list, and each item shows a severity icon and text, not only a colored edge. Also: `loading`,
+`error` + `(retry)`, `emptyTitle` / `emptyDescription`, `groupBy="day"` with item `time`, `messageLines`,
+item `href` / `routerLink`, `(markRead)`, `hasMore` + `(loadMore)`, `announceNew`, `countVariant`, and the
+`[ngccNotificationFooter]` slot. Full list: `docs/release_notes/RELEASE_NOTES_1.5.0.md`.
+
+**Header action badge (1.5.0)**: `<ngcc-header-action iconName="notification" ariaLabel="Notifications" [badge]="unread" />`
+(`badge` is a count or `'dot'`; the count is announced in the button's name).
+
 ---
 
 ### 18. NgccSideNav
