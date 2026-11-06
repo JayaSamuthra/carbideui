@@ -1326,6 +1326,21 @@ Non-modal detail popover (no backdrop). Mark the trigger with `ngccPopoverTrigge
 `placement` takes 12 values (`top`, `bottom-start`, `right-end`, …); `caret` shows the pointer. The trigger gets
 `aria-expanded`, `aria-controls` and `aria-haspopup="dialog"`.
 
+### 23j. NgccFormField (1.5.0)
+
+```html
+<ngcc-form-field label="Hostname" [optional]="true" helperText="Letters and digits" [error]="hostError()"
+  tooltip="Used in the instance URL">
+  <input class="cds--text-input" formControlName="host" />
+</ngcc-form-field>
+```
+
+One label, helper, error and tooltip layout for any control. The first input, select, textarea or combobox
+inside is linked for you (`for`, `aria-describedby`, `aria-invalid`, `aria-required`); ids you set on
+`aria-describedby` are kept. `required` draws an asterisk, `optional` writes "(optional)" (translate with
+`optionalLabel`). Use it with native controls or controls that do not draw their own label. Also new:
+`<ngcc-accordion-item [(expanded)]="open">` to open a section from code.
+
 ### 23i. Layout helpers
 
 ```html
