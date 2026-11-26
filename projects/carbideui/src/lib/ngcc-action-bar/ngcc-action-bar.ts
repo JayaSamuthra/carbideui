@@ -77,7 +77,9 @@ export class NgccActionBar {
       if (!el || !this.isBrowser) return;
       this.height.set(el.offsetHeight || 64);
       if (typeof ResizeObserver === 'undefined') return;
-      const ro = new ResizeObserver(() => this.height.set(el.offsetHeight || 64));
+      // Typed constructor: CodeQL's bundled lib models ResizeObserver without a callback parameter.
+      const Observer: new (callback: ResizeObserverCallback) => ResizeObserver = ResizeObserver;
+      const ro = new Observer(() => this.height.set(el.offsetHeight || 64));
       ro.observe(el);
       inject(DestroyRef).onDestroy(() => ro.disconnect());
     });
