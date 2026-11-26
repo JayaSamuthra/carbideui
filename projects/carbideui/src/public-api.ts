@@ -195,3 +195,5 @@ export * from './lib/ngcc-filter-bar/public-api';
 
 // Overflow Menu
 export * from './lib/ngcc-overflow-menu/public-api';
+
+export * from './lib/ngcc-multi-select/public-api';
