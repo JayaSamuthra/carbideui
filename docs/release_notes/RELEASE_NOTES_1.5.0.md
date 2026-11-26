@@ -83,10 +83,61 @@ Required fields get an asterisk, optional ones get "(optional)" (`optionalLabel`
 </ngcc-form-field>
 ```
 
+### Consistent labels: `optional` and `tooltip` on every form component
+
+`ngcc-input`, `ngcc-input-number`, `ngcc-text-area`, `ngcc-dropdown` and `ngcc-multi-select` take `optional`,
+`optionalLabel` and `tooltip`, like `ngcc-form-field` (`ngcc-radio-tile-group` takes `optional`). Required shows
+an asterisk and optional shows "(optional)". They share one internal label component, so the markup and
+accessibility behavior are identical. Keep using each component's own `label`, `helperText` and error:
+`ngcc-form-field` is for native and third-party controls, and in development it warns when it wraps a
+component that already has its own label.
+
+Fix: the `ngcc-dropdown` label pointed (`for`) at an id nothing carried. The trigger now has that id, so
+clicking the label focuses the dropdown.
+
 ### `ngcc-accordion-item`: `[(expanded)]`
 
 A two-way open state, so a form can open a section that holds an error or start one open. Leave it unset to
 keep `defaultOpen`. Toggles by the user and by the accordion (single-open mode) are written back to the model.
+
+### New: `ngcc-multi-select`
+
+Searchable multi-select: chips with remove, group headings, "Select all" (acts on the matches), creating new
+values (`creatable`, which with no options is a tag input), loading and error states with Retry, a keyboard
+model and polite result announcements. Works with `[(value)]` and Angular forms. Texts go through `labels`.
+
+### New: `ngcc-radio-tile-group`
+
+One-of-many tiles with a selected state and a description line, built on native radio inputs inside Carbon's
+selectable tile (arrow keys and screen reader semantics come from the browser). Works with Angular forms.
+
+### New: `ngcc-section-nav`
+
+Sticky "on this page" list: follows scrolling, jumps to a section (and moves focus there), and can flag
+sections with `error`, `warning` or `complete` (written out for screen readers, not colour alone).
+
+### New: `ngcc-action-bar`
+
+Bottom bar for form actions with a status area (polite live region). Sticks to its scroll container, or
+`fixed` to the viewport with a spacer so the last content is never covered.
+
+### New: `ngcc-summary-tile`
+
+Description-list tile for a live summary: empty values show an em dash read as "Not set", a header slot takes a
+status tag.
+
+### `ngcc-input-number`: units and stepping
+
+`prefix` and `suffix` show a unit inside the field and are added to the accessible name. ArrowUp/ArrowDown now
+step by `step` within `min`/`max` (the `step` input previously only set an attribute).
+
+### `ngcc-table`: editable cells
+
+Columns take `editor: 'text' | 'number' | 'select'` (with `options`, `min`, `max`, `step`), per-column
+`validate`, a table-level `rowValidator`, and a `<ng-template ngccTableCell="key">` for custom cells. Edits are
+written into the row object and reported by `cellEdit`, so the rows array is not replaced and selection,
+sorting and paging are kept. `validate()` checks every row on every page; `validityChange` reports when the
+table flips between valid and invalid.
 
 ## Fixes
 
@@ -115,9 +166,7 @@ better describes a transient overlay. Update tests or selectors that look for `r
 
 ## Not in this release
 
-From the form-kit request: the filterable multi-select with chips (the largest item), number input props and
-units, radio tiles, the editable table, section navigation, the sticky action bar, tag input and the summary
-tile.
+The form-kit request is covered. Tag input is the multi-select with `creatable` (no separate component).
 
 The panel does not read the header's own theme automatically (you set `--ngcc-header-panel-background`),
 and `NgccI18nService` is not wired in; pass translated strings through `labels`.
