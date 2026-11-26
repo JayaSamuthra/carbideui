@@ -197,3 +197,10 @@ export * from './lib/ngcc-filter-bar/public-api';
 export * from './lib/ngcc-overflow-menu/public-api';
 
 export * from './lib/ngcc-multi-select/public-api';
+
+// Form building blocks
+
+export * from './lib/ngcc-radio-tile/public-api';
+export * from './lib/ngcc-section-nav/public-api';
+export * from './lib/ngcc-action-bar/public-api';
+export * from './lib/ngcc-summary-tile/public-api';
