@@ -4,7 +4,7 @@ import { NgccInput } from '../ngcc-input/ngcc-input-text/ngcc-input';
 import { NgccInputNumber } from '../ngcc-input/ngcc-input-number/ngcc-input-number';
 import { NgccTextAreaComponent } from '../ngcc-input/ngcc-textarea/ngcc-text-area';
 import { NgccDropdown } from '../ngcc-dropdown/ngcc-dropdown';
-// import { NgccMultiSelect } from '../ngcc-multi-select/ngcc-multi-select';
+import { NgccMultiSelect } from '../ngcc-multi-select/ngcc-multi-select';
 import { NgccFormField } from '../ngcc-form-field/ngcc-form-field';
 import { runAxe } from '../../test-utils/a11y';
 
@@ -15,7 +15,7 @@ import { runAxe } from '../../test-utils/a11y';
     NgccInputNumber,
     NgccTextAreaComponent,
     NgccDropdown,
-    // NgccMultiSelect,
+    NgccMultiSelect,
     NgccFormField,
   ],
   template: `
@@ -23,7 +23,7 @@ import { runAxe } from '../../test-utils/a11y';
     <ngcc-input-number label="Number" [optional]="true" tooltip="Number help" />
     <ngcc-text-area label="Area" [optional]="true" tooltip="Area help" />
     <ngcc-dropdown label="Drop" [optional]="true" tooltip="Drop help" [options]="[]" />
-    <!-- <ngcc-multi-select label="Multi" [optional]="true" tooltip="Multi help" [options]="[]" /> -->
+    <ngcc-multi-select label="Multi" [optional]="true" tooltip="Multi help" [options]="[]" />
     <ngcc-form-field label="Native" [optional]="true" tooltip="Native help"
       ><input
     /></ngcc-form-field>
