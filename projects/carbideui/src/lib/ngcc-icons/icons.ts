@@ -1,5 +1,19 @@
 // icons.ts
-export const ICONS = {
+import {
+  billingIcons,
+  cloudInfrastructureIcons,
+  commonUiIcons,
+  computeIcons,
+  kubernetesIcons,
+  monitoringIcons,
+  networkingIcons,
+  operationsIcons,
+  securityIcons,
+  storageIcons,
+} from './categories';
+
+/** Original icons. Names are part of the public API — do not rename or remove. */
+const CORE_ICONS = {
   add: {
     svg: `<path d="M17 15V7h-2v8H7v2h8v8h2v-8h8v-2h-8z"></path>`,
     viewBox: '0 0 32 32',
@@ -321,6 +335,24 @@ export const ICONS = {
     svg: `<circle cx="9" cy="6" r="1"/><path d="M26,10H6A2.0021,2.0021,0,0,1,4,8V4A2.0021,2.0021,0,0,1,6,2H26a2.0021,2.0021,0,0,1,2,2V8A2.0021,2.0021,0,0,1,26,10ZM6,4V8H26V4Z"/><circle cx="9" cy="16" r="1"/><path d="M26,20H6a2.0021,2.0021,0,0,1-2-2V14a2.0021,2.0021,0,0,1,2-2H26a2.0021,2.0021,0,0,1,2,2v4A2.0021,2.0021,0,0,1,26,20ZM6,14v4H26V14Z"/><circle cx="9" cy="26" r="1"/><path d="M26,30H6a2.0021,2.0021,0,0,1-2-2V24a2.0021,2.0021,0,0,1,2-2H26a2.0021,2.0021,0,0,1,2,2v4A2.0021,2.0021,0,0,1,26,30ZM6,24v4H26V24Z"/>`,
     viewBox: '0 0 32 32',
   },
+} as const;
+
+/**
+ * Combined registry. Cloud icon sets live in ./categories (one file per category) and are
+ * also exported individually, so apps that only need one set can import it directly.
+ */
+export const ICONS = {
+  ...cloudInfrastructureIcons,
+  ...computeIcons,
+  ...networkingIcons,
+  ...storageIcons,
+  ...kubernetesIcons,
+  ...securityIcons,
+  ...monitoringIcons,
+  ...billingIcons,
+  ...operationsIcons,
+  ...commonUiIcons,
+  ...CORE_ICONS,
 } as const;
 
 //  Extract a union type from keys

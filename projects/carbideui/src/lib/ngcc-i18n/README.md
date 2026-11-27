@@ -13,7 +13,7 @@ A modern, signals-based internationalization (i18n) solution for Angular applica
 ✅ **TypeScript Support** - Full type safety with interfaces  
 ✅ **No Dependencies** - No external i18n libraries required  
 ✅ **HTTP Loader** - Built-in loader for JSON translation files  
-✅ **Custom Loaders** - Easily implement custom loaders for any data source  
+✅ **Custom Loaders** - Easily implement custom loaders for any data source
 
 ## Installation
 
@@ -49,6 +49,7 @@ bootstrapApplication(AppComponent, {
 Create JSON files in `public/assets/i18n/`:
 
 **en.json:**
+
 ```json
 {
   "greeting": "Hello",
@@ -58,6 +59,7 @@ Create JSON files in `public/assets/i18n/`:
 ```
 
 **fr.json:**
+
 ```json
 {
   "greeting": "Bonjour",
@@ -69,6 +71,7 @@ Create JSON files in `public/assets/i18n/`:
 ### 3. Use in Components
 
 **Using the Service:**
+
 ```typescript
 import { Component, OnInit, inject } from '@angular/core';
 import { NgccI18nService } from '@carbideui/components';
@@ -95,6 +98,7 @@ export class AppComponent implements OnInit {
 ```
 
 **Using the Pipe in Templates:**
+
 ```typescript
 import { Component } from '@angular/core';
 import { NgccI18nPipe } from '@carbideui/components';
@@ -134,12 +138,13 @@ export class DemoComponent {}
 Standalone pipe for use in templates.
 
 **Syntax:**
+
 ```html
-{{ key | ngccI18n }}
-{{ key | ngccI18n: { param1: value1, param2: value2 } }}
+{{ key | ngccI18n }} {{ key | ngccI18n: { param1: value1, param2: value2 } }}
 ```
 
 **Examples:**
+
 ```html
 <!-- Simple translation -->
 <h1>{{ 'page_title' | ngccI18n }}</h1>
@@ -148,9 +153,7 @@ Standalone pipe for use in templates.
 <p>{{ 'user_greeting' | ngccI18n: { name: userName } }}</p>
 
 <!-- In loops -->
-<div *ngFor="let item of items">
-  {{ item.labelKey | ngccI18n: { count: item.count } }}
-</div>
+<div *ngFor="let item of items">{{ item.labelKey | ngccI18n: { count: item.count } }}</div>
 ```
 
 ### NgccI18nLoader Interface
@@ -167,11 +170,11 @@ interface NgccI18nLoader {
 
 ```typescript
 interface NgccI18nConfig {
-  defaultLanguage?: string;        // Default: 'en'
-  fallbackLanguage?: string;       // Default: 'en'
-  loader: NgccI18nLoader;           // Required
+  defaultLanguage?: string; // Default: 'en'
+  fallbackLanguage?: string; // Default: 'en'
+  loader: NgccI18nLoader; // Required
   cache?: Map<string, Record<string, string>>; // Optional
-  useBrowserLanguage?: boolean;    // Default: false
+  useBrowserLanguage?: boolean; // Default: false
 }
 ```
 
@@ -262,6 +265,7 @@ const message = i18n.t('welcome', { name: 'Alice', count: 5 });
 ```
 
 Parameter names are case-sensitive and support whitespace around them:
+
 ```html
 {{ 'welcome' | ngccI18n: { name: 'Alice' } }}
 <!-- {{name}}, {{ name }}, {{  name  }} all work -->
@@ -320,6 +324,7 @@ i18n.clearCache();
 ## Browser Support
 
 Works in all modern browsers that support Angular 20+:
+
 - Chrome/Edge 120+
 - Firefox 120+
 - Safari 16+
