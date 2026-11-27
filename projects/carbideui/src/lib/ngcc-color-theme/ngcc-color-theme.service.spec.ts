@@ -163,9 +163,23 @@ describe('NgccColorThemeService', () => {
         '--cds-layer-01:',
         '--cds-field-01:',
         '--cds-layer-hover-01:',
+        '--cds-layer-accent-01:',
+        '--cds-layer-selected-01:',
+        '--cds-layer-active-01:',
       ]) {
         expect(css()).toContain(v);
       }
+    });
+
+    it('derives accent/selected layers, skeleton and text variants from the customized colors', () => {
+      service.setThemeColor('white', 'layer-02', '#ddeeff');
+      service.setThemeColor('white', 'background', '#f8fbfb');
+      service.setThemeColor('white', 'text-secondary', '#2b5050');
+      TestBed.tick();
+      expect(css()).toContain('--cds-layer-accent-02: color-mix(in srgb, #8d8d8d 20%, #ddeeff);');
+      expect(css()).toContain('--cds-skeleton-background:');
+      expect(css()).toContain('--cds-background-selected:');
+      expect(css()).toContain('--cds-text-helper: color-mix(in srgb, #2b5050 75%, transparent);');
     });
 
     it('rejects invalid colors and unknown themes/tokens', () => {

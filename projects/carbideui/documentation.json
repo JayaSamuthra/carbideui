@@ -123,6 +123,41 @@
             "extends": []
         },
         {
+            "name": "IconGroup",
+            "id": "interface-IconGroup-64b59d93fef739744d2e9176c2ecdcba04289357cc94f9b97b5e34d541d0f4bf51e4da5b7c72319c87ad17f0b57fa44974bf9dd6d7eab5b4156f90e9a5ee17ce",
+            "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';\nimport { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';\nimport { NgccIcon } from './ngcc-icon';\nimport * as categorySets from './categories';\nimport { ICONS, NgccIconNameType } from './icons';\n\ninterface IconGroup {\n  title: string;\n  names: string[];\n}\n\nconst CATEGORY_TITLES: Record<string, string> = {\n  cloudInfrastructureIcons: 'Cloud infrastructure',\n  computeIcons: 'Compute & virtual machines',\n  networkingIcons: 'Networking & connectivity',\n  storageIcons: 'Storage management',\n  kubernetesIcons: 'Kubernetes & containers',\n  securityIcons: 'Security & access management',\n  monitoringIcons: 'Monitoring & observability',\n  billingIcons: 'Billing & cost management',\n  operationsIcons: 'Cloud operations & automation',\n  commonUiIcons: 'Common UI',\n};\n\n/** Story-only placement of the original icons into the category groups; anything unlisted goes to Common UI. */\nconst CORE_PLACEMENT: Record<string, string[]> = {\n  'Cloud infrastructure': ['cloud', 'server', 'globe', 'location'],\n  'Compute & virtual machines': ['cpu', 'memory', 'services', 'launch'],\n  'Networking & connectivity': ['network', 'link'],\n  'Storage management': ['disk', 'document', 'save'],\n  'Security & access management': [\n    'lock',\n    'unlock',\n    'user',\n    'user_multi',\n    'user_avatar',\n    'user_admin',\n    'customer',\n    'sign_out',\n  ],\n  'Monitoring & observability': [\n    'activity',\n    'notification',\n    'reports',\n    'information',\n    'info_filled',\n    'warn',\n    'warning_filled',\n    'error',\n    'error_filled',\n    'success_filled',\n  ],\n  'Billing & cost management': ['billing', 'license', 'marketplace', 'tag'],\n  'Cloud operations & automation': [\n    'configuration',\n    'settings_adjust',\n    'renew',\n    'refresh',\n    'export',\n    'upload',\n    'download',\n  ],\n};\n\nfunction buildGroups(): IconGroup[] {\n  const sets = categorySets as Record<string, Record<string, unknown>>;\n  const placed = new Set<string>();\n  const groups: IconGroup[] = Object.keys(CATEGORY_TITLES).map((key) => {\n    const title = CATEGORY_TITLES[key];\n    const core = (CORE_PLACEMENT[title] ?? []).filter((n) => n in ICONS);\n    core.forEach((n) => placed.add(n));\n    return { title, names: [...Object.keys(sets[key]), ...core].sort() };\n  });\n  const categorized = new Set(groups.flatMap((g) => g.names));\n  const rest = Object.keys(ICONS).filter((n) => !categorized.has(n) && !placed.has(n));\n  const common = groups.find((g) => g.title === 'Common UI');\n  common?.names.push(...rest);\n  common?.names.sort();\n  return groups;\n}\n\n@Component({\n  selector: 'ngcc-icon-browser',\n  standalone: true,\n  imports: [NgccIcon],\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  template: `\n    <div style=\"display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem\">\n      <input\n        type=\"search\"\n        class=\"cds--text-input\"\n        style=\"max-width:24rem\"\n        placeholder=\"Search icons (name or category)\"\n        aria-label=\"Search icons\"\n        [value]=\"query()\"\n        (input)=\"query.set($any($event.target).value)\"\n      />\n      <select\n        class=\"cds--select-input\"\n        style=\"max-width:18rem\"\n        aria-label=\"Filter by category\"\n        (change)=\"category.set($any($event.target).value)\"\n      >\n        <option value=\"\">All categories</option>\n        @for (g of groups; track g.title) {\n          <option [value]=\"g.title\">{{ g.title }} ({{ g.names.length }})</option>\n        }\n      </select>\n      <span style=\"font-size:0.875rem\">{{ total() }} icons</span>\n    </div>\n    @for (g of filtered(); track g.title) {\n      <section style=\"margin-bottom:2rem\">\n        <h3 style=\"margin:0 0 0.75rem\">\n          {{ g.title }} <small>({{ g.names.length }})</small>\n        </h3>\n        <div\n          style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(8rem,1fr));gap:0.75rem\"\n        >\n          @for (name of g.names; track name) {\n            <div\n              style=\"display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem;border:1px solid var(--cds-border-subtle, #e0e0e0)\"\n            >\n              <ngcc-icon [name]=\"$any(name)\" size=\"lg\" [decorative]=\"true\"></ngcc-icon>\n              <code style=\"font-size:0.75rem;word-break:break-all;text-align:center\">{{\n                name\n              }}</code>\n            </div>\n          }\n        </div>\n      </section>\n    } @empty {\n      <p>No icons match \"{{ query() }}\".</p>\n    }\n  `,\n})\nclass IconBrowser {\n  readonly groups = buildGroups();\n  readonly query = signal('');\n  readonly category = signal('');\n  readonly filtered = computed<IconGroup[]>(() => {\n    const q = this.query()\n      .trim()\n      .toLowerCase()\n      .replace(/[\\s-]+/g, '_');\n    const cat = this.category();\n    return this.groups\n      .filter((g) => !cat || g.title === cat)\n      .map((g) => ({\n        title: g.title,\n        names:\n          q && !g.title.toLowerCase().includes(q.replace(/_/g, ' '))\n            ? g.names.filter((n) => n.includes(q))\n            : g.names,\n      }))\n      .filter((g) => g.names.length > 0);\n  });\n  readonly total = computed(() => this.filtered().reduce((n, g) => n + g.names.length, 0));\n}\n\nconst meta: Meta<NgccIcon> = {\n  decorators: [moduleMetadata({ imports: [IconBrowser] })],\n  title: 'Components/Icon',\n  component: NgccIcon,\n  tags: ['autodocs'],\n  argTypes: {\n    name: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['sm', 'md', 'lg', 'xl', 2, 3, 4], // presets + numbers\n    },\n    color: { control: 'color' },\n    ariaLabel: { control: 'text' },\n    decorative: { control: 'boolean' },\n    svgClass: { control: 'text' },\n  },\n};\n\nexport default meta;\ntype Story = StoryObj<NgccIcon>;\n\nexport const Default: Story = {\n  args: {\n    name: 'add',\n    size: 'md',\n    color: 'currentColor',\n    ariaLabel: 'Add',\n  },\n};\n\nexport const Sizes: Story = {\n  render: () => ({\n    template: `\n      <div style=\"display: flex; gap: 1rem; align-items: center;\">\n        <ngcc-icon name=\"add\" size=\"sm\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"md\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"xl\"></ngcc-icon>\n        <ngcc-icon name=\"add\" [size]=\"2\"></ngcc-icon>\n      </div>\n    `,\n  }),\n};\n\nexport const Colors: Story = {\n  render: () => ({\n    template: `\n      <div style=\"display: flex; gap: 1rem; align-items: center;\">\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"red\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"green\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"blue\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"#ff9900\"></ngcc-icon>\n      </div>\n    `,\n  }),\n};\n\nexport const Decorative: Story = {\n  args: {\n    name: 'close',\n    size: 'lg',\n    decorative: true,\n  },\n};\n\nexport const WithCustomClass: Story = {\n  args: {\n    name: 'edit',\n    svgClass: 'custom-class',\n  },\n};\n\n/** Searchable gallery grouped by category. Search matches icon names and category titles. */\nexport const AllIcons: Story = {\n  parameters: { controls: { disable: true } },\n  render: () => ({ template: `<ngcc-icon-browser></ngcc-icon-browser>` }),\n};\n",
+            "properties": [
+                {
+                    "name": "names",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string[]",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "title",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 8
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 172,
+            "methods": [],
+            "extends": []
+        },
+        {
             "name": "KpiCard",
             "id": "interface-KpiCard-d4b1a524652b18887c9f9642236635a166a647130714b74d0073f74f0bc05b325ae89786ca644757ee754f40ae0c5daa996c439bd989f446ee58670d9a9c2cd0",
             "file": "projects/carbideui/src/lib/ngcc-header/ngcc-dashboard-page.stories.ts",
@@ -1150,6 +1185,117 @@
             "implements": [
                 "OnDestroy"
             ]
+        },
+        {
+            "name": "IconBrowser",
+            "id": "component-IconBrowser-64b59d93fef739744d2e9176c2ecdcba04289357cc94f9b97b5e34d541d0f4bf51e4da5b7c72319c87ad17f0b57fa44974bf9dd6d7eab5b4156f90e9a5ee17ce",
+            "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+            "changeDetection": "ChangeDetectionStrategy.OnPush",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "ngcc-icon-browser",
+            "styleUrls": [],
+            "styles": [],
+            "template": "<div style=\"display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem\">\n  <input\n    type=\"search\"\n    class=\"cds--text-input\"\n    style=\"max-width:24rem\"\n    placeholder=\"Search icons (name or category)\"\n    aria-label=\"Search icons\"\n    [value]=\"query()\"\n    (input)=\"query.set($any($event.target).value)\"\n  />\n  <select\n    class=\"cds--select-input\"\n    style=\"max-width:18rem\"\n    aria-label=\"Filter by category\"\n    (change)=\"category.set($any($event.target).value)\"\n  >\n    <option value=\"\">All categories</option>\n    @for (g of groups; track g.title) {\n      <option [value]=\"g.title\">{{ g.title }} ({{ g.names.length }})</option>\n    }\n  </select>\n  <span style=\"font-size:0.875rem\">{{ total() }} icons</span>\n</div>\n@for (g of filtered(); track g.title) {\n  <section style=\"margin-bottom:2rem\">\n    <h3 style=\"margin:0 0 0.75rem\">\n      {{ g.title }} <small>({{ g.names.length }})</small>\n    </h3>\n    <div\n      style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(8rem,1fr));gap:0.75rem\"\n    >\n      @for (name of g.names; track name) {\n        <div\n          style=\"display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem;border:1px solid var(--cds-border-subtle, #e0e0e0)\"\n        >\n          <ngcc-icon [name]=\"$any(name)\" size=\"lg\" [decorative]=\"true\"></ngcc-icon>\n          <code style=\"font-size:0.75rem;word-break:break-all;text-align:center\">{{\n            name\n          }}</code>\n        </div>\n      }\n    </div>\n  </section>\n} @empty {\n  <p>No icons match \"{{ query() }}\".</p>\n}\n",
+            "templateUrl": [],
+            "viewProviders": [],
+            "hostDirectives": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "category",
+                    "defaultValue": "signal('')",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 139,
+                    "modifierKind": [
+                        148
+                    ]
+                },
+                {
+                    "name": "filtered",
+                    "defaultValue": "computed<IconGroup[]>(() => {\n    const q = this.query()\n      .trim()\n      .toLowerCase()\n      .replace(/[\\s-]+/g, '_');\n    const cat = this.category();\n    return this.groups\n      .filter((g) => !cat || g.title === cat)\n      .map((g) => ({\n        title: g.title,\n        names:\n          q && !g.title.toLowerCase().includes(q.replace(/_/g, ' '))\n            ? g.names.filter((n) => n.includes(q))\n            : g.names,\n      }))\n      .filter((g) => g.names.length > 0);\n  })",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 140,
+                    "modifierKind": [
+                        148
+                    ]
+                },
+                {
+                    "name": "groups",
+                    "defaultValue": "buildGroups()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 137,
+                    "modifierKind": [
+                        148
+                    ]
+                },
+                {
+                    "name": "query",
+                    "defaultValue": "signal('')",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 138,
+                    "modifierKind": [
+                        148
+                    ]
+                },
+                {
+                    "name": "total",
+                    "defaultValue": "computed(() => this.filtered().reduce((n, g) => n + g.names.length, 0))",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 157,
+                    "modifierKind": [
+                        148
+                    ]
+                }
+            ],
+            "methodsClass": [],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "standalone": true,
+            "imports": [
+                {
+                    "name": "NgccIcon"
+                }
+            ],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';\nimport { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';\nimport { NgccIcon } from './ngcc-icon';\nimport * as categorySets from './categories';\nimport { ICONS, NgccIconNameType } from './icons';\n\ninterface IconGroup {\n  title: string;\n  names: string[];\n}\n\nconst CATEGORY_TITLES: Record<string, string> = {\n  cloudInfrastructureIcons: 'Cloud infrastructure',\n  computeIcons: 'Compute & virtual machines',\n  networkingIcons: 'Networking & connectivity',\n  storageIcons: 'Storage management',\n  kubernetesIcons: 'Kubernetes & containers',\n  securityIcons: 'Security & access management',\n  monitoringIcons: 'Monitoring & observability',\n  billingIcons: 'Billing & cost management',\n  operationsIcons: 'Cloud operations & automation',\n  commonUiIcons: 'Common UI',\n};\n\n/** Story-only placement of the original icons into the category groups; anything unlisted goes to Common UI. */\nconst CORE_PLACEMENT: Record<string, string[]> = {\n  'Cloud infrastructure': ['cloud', 'server', 'globe', 'location'],\n  'Compute & virtual machines': ['cpu', 'memory', 'services', 'launch'],\n  'Networking & connectivity': ['network', 'link'],\n  'Storage management': ['disk', 'document', 'save'],\n  'Security & access management': [\n    'lock',\n    'unlock',\n    'user',\n    'user_multi',\n    'user_avatar',\n    'user_admin',\n    'customer',\n    'sign_out',\n  ],\n  'Monitoring & observability': [\n    'activity',\n    'notification',\n    'reports',\n    'information',\n    'info_filled',\n    'warn',\n    'warning_filled',\n    'error',\n    'error_filled',\n    'success_filled',\n  ],\n  'Billing & cost management': ['billing', 'license', 'marketplace', 'tag'],\n  'Cloud operations & automation': [\n    'configuration',\n    'settings_adjust',\n    'renew',\n    'refresh',\n    'export',\n    'upload',\n    'download',\n  ],\n};\n\nfunction buildGroups(): IconGroup[] {\n  const sets = categorySets as Record<string, Record<string, unknown>>;\n  const placed = new Set<string>();\n  const groups: IconGroup[] = Object.keys(CATEGORY_TITLES).map((key) => {\n    const title = CATEGORY_TITLES[key];\n    const core = (CORE_PLACEMENT[title] ?? []).filter((n) => n in ICONS);\n    core.forEach((n) => placed.add(n));\n    return { title, names: [...Object.keys(sets[key]), ...core].sort() };\n  });\n  const categorized = new Set(groups.flatMap((g) => g.names));\n  const rest = Object.keys(ICONS).filter((n) => !categorized.has(n) && !placed.has(n));\n  const common = groups.find((g) => g.title === 'Common UI');\n  common?.names.push(...rest);\n  common?.names.sort();\n  return groups;\n}\n\n@Component({\n  selector: 'ngcc-icon-browser',\n  standalone: true,\n  imports: [NgccIcon],\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  template: `\n    <div style=\"display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem\">\n      <input\n        type=\"search\"\n        class=\"cds--text-input\"\n        style=\"max-width:24rem\"\n        placeholder=\"Search icons (name or category)\"\n        aria-label=\"Search icons\"\n        [value]=\"query()\"\n        (input)=\"query.set($any($event.target).value)\"\n      />\n      <select\n        class=\"cds--select-input\"\n        style=\"max-width:18rem\"\n        aria-label=\"Filter by category\"\n        (change)=\"category.set($any($event.target).value)\"\n      >\n        <option value=\"\">All categories</option>\n        @for (g of groups; track g.title) {\n          <option [value]=\"g.title\">{{ g.title }} ({{ g.names.length }})</option>\n        }\n      </select>\n      <span style=\"font-size:0.875rem\">{{ total() }} icons</span>\n    </div>\n    @for (g of filtered(); track g.title) {\n      <section style=\"margin-bottom:2rem\">\n        <h3 style=\"margin:0 0 0.75rem\">\n          {{ g.title }} <small>({{ g.names.length }})</small>\n        </h3>\n        <div\n          style=\"display:grid;grid-template-columns:repeat(auto-fill,minmax(8rem,1fr));gap:0.75rem\"\n        >\n          @for (name of g.names; track name) {\n            <div\n              style=\"display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding:1rem;border:1px solid var(--cds-border-subtle, #e0e0e0)\"\n            >\n              <ngcc-icon [name]=\"$any(name)\" size=\"lg\" [decorative]=\"true\"></ngcc-icon>\n              <code style=\"font-size:0.75rem;word-break:break-all;text-align:center\">{{\n                name\n              }}</code>\n            </div>\n          }\n        </div>\n      </section>\n    } @empty {\n      <p>No icons match \"{{ query() }}\".</p>\n    }\n  `,\n})\nclass IconBrowser {\n  readonly groups = buildGroups();\n  readonly query = signal('');\n  readonly category = signal('');\n  readonly filtered = computed<IconGroup[]>(() => {\n    const q = this.query()\n      .trim()\n      .toLowerCase()\n      .replace(/[\\s-]+/g, '_');\n    const cat = this.category();\n    return this.groups\n      .filter((g) => !cat || g.title === cat)\n      .map((g) => ({\n        title: g.title,\n        names:\n          q && !g.title.toLowerCase().includes(q.replace(/_/g, ' '))\n            ? g.names.filter((n) => n.includes(q))\n            : g.names,\n      }))\n      .filter((g) => g.names.length > 0);\n  });\n  readonly total = computed(() => this.filtered().reduce((n, g) => n + g.names.length, 0));\n}\n\nconst meta: Meta<NgccIcon> = {\n  decorators: [moduleMetadata({ imports: [IconBrowser] })],\n  title: 'Components/Icon',\n  component: NgccIcon,\n  tags: ['autodocs'],\n  argTypes: {\n    name: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['sm', 'md', 'lg', 'xl', 2, 3, 4], // presets + numbers\n    },\n    color: { control: 'color' },\n    ariaLabel: { control: 'text' },\n    decorative: { control: 'boolean' },\n    svgClass: { control: 'text' },\n  },\n};\n\nexport default meta;\ntype Story = StoryObj<NgccIcon>;\n\nexport const Default: Story = {\n  args: {\n    name: 'add',\n    size: 'md',\n    color: 'currentColor',\n    ariaLabel: 'Add',\n  },\n};\n\nexport const Sizes: Story = {\n  render: () => ({\n    template: `\n      <div style=\"display: flex; gap: 1rem; align-items: center;\">\n        <ngcc-icon name=\"add\" size=\"sm\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"md\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"xl\"></ngcc-icon>\n        <ngcc-icon name=\"add\" [size]=\"2\"></ngcc-icon>\n      </div>\n    `,\n  }),\n};\n\nexport const Colors: Story = {\n  render: () => ({\n    template: `\n      <div style=\"display: flex; gap: 1rem; align-items: center;\">\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"red\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"green\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"blue\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"#ff9900\"></ngcc-icon>\n      </div>\n    `,\n  }),\n};\n\nexport const Decorative: Story = {\n  args: {\n    name: 'close',\n    size: 'lg',\n    decorative: true,\n  },\n};\n\nexport const WithCustomClass: Story = {\n  args: {\n    name: 'edit',\n    svgClass: 'custom-class',\n  },\n};\n\n/** Searchable gallery grouped by category. Search matches icon names and category titles. */\nexport const AllIcons: Story = {\n  parameters: { controls: { disable: true } },\n  render: () => ({ template: `<ngcc-icon-browser></ngcc-icon-browser>` }),\n};\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "extends": []
         },
         {
             "name": "LanguageSwitcherComponent",
@@ -2228,7 +2374,9 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Story",
-                "defaultValue": "{\n  parameters: { controls: { disable: true } },\n  render: () => ({\n    props: { names: Object.keys(ICONS).sort() },\n    template: `\n      <div style=\"display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 1rem;\">\n        @for (name of names; track name) {\n          <div style=\"display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; border: 1px solid var(--cds-border-subtle, #e0e0e0);\">\n            <ngcc-icon [name]=\"name\" size=\"lg\" [decorative]=\"true\"></ngcc-icon>\n            <code style=\"font-size: 0.75rem; word-break: break-all; text-align: center;\">{{ name }}</code>\n          </div>\n        }\n      </div>\n    `,\n  }),\n}"
+                "defaultValue": "{\n  parameters: { controls: { disable: true } },\n  render: () => ({ template: `<ngcc-icon-browser></ngcc-icon-browser>` }),\n}",
+                "rawdescription": "Searchable gallery grouped by category. Search matches icon names and category titles.",
+                "description": "<p>Searchable gallery grouped by category. Search matches icon names and category titles.</p>\n"
             },
             {
                 "name": "AnalyticsDashboard",
@@ -2447,6 +2595,16 @@
                 "defaultValue": "'carbon'"
             },
             {
+                "name": "CATEGORY_TITLES",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Record<string, string>",
+                "defaultValue": "{\n  cloudInfrastructureIcons: 'Cloud infrastructure',\n  computeIcons: 'Compute & virtual machines',\n  networkingIcons: 'Networking & connectivity',\n  storageIcons: 'Storage management',\n  kubernetesIcons: 'Kubernetes & containers',\n  securityIcons: 'Security & access management',\n  monitoringIcons: 'Monitoring & observability',\n  billingIcons: 'Billing & cost management',\n  operationsIcons: 'Cloud operations & automation',\n  commonUiIcons: 'Common UI',\n}"
+            },
+            {
                 "name": "CHART_THEME_MAP",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -2563,6 +2721,18 @@
                 "description": "<p>Confirmation modal with text input</p>\n"
             },
             {
+                "name": "CORE_PLACEMENT",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Record<string, string[]>",
+                "defaultValue": "{\n  'Cloud infrastructure': ['cloud', 'server', 'globe', 'location'],\n  'Compute & virtual machines': ['cpu', 'memory', 'services', 'launch'],\n  'Networking & connectivity': ['network', 'link'],\n  'Storage management': ['disk', 'document', 'save'],\n  'Security & access management': [\n    'lock',\n    'unlock',\n    'user',\n    'user_multi',\n    'user_avatar',\n    'user_admin',\n    'customer',\n    'sign_out',\n  ],\n  'Monitoring & observability': [\n    'activity',\n    'notification',\n    'reports',\n    'information',\n    'info_filled',\n    'warn',\n    'warning_filled',\n    'error',\n    'error_filled',\n    'success_filled',\n  ],\n  'Billing & cost management': ['billing', 'license', 'marketplace', 'tag'],\n  'Cloud operations & automation': [\n    'configuration',\n    'settings_adjust',\n    'renew',\n    'refresh',\n    'export',\n    'upload',\n    'download',\n  ],\n}",
+                "rawdescription": "Story-only placement of the original icons into the category groups; anything unlisted goes to Common UI.",
+                "description": "<p>Story-only placement of the original icons into the category groups; anything unlisted goes to Common UI.</p>\n"
+            },
+            {
                 "name": "CostGoingUp",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -2571,6 +2741,16 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    label: 'Cloud spend',\n    value: '$9,830',\n    delta: '+8%',\n    trend: 'up',\n    trendSentiment: 'positive-down',\n    status: 'warning',\n  },\n}"
+            },
+            {
+                "name": "CreatableWithOptions",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" creatable /></div>`,\n  }),\n}"
             },
             {
                 "name": "Currency",
@@ -2711,6 +2891,18 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  render: (args) => ({\n    props: { ...args },\n    template: `\n      <ngcc-accordion [multi]=\"multi\" [size]=\"size\" [align]=\"align\">\n        <ngcc-accordion-item title=\"Section 1\" [defaultOpen]=\"true\">\n          Content for section 1\n        </ngcc-accordion-item>\n        <ngcc-accordion-item title=\"Section 2\">\n          Content for section 2\n        </ngcc-accordion-item>\n      </ngcc-accordion>\n    `,\n  }),\n}"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: () => ({\n    template: `\n      <div style=\"height:20rem;overflow:auto;border:1px solid var(--cds-border-subtle)\">\n        <div style=\"height:40rem;padding:1rem\">Long form content…</div>\n        <ngcc-action-bar>\n          <span ngccActionBarStatus>3 fields need attention</span>\n          <button type=\"button\" class=\"cds--btn cds--btn--secondary\">Cancel</button>\n          <button type=\"button\" class=\"cds--btn cds--btn--primary\">Save</button>\n        </ngcc-action-bar>\n      </div>`,\n  }),\n}",
+                "rawdescription": "Sticks to the bottom of the scrolling box; the content above it is never covered.",
+                "description": "<p>Sticks to the bottom of the scrolling box; the content above it is never covered.</p>\n"
             },
             {
                 "name": "Default",
@@ -2868,6 +3060,16 @@
                 "name": "Default",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: ['euw'] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [helperText]=\"helperText\" [options]=\"options\" [(value)]=\"value\" /></div>`,\n  }),\n}"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-notification-list/ngcc-notification-list.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
@@ -2928,6 +3130,26 @@
                 "name": "Default",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: 'starter' },\n    template: `<ngcc-radio-tile-group [legend]=\"legend\" [helperText]=\"helperText\" [options]=\"options\" [(value)]=\"value\" [columns]=\"columns\" />`,\n  }),\n}"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: () => ({\n    props: {\n      sections: [\n        { id: 'sn-basics', label: 'Basics' },\n        { id: 'sn-network', label: 'Network', status: 'error' },\n        { id: 'sn-storage', label: 'Storage', status: 'warning' },\n        { id: 'sn-review', label: 'Review', status: 'complete' },\n      ],\n    },\n    template: `\n      <div style=\"display:grid;grid-template-columns:14rem 1fr;gap:2rem;height:24rem;overflow:auto\">\n        <ngcc-section-nav [sections]=\"sections\" />\n        <div>\n          <section id=\"sn-basics\" style=\"min-height:18rem\"><h2>Basics</h2></section>\n          <section id=\"sn-network\" style=\"min-height:18rem\"><h2>Network</h2></section>\n          <section id=\"sn-storage\" style=\"min-height:18rem\"><h2>Storage</h2></section>\n          <section id=\"sn-review\" style=\"min-height:18rem\"><h2>Review</h2></section>\n        </div>\n      </div>`,\n  }),\n}"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-skeleton/ngcc-skeleton.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
@@ -2963,6 +3185,16 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{}"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: args,\n    template: `\n      <div style=\"max-width:24rem\">\n        <ngcc-summary-tile [heading]=\"heading\" [items]=\"items\" [columns]=\"columns\">\n          <ngcc-tag ngccSummaryStatus type=\"green\" size=\"sm\">Valid</ngcc-tag>\n        </ngcc-summary-tile>\n      </div>`,\n  }),\n}"
             },
             {
                 "name": "Default",
@@ -3018,21 +3250,21 @@
                 "name": "Default",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "Story",
-                "defaultValue": "{\n  args: {\n    label: 'Age',\n    placeholder: 'Enter age',\n  },\n}"
-            },
-            {
-                "name": "Default",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-text/ngcc-input.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    label: 'Username',\n    placeholder: 'Enter your username',\n  },\n}"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  args: {\n    label: 'Age',\n    placeholder: 'Enter age',\n  },\n}"
             },
             {
                 "name": "Default",
@@ -3107,6 +3339,16 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    href: '/restricted',\n    disabled: true,\n  },\n  render: (args) => ({\n    props: args,\n    template: `\n      <ngcc-link [href]=\"href\" [disabled]=\"disabled\">\n        Unavailable Link\n      </ngcc-link>\n    `,\n  }),\n}"
+            },
+            {
+                "name": "Disabled",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: ['use', 'ap'] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" disabled /></div>`,\n  }),\n}"
             },
             {
                 "name": "Disabled",
@@ -3207,6 +3449,18 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    columns: sampleColumns,\n    rows: sampleRows,\n    loading: false,\n    config: {\n      pagination: false,\n      pageSize: 10,\n      rowSelection: 'none',\n      search: { enabled: true, mode: 'dynamic' },\n    },\n  },\n  render: (args) => ({\n    props: {\n      ...args,\n      onSearchChange: (term: string) => {\n        console.log('Dynamic search triggered:', term);\n      },\n    },\n    template: `\n      <div style=\"padding: 20px;\">\n        <p>Dynamic search emits query string to parent (console logs it).</p>\n\n        <ngcc-table-toolbar\n  [totalRows]=\"rows.length\"\n  searchMode=\"remote\"\n  (searchChanged)=\"onSearchChange($event)\"\n>\n  <button ngcc-toolbar-actions class=\"cds--btn cds--btn--primary\">Add User</button>\n</ngcc-table-toolbar>\n\n<ngcc-table\n   [columns]=\"columns\"\n           [rows]=\"rows\"\n           [loading]=\"loading\"\n           [config]=\"config\"\n></ngcc-table>\n\n      </div>\n    `,\n  }),\n}"
+            },
+            {
+                "name": "Editable",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-table/ngcc-table.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: () => ({\n    props: {\n      columns: [\n        {\n          key: 'name',\n          header: 'Volume',\n          editor: 'text',\n          validate: (v: unknown) => (String(v).trim() ? null : 'Name is required'),\n        },\n        {\n          key: 'size',\n          header: 'Size (GB)',\n          editor: 'number',\n          min: 1,\n          validate: (v: unknown) => (typeof v === 'number' && v >= 1 ? null : 'At least 1 GB'),\n        },\n        {\n          key: 'tier',\n          header: 'Tier',\n          editor: 'select',\n          options: [\n            { value: 'hot', label: 'Hot' },\n            { value: 'cold', label: 'Cold' },\n          ],\n        },\n      ],\n      rows: [\n        { name: 'data-a', size: 10, tier: 'hot' },\n        { name: 'data-b', size: 80, tier: 'cold' },\n      ],\n      config: { pagination: false, rowSelection: 'none' },\n      rowValidator: (r: { tier: string; size: number }) =>\n        r.tier === 'cold' && r.size > 50 ? 'Cold storage is limited to 50 GB' : null,\n    },\n    template: `<ngcc-table #t [columns]=\"columns\" [rows]=\"rows\" [config]=\"config\" [rowValidator]=\"rowValidator\" />\n      <button type=\"button\" class=\"cds--btn cds--btn--secondary\" (click)=\"t.validate()\">Validate all</button>`,\n  }),\n}",
+                "rawdescription": "Inline editors per row, with cell validation, a row-level rule and a custom cell template.",
+                "description": "<p>Inline editors per row, with cell validation, a row-level rule and a custom cell template.</p>\n"
             },
             {
                 "name": "Email",
@@ -3660,6 +3914,16 @@
                 "name": "Invalid",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" invalid errorMessage=\"Pick at least one region\" required /></div>`,\n  }),\n}"
+            },
+            {
+                "name": "Invalid",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-radio/ngcc-radio.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
@@ -3819,6 +4083,16 @@
                 "defaultValue": "{ args: { loading: true } }"
             },
             {
+                "name": "LoadingAndError",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"display:grid;gap:2rem;max-width:28rem\">\n      <ngcc-multi-select label=\"Loading\" [options]=\"[]\" loading />\n      <ngcc-multi-select label=\"Failed\" [options]=\"[]\" error=\"Could not load regions\" />\n    </div>`,\n  }),\n}"
+            },
+            {
                 "name": "LoadingState",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -3872,21 +4146,31 @@
                 "name": "meta",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "Meta<NgccAvatar>",
-                "defaultValue": "{\n  title: 'Components/Avatar',\n  component: NgccAvatar,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccAvatar] })],\n  parameters: {\n    docs: {\n      description: {\n        component: `\nA photo when \\`src\\` loads, otherwise initials on a color that is stable for that name, otherwise a person icon. White initials meet AA contrast on every color in the palette.\n\nThe accessible name is \\`name\\`. Add \\`decorative\\` when the name is already printed beside it.\n\n\\`\\`\\`html\n<ngcc-avatar name=\"Ada Lovelace\" size=\"lg\" />\n<ngcc-avatar name=\"Ada Lovelace\" src=\"/ada.jpg\" [decorative]=\"true\" /> Ada Lovelace\n\\`\\`\\`\n        `,\n      },\n    },\n  },\n  args: { name: 'Ada Lovelace', src: '', size: 'md', shape: 'circle', decorative: false },\n  argTypes: {\n    size: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl'] },\n    shape: { control: 'radio', options: ['circle', 'square'] },\n  },\n}"
-            },
-            {
-                "name": "meta",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-activity-feed/ngcc-activity-feed.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Meta<NgccActivityFeed>",
                 "defaultValue": "{\n  title: 'Components/Activity Feed',\n  component: NgccActivityFeed,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccActivityFeed] })],\n  argTypes: { variant: { control: 'select', options: ['feed', 'timeline'] } },\n  args: { items, variant: 'feed' },\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccActionBar>",
+                "defaultValue": "{\n  title: 'Components/Action Bar',\n  component: NgccActionBar,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccActionBar] })],\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccAvatar>",
+                "defaultValue": "{\n  title: 'Components/Avatar',\n  component: NgccAvatar,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccAvatar] })],\n  parameters: {\n    docs: {\n      description: {\n        component: `\nA photo when \\`src\\` loads, otherwise initials on a color that is stable for that name, otherwise a person icon. White initials meet AA contrast on every color in the palette.\n\nThe accessible name is \\`name\\`. Add \\`decorative\\` when the name is already printed beside it.\n\n\\`\\`\\`html\n<ngcc-avatar name=\"Ada Lovelace\" size=\"lg\" />\n<ngcc-avatar name=\"Ada Lovelace\" src=\"/ada.jpg\" [decorative]=\"true\" /> Ada Lovelace\n\\`\\`\\`\n        `,\n      },\n    },\n  },\n  args: { name: 'Ada Lovelace', src: '', size: 'md', shape: 'circle', decorative: false },\n  argTypes: {\n    size: { control: 'radio', options: ['xs', 'sm', 'md', 'lg', 'xl'] },\n    shape: { control: 'radio', options: ['circle', 'square'] },\n  },\n}"
             },
             {
                 "name": "meta",
@@ -4090,7 +4374,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Meta<NgccIcon>",
-                "defaultValue": "{\n  title: 'Components/Icon',\n  component: NgccIcon,\n  tags: ['autodocs'],\n  argTypes: {\n    name: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['sm', 'md', 'lg', 'xl', 2, 3, 4], // presets + numbers\n    },\n    color: { control: 'color' },\n    ariaLabel: { control: 'text' },\n    decorative: { control: 'boolean' },\n    svgClass: { control: 'text' },\n  },\n}"
+                "defaultValue": "{\n  decorators: [moduleMetadata({ imports: [IconBrowser] })],\n  title: 'Components/Icon',\n  component: NgccIcon,\n  tags: ['autodocs'],\n  argTypes: {\n    name: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['sm', 'md', 'lg', 'xl', 2, 3, 4], // presets + numbers\n    },\n    color: { control: 'color' },\n    ariaLabel: { control: 'text' },\n    decorative: { control: 'boolean' },\n    svgClass: { control: 'text' },\n  },\n}"
             },
             {
                 "name": "meta",
@@ -4121,6 +4405,16 @@
                 "deprecationMessage": "",
                 "type": "Meta<ModalStoryWrapper>",
                 "defaultValue": "{\n  title: 'Components/Modal',\n  component: ModalStoryWrapper,\n  decorators: [\n    moduleMetadata({\n      imports: [NgccModal, NgccButton, NgccInput, NgccCheckbox],\n    }),\n  ],\n  tags: ['autodocs'],\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccMultiSelect>",
+                "defaultValue": "{\n  title: 'Components/Multi Select',\n  component: NgccMultiSelect,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccMultiSelect] })],\n  args: { label: 'Regions', helperText: 'Choose where the cluster runs', options: REGIONS },\n  argTypes: { options: { control: 'object' } },\n}"
             },
             {
                 "name": "meta",
@@ -4206,6 +4500,26 @@
                 "name": "meta",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccRadioTileGroup>",
+                "defaultValue": "{\n  title: 'Components/Radio Tile Group',\n  component: NgccRadioTileGroup,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccRadioTileGroup] })],\n  args: { legend: 'Plan', helperText: 'You can change this later', options: PLANS },\n  argTypes: { options: { control: 'object' }, columns: { control: 'number' } },\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccSectionNav>",
+                "defaultValue": "{\n  title: 'Components/Section Nav',\n  component: NgccSectionNav,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccSectionNav] })],\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-side-nav/ngcc-side-nav.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
@@ -4261,6 +4575,16 @@
                 "deprecationMessage": "",
                 "type": "Meta<NgccStructuredList>",
                 "defaultValue": "{\n  title: 'Components/Structured List',\n  component: NgccStructuredList,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccStructuredList] })],\n  args: {\n    condensed: false,\n    columns: [\n      { key: 'name', header: 'Name' },\n      { key: 'region', header: 'Region' },\n      { key: 'size', header: 'Size' },\n    ],\n    rows: [\n      { id: 1, name: 'vm-web-01', region: 'us-east', size: '4 vCPU' },\n      { id: 2, name: 'vm-db-01', region: 'eu-west', size: '8 vCPU' },\n    ],\n  },\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccSummaryTile>",
+                "defaultValue": "{\n  title: 'Components/Summary Tile',\n  component: NgccSummaryTile,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccSummaryTile, NgccTag] })],\n  args: {\n    heading: 'Plan',\n    columns: 1,\n    items: [\n      { label: 'Region', value: 'eu-west-1' },\n      { label: 'Disk', value: '100 GB' },\n      { label: 'Owner', value: null },\n    ],\n  },\n  argTypes: { items: { control: 'object' }, columns: { control: 'number' } },\n}"
             },
             {
                 "name": "meta",
@@ -4356,21 +4680,21 @@
                 "name": "meta",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "Meta<NgccInputNumber>",
-                "defaultValue": "{\n  title: 'Components/Input/Number',\n  component: NgccInputNumber,\n  tags: ['autodocs'],\n  decorators: [\n    moduleMetadata({\n      imports: [NgccInputNumber, ReactiveFormsModule],\n    }),\n  ],\n  argTypes: {\n    label: { control: 'text' },\n    placeholder: { control: 'text' },\n    size: { control: 'select', options: ['sm', 'md', 'lg'] },\n    required: { control: 'boolean' },\n    disabled: { control: 'boolean' },\n    readonly: { control: 'boolean' },\n    fluid: { control: 'boolean' },\n    skeleton: { control: 'boolean' },\n    helperText: { control: 'text' },\n    ariaLabel: { control: 'text' },\n    invalid: { control: 'boolean' },\n    value: { control: 'text' },\n    errorMessage: { control: 'text' },\n    integerOnly: { control: 'boolean' },\n    decimalOnly: { control: 'boolean' },\n    decimalPadding: { control: 'number' },\n    hideArrows: { control: 'boolean' },\n    min: { control: 'number' },\n    max: { control: 'number' },\n    step: { control: 'number' },\n    currency: { control: 'boolean' },\n    currencyCode: {\n      control: 'select',\n      options: ['USD', 'EUR', 'GBP', 'INR', 'JPY', 'CNY'],\n    },\n  },\n}"
-            },
-            {
-                "name": "meta",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
                 "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-text/ngcc-input.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "Meta<NgccInput>",
                 "defaultValue": "{\n  title: 'Components/Input/Text',\n  component: NgccInput,\n  tags: ['autodocs'],\n  decorators: [\n    moduleMetadata({\n      imports: [NgccInput, FormsModule, ReactiveFormsModule],\n    }),\n  ],\n  argTypes: {\n    label: { control: 'text' },\n    placeholder: { control: 'text' },\n    type: { control: 'select', options: ['text', 'email', 'password', 'number'] },\n    size: { control: 'select', options: ['sm', 'md', 'lg'] },\n    required: { control: 'boolean' },\n    disabled: { control: 'boolean' },\n    readonly: { control: 'boolean' },\n    fluid: { control: 'boolean' },\n    skeleton: { control: 'boolean' },\n    helperText: { control: 'text' },\n    ariaLabel: { control: 'text' },\n    invalid: { control: 'boolean' },\n    value: { control: 'text' },\n    errorMessage: { control: 'text' },\n  },\n}"
+            },
+            {
+                "name": "meta",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Meta<NgccInputNumber>",
+                "defaultValue": "{\n  title: 'Components/Input/Number',\n  component: NgccInputNumber,\n  tags: ['autodocs'],\n  decorators: [\n    moduleMetadata({\n      imports: [NgccInputNumber, ReactiveFormsModule],\n    }),\n  ],\n  argTypes: {\n    label: { control: 'text' },\n    placeholder: { control: 'text' },\n    size: { control: 'select', options: ['sm', 'md', 'lg'] },\n    required: { control: 'boolean' },\n    disabled: { control: 'boolean' },\n    readonly: { control: 'boolean' },\n    fluid: { control: 'boolean' },\n    skeleton: { control: 'boolean' },\n    helperText: { control: 'text' },\n    ariaLabel: { control: 'text' },\n    invalid: { control: 'boolean' },\n    value: { control: 'text' },\n    errorMessage: { control: 'text' },\n    integerOnly: { control: 'boolean' },\n    decimalOnly: { control: 'boolean' },\n    decimalPadding: { control: 'number' },\n    hideArrows: { control: 'boolean' },\n    min: { control: 'number' },\n    max: { control: 'number' },\n    step: { control: 'number' },\n    currency: { control: 'boolean' },\n    currencyCode: {\n      control: 'select',\n      options: ['USD', 'EUR', 'GBP', 'INR', 'JPY', 'CNY'],\n    },\n  },\n}"
             },
             {
                 "name": "meta",
@@ -4633,6 +4957,16 @@
                 "defaultValue": "{\n  render: () => ({\n    template: `\n      <div style=\"display:grid;grid-template-columns:repeat(3,auto);gap:3rem;padding:6rem 10rem\">\n        @for (p of ['top','right','bottom','left','bottom-start','bottom-end']; track p) {\n          <ngcc-popover [placement]=\"p\" trigger=\"hover\" [label]=\"p\">\n            <button ngccPopoverTrigger type=\"button\" class=\"cds--btn cds--btn--ghost\">{{ p }}</button>\n            <span>Placed {{ p }}</span>\n          </ngcc-popover>\n        }\n      </div>`,\n  }),\n}"
             },
             {
+                "name": "PLANS",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "[]",
+                "defaultValue": "[\n  { value: 'starter', label: 'Starter', description: '1 vCPU, 2 GB RAM' },\n  { value: 'pro', label: 'Pro', description: '4 vCPU, 16 GB RAM' },\n  { value: 'ent', label: 'Enterprise', description: 'Dedicated hosts', disabled: true },\n]"
+            },
+            {
                 "name": "Positioning",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -4773,6 +5107,16 @@
                 "defaultValue": "{\n  args: {\n    labelText: 'Read-only setting',\n    readOnly: true,\n  },\n  render: (args) => ({\n    props: args,\n    template: `\n      <div style=\"display:flex;flex-direction:column;gap:1rem;\">\n        <ngcc-toggle [labelText]=\"labelText\" [readOnly]=\"true\" [toggled]=\"false\"></ngcc-toggle>\n        <ngcc-toggle [labelText]=\"labelText\" [readOnly]=\"true\" [toggled]=\"true\"></ngcc-toggle>\n      </div>\n    `,\n  }),\n}"
             },
             {
+                "name": "REGIONS",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "NgccMultiSelectOption[]",
+                "defaultValue": "[\n  { value: 'euw', label: 'Europe West', group: 'Europe', description: 'Ireland' },\n  { value: 'eun', label: 'Europe North', group: 'Europe', description: 'Finland' },\n  { value: 'use', label: 'US East', group: 'Americas' },\n  { value: 'usw', label: 'US West', group: 'Americas' },\n  { value: 'ap', label: 'Asia Pacific' },\n  { value: 'old', label: 'Retired region', disabled: true },\n]"
+            },
+            {
                 "name": "Required",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -4781,6 +5125,16 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: { label: 'Accept terms', required: true, helperText: 'This is required' },\n}"
+            },
+            {
+                "name": "RequiredAndEmpty",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: null },\n    template: `<ngcc-radio-tile-group [legend]=\"legend\" [options]=\"options\" [(value)]=\"value\" required invalid errorMessage=\"Choose a plan\" />`,\n  }),\n}"
             },
             {
                 "name": "sampleColumns",
@@ -4833,6 +5187,16 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    columns: sampleColumns,\n    rows: sampleRows,\n    loading: false,\n    config: { pagination: false, pageSize: 10, rowSelection: 'multiple' },\n  },\n  render: (args) => ({\n    props: {\n      ...args,\n      onRowSelect: (selected: any[]) => {\n        console.log('selected', selected);\n      },\n    },\n    template: `\n      <div style=\"padding: 20px;\">\n        <p style=\"margin-bottom:8px;\">Row selection enabled (click row or checkbox).</p>\n        <ngcc-table\n          [columns]=\"columns\"\n          [rows]=\"rows\"\n          [loading]=\"loading\"\n          [config]=\"config\"\n          (rowSelect)=\"onRowSelect($event)\"\n        ></ngcc-table>\n      </div>\n    `,\n  }),\n}"
+            },
+            {
+                "name": "SelectAll",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" selectAll /></div>`,\n  }),\n}"
             },
             {
                 "name": "SemiGauge",
@@ -5319,6 +5683,18 @@
                 "defaultValue": "{\n  name: 'With custom heading template',\n  args: {\n    followFocus: true,\n    isNavigation: false,\n  },\n  render: (args) => ({\n    props: {\n      ...args,\n      data: [{ name: 'One' }, { name: 'Two' }, { name: 'Three' }],\n    },\n    template: `\n      <ng-template #customTabs let-item>\n        {{ item ? item.name : 'Loading...' }}\n      </ng-template>\n\n      <ng-template #iconTab>\n        <div style=\"height: 14px;\">\n          Custom Icon Tab\n          <svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\"\n               style=\"height: 14px; width: 14px; fill: #3d70b2;\">\n            <path d=\"M8 14.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16z\"></path>\n            <path d=\"M9 13H7V7h2z\"></path>\n            <path d=\"M7 4a1 1 0 1 1 2 0 1 1 0 1 1-2 0\"></path>\n          </svg>\n        </div>\n      </ng-template>\n\n      <ngcc-tabs [type]=\"type\" [followFocus]=\"followFocus\" [isNavigation]=\"isNavigation\">\n        @for (item of data; track item.name) {\n          <ngcc-tab [heading]=\"customTabs\" [context]=\"item\" title=\"Tab Content\">\n            Tab Content for {{ item.name }}\n          </ngcc-tab>\n        }\n        <ngcc-tab [heading]=\"iconTab\" title=\"Custom tab content\">Tab Content Custom</ngcc-tab>\n      </ngcc-tabs>\n    `,\n  }),\n}"
             },
             {
+                "name": "TagInput",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{\n  render: () => ({\n    props: { value: ['prod', 'eu'] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select label=\"Tags\" helperText=\"Type and press Enter\" [options]=\"[]\" [(value)]=\"value\" creatable /></div>`,\n  }),\n}",
+                "rawdescription": "With `creatable` and no options it is a tag input.",
+                "description": "<p>With <code>creatable</code> and no options it is a tag input.</p>\n"
+            },
+            {
                 "name": "TaskProgress",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -5337,6 +5713,16 @@
                 "deprecationMessage": "",
                 "type": "string",
                 "defaultValue": "'ngcc-theme'"
+            },
+            {
+                "name": "ThreeColumns",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{ ...Default, args: { columns: 3 } }"
             },
             {
                 "name": "Thresholds",
@@ -5407,6 +5793,16 @@
                 "deprecationMessage": "",
                 "type": "Story",
                 "defaultValue": "{\n  args: {\n    columns: sampleColumns,\n    rows: sampleRows,\n    loading: false,\n    config: { pagination: false, pageSize: 10, rowSelection: 'multiple' },\n  },\n  render: (args) => ({\n    props: {\n      ...args,\n      onSearch: (query: string) => {\n        console.log('Search triggered:', query);\n      },\n    },\n    template: `\n      <div style=\"padding: 20px;\">\n        <ngcc-table [columns]=\"columns\" [rows]=\"rows\">\n          <ngcc-table-toolbar\n            [totalRows]=\"rows.length\"\n            (searchChanged)=\"onSearch($event)\"\n          ></ngcc-table-toolbar>\n        </ngcc-table>\n\n        <br><br>\n\n        <ngcc-table-toolbar\n          [totalRows]=\"rows.length\"\n          (searchChanged)=\"onSearch($event)\"\n        ></ngcc-table-toolbar>\n\n        <ngcc-table [columns]=\"columns\" [rows]=\"rows\"></ngcc-table>\n      </div>\n    `,\n  }),\n}"
+            },
+            {
+                "name": "TwoColumns",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story",
+                "defaultValue": "{ ...Default, args: { columns: 2 } }"
             },
             {
                 "name": "types",
@@ -5883,6 +6279,17 @@
         ],
         "functions": [
             {
+                "name": "buildGroups",
+                "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "ctype": "miscellaneous",
+                "subtype": "function",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "args": [],
+                "returnType": "IconGroup[]"
+            },
+            {
                 "name": "toTs",
                 "file": "projects/carbideui/src/lib/ngcc-color-theme/ngcc-color-theme-guide.stories.ts",
                 "ctype": "miscellaneous",
@@ -5965,8 +6372,8 @@
                 "name": "Story",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
-                "rawtype": "StoryObj<NgccAvatar>",
-                "file": "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts",
+                "rawtype": "StoryObj<NgccActivityFeed>",
+                "file": "projects/carbideui/src/lib/ngcc-activity-feed/ngcc-activity-feed.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -5976,8 +6383,19 @@
                 "name": "Story",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
-                "rawtype": "StoryObj<NgccActivityFeed>",
-                "file": "projects/carbideui/src/lib/ngcc-activity-feed/ngcc-activity-feed.stories.ts",
+                "rawtype": "StoryObj<NgccActionBar>",
+                "file": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "kind": 184
+            },
+            {
+                "name": "Story",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
+                "rawtype": "StoryObj<NgccAvatar>",
+                "file": "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -6229,6 +6647,17 @@
                 "name": "Story",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
+                "rawtype": "StoryObj<NgccMultiSelect>",
+                "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "kind": 184
+            },
+            {
+                "name": "Story",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
                 "rawtype": "StoryObj<NgccNotification>",
                 "file": "projects/carbideui/src/lib/ngcc-notification/ngcc-notification.stories.ts",
                 "deprecated": false,
@@ -6317,6 +6746,28 @@
                 "name": "Story",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
+                "rawtype": "StoryObj<NgccRadioTileGroup>",
+                "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "kind": 184
+            },
+            {
+                "name": "Story",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
+                "rawtype": "StoryObj<NgccSectionNav>",
+                "file": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "kind": 184
+            },
+            {
+                "name": "Story",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
                 "rawtype": "StoryObj<SideNavWrapper>",
                 "file": "projects/carbideui/src/lib/ngcc-side-nav/ngcc-side-nav.stories.ts",
                 "deprecated": false,
@@ -6374,6 +6825,17 @@
                 "subtype": "typealias",
                 "rawtype": "StoryObj<NgccStructuredList>",
                 "file": "projects/carbideui/src/lib/ngcc-structured-list/ngcc-structured-list.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "kind": 184
+            },
+            {
+                "name": "Story",
+                "ctype": "miscellaneous",
+                "subtype": "typealias",
+                "rawtype": "StoryObj<NgccSummaryTile>",
+                "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -6482,8 +6944,8 @@
                 "name": "Story",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
-                "rawtype": "StoryObj<NgccInputNumber>",
-                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
+                "rawtype": "StoryObj<NgccInput>",
+                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-text/ngcc-input.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -6493,8 +6955,8 @@
                 "name": "Story",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
-                "rawtype": "StoryObj<NgccInput>",
-                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-text/ngcc-input.stories.ts",
+                "rawtype": "StoryObj<NgccInputNumber>",
+                "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -6606,7 +7068,19 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "Story",
-                    "defaultValue": "{\n  parameters: { controls: { disable: true } },\n  render: () => ({\n    props: { names: Object.keys(ICONS).sort() },\n    template: `\n      <div style=\"display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 1rem;\">\n        @for (name of names; track name) {\n          <div style=\"display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; border: 1px solid var(--cds-border-subtle, #e0e0e0);\">\n            <ngcc-icon [name]=\"name\" size=\"lg\" [decorative]=\"true\"></ngcc-icon>\n            <code style=\"font-size: 0.75rem; word-break: break-all; text-align: center;\">{{ name }}</code>\n          </div>\n        }\n      </div>\n    `,\n  }),\n}"
+                    "defaultValue": "{\n  parameters: { controls: { disable: true } },\n  render: () => ({ template: `<ngcc-icon-browser></ngcc-icon-browser>` }),\n}",
+                    "rawdescription": "Searchable gallery grouped by category. Search matches icon names and category titles.",
+                    "description": "<p>Searchable gallery grouped by category. Search matches icon names and category titles.</p>\n"
+                },
+                {
+                    "name": "CATEGORY_TITLES",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Record<string, string>",
+                    "defaultValue": "{\n  cloudInfrastructureIcons: 'Cloud infrastructure',\n  computeIcons: 'Compute & virtual machines',\n  networkingIcons: 'Networking & connectivity',\n  storageIcons: 'Storage management',\n  kubernetesIcons: 'Kubernetes & containers',\n  securityIcons: 'Security & access management',\n  monitoringIcons: 'Monitoring & observability',\n  billingIcons: 'Billing & cost management',\n  operationsIcons: 'Cloud operations & automation',\n  commonUiIcons: 'Common UI',\n}"
                 },
                 {
                     "name": "Colors",
@@ -6617,6 +7091,18 @@
                     "deprecationMessage": "",
                     "type": "Story",
                     "defaultValue": "{\n  render: () => ({\n    template: `\n      <div style=\"display: flex; gap: 1rem; align-items: center;\">\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"red\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"green\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"blue\"></ngcc-icon>\n        <ngcc-icon name=\"add\" size=\"lg\" color=\"#ff9900\"></ngcc-icon>\n      </div>\n    `,\n  }),\n}"
+                },
+                {
+                    "name": "CORE_PLACEMENT",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Record<string, string[]>",
+                    "defaultValue": "{\n  'Cloud infrastructure': ['cloud', 'server', 'globe', 'location'],\n  'Compute & virtual machines': ['cpu', 'memory', 'services', 'launch'],\n  'Networking & connectivity': ['network', 'link'],\n  'Storage management': ['disk', 'document', 'save'],\n  'Security & access management': [\n    'lock',\n    'unlock',\n    'user',\n    'user_multi',\n    'user_avatar',\n    'user_admin',\n    'customer',\n    'sign_out',\n  ],\n  'Monitoring & observability': [\n    'activity',\n    'notification',\n    'reports',\n    'information',\n    'info_filled',\n    'warn',\n    'warning_filled',\n    'error',\n    'error_filled',\n    'success_filled',\n  ],\n  'Billing & cost management': ['billing', 'license', 'marketplace', 'tag'],\n  'Cloud operations & automation': [\n    'configuration',\n    'settings_adjust',\n    'renew',\n    'refresh',\n    'export',\n    'upload',\n    'download',\n  ],\n}",
+                    "rawdescription": "Story-only placement of the original icons into the category groups; anything unlisted goes to Common UI.",
+                    "description": "<p>Story-only placement of the original icons into the category groups; anything unlisted goes to Common UI.</p>\n"
                 },
                 {
                     "name": "Decorative",
@@ -6646,7 +7132,7 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "Meta<NgccIcon>",
-                    "defaultValue": "{\n  title: 'Components/Icon',\n  component: NgccIcon,\n  tags: ['autodocs'],\n  argTypes: {\n    name: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['sm', 'md', 'lg', 'xl', 2, 3, 4], // presets + numbers\n    },\n    color: { control: 'color' },\n    ariaLabel: { control: 'text' },\n    decorative: { control: 'boolean' },\n    svgClass: { control: 'text' },\n  },\n}"
+                    "defaultValue": "{\n  decorators: [moduleMetadata({ imports: [IconBrowser] })],\n  title: 'Components/Icon',\n  component: NgccIcon,\n  tags: ['autodocs'],\n  argTypes: {\n    name: {\n      control: { type: 'select' },\n      options: Object.keys(ICONS) as NgccIconNameType[],\n    },\n    size: {\n      control: { type: 'select' },\n      options: ['sm', 'md', 'lg', 'xl', 2, 3, 4], // presets + numbers\n    },\n    color: { control: 'color' },\n    ariaLabel: { control: 'text' },\n    decorative: { control: 'boolean' },\n    svgClass: { control: 'text' },\n  },\n}"
                 },
                 {
                     "name": "Sizes",
@@ -8313,6 +8799,100 @@
                     "defaultValue": "{\n  args: {\n    label: 'Uptime',\n    value: 99.98,\n    unit: '%',\n    delta: 0,\n    deltaCaption: 'no change',\n    status: 'info',\n  },\n}"
                 }
             ],
+            "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts": [
+                {
+                    "name": "CreatableWithOptions",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" creatable /></div>`,\n  }),\n}"
+                },
+                {
+                    "name": "Default",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: ['euw'] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [helperText]=\"helperText\" [options]=\"options\" [(value)]=\"value\" /></div>`,\n  }),\n}"
+                },
+                {
+                    "name": "Disabled",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: ['use', 'ap'] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" disabled /></div>`,\n  }),\n}"
+                },
+                {
+                    "name": "Invalid",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" invalid errorMessage=\"Pick at least one region\" required /></div>`,\n  }),\n}"
+                },
+                {
+                    "name": "LoadingAndError",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"display:grid;gap:2rem;max-width:28rem\">\n      <ngcc-multi-select label=\"Loading\" [options]=\"[]\" loading />\n      <ngcc-multi-select label=\"Failed\" [options]=\"[]\" error=\"Could not load regions\" />\n    </div>`,\n  }),\n}"
+                },
+                {
+                    "name": "meta",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Meta<NgccMultiSelect>",
+                    "defaultValue": "{\n  title: 'Components/Multi Select',\n  component: NgccMultiSelect,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccMultiSelect] })],\n  args: { label: 'Regions', helperText: 'Choose where the cluster runs', options: REGIONS },\n  argTypes: { options: { control: 'object' } },\n}"
+                },
+                {
+                    "name": "REGIONS",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NgccMultiSelectOption[]",
+                    "defaultValue": "[\n  { value: 'euw', label: 'Europe West', group: 'Europe', description: 'Ireland' },\n  { value: 'eun', label: 'Europe North', group: 'Europe', description: 'Finland' },\n  { value: 'use', label: 'US East', group: 'Americas' },\n  { value: 'usw', label: 'US West', group: 'Americas' },\n  { value: 'ap', label: 'Asia Pacific' },\n  { value: 'old', label: 'Retired region', disabled: true },\n]"
+                },
+                {
+                    "name": "SelectAll",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: [] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select [label]=\"label\" [options]=\"options\" [(value)]=\"value\" selectAll /></div>`,\n  }),\n}"
+                },
+                {
+                    "name": "TagInput",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: () => ({\n    props: { value: ['prod', 'eu'] },\n    template: `<div style=\"max-width:28rem\"><ngcc-multi-select label=\"Tags\" helperText=\"Type and press Enter\" [options]=\"[]\" [(value)]=\"value\" creatable /></div>`,\n  }),\n}",
+                    "rawdescription": "With `creatable` and no options it is a tag input.",
+                    "description": "<p>With <code>creatable</code> and no options it is a tag input.</p>\n"
+                }
+            ],
             "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts": [
                 {
                     "name": "Currency",
@@ -8529,6 +9109,30 @@
                     "deprecationMessage": "",
                     "type": "Story",
                     "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, multi: false },\n    template: `\n      <ngcc-accordion [multi]=\"multi\" [size]=\"size\" [align]=\"align\">\n        <ngcc-accordion-item title=\"Alpha\">\n          Content for Alpha\n        </ngcc-accordion-item>\n        <ngcc-accordion-item title=\"Beta\">\n          Content for Beta\n        </ngcc-accordion-item>\n        <ngcc-accordion-item title=\"Gamma\">\n          Content for Gamma\n        </ngcc-accordion-item>\n      </ngcc-accordion>\n    `,\n  }),\n}"
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts": [
+                {
+                    "name": "Default",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: () => ({\n    template: `\n      <div style=\"height:20rem;overflow:auto;border:1px solid var(--cds-border-subtle)\">\n        <div style=\"height:40rem;padding:1rem\">Long form content…</div>\n        <ngcc-action-bar>\n          <span ngccActionBarStatus>3 fields need attention</span>\n          <button type=\"button\" class=\"cds--btn cds--btn--secondary\">Cancel</button>\n          <button type=\"button\" class=\"cds--btn cds--btn--primary\">Save</button>\n        </ngcc-action-bar>\n      </div>`,\n  }),\n}",
+                    "rawdescription": "Sticks to the bottom of the scrolling box; the content above it is never covered.",
+                    "description": "<p>Sticks to the bottom of the scrolling box; the content above it is never covered.</p>\n"
+                },
+                {
+                    "name": "meta",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Meta<NgccActionBar>",
+                    "defaultValue": "{\n  title: 'Components/Action Bar',\n  component: NgccActionBar,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccActionBar] })],\n}"
                 }
             ],
             "projects/carbideui/src/lib/ngcc-breadcrumb/ngcc-breadcrumb.stories.ts": [
@@ -9473,6 +10077,80 @@
                     "defaultValue": "{\n  args: {\n    helperText: 'Select the option that best describes your preference.',\n    legend: 'With helper text',\n  },\n  render: (args) => ({ props: { ...args }, template: FULL_TEMPLATE }),\n}"
                 }
             ],
+            "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts": [
+                {
+                    "name": "Default",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: 'starter' },\n    template: `<ngcc-radio-tile-group [legend]=\"legend\" [helperText]=\"helperText\" [options]=\"options\" [(value)]=\"value\" [columns]=\"columns\" />`,\n  }),\n}"
+                },
+                {
+                    "name": "meta",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Meta<NgccRadioTileGroup>",
+                    "defaultValue": "{\n  title: 'Components/Radio Tile Group',\n  component: NgccRadioTileGroup,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccRadioTileGroup] })],\n  args: { legend: 'Plan', helperText: 'You can change this later', options: PLANS },\n  argTypes: { options: { control: 'object' }, columns: { control: 'number' } },\n}"
+                },
+                {
+                    "name": "PLANS",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "[]",
+                    "defaultValue": "[\n  { value: 'starter', label: 'Starter', description: '1 vCPU, 2 GB RAM' },\n  { value: 'pro', label: 'Pro', description: '4 vCPU, 16 GB RAM' },\n  { value: 'ent', label: 'Enterprise', description: 'Dedicated hosts', disabled: true },\n]"
+                },
+                {
+                    "name": "RequiredAndEmpty",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: { ...args, value: null },\n    template: `<ngcc-radio-tile-group [legend]=\"legend\" [options]=\"options\" [(value)]=\"value\" required invalid errorMessage=\"Choose a plan\" />`,\n  }),\n}"
+                },
+                {
+                    "name": "ThreeColumns",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{ ...Default, args: { columns: 3 } }"
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts": [
+                {
+                    "name": "Default",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: () => ({\n    props: {\n      sections: [\n        { id: 'sn-basics', label: 'Basics' },\n        { id: 'sn-network', label: 'Network', status: 'error' },\n        { id: 'sn-storage', label: 'Storage', status: 'warning' },\n        { id: 'sn-review', label: 'Review', status: 'complete' },\n      ],\n    },\n    template: `\n      <div style=\"display:grid;grid-template-columns:14rem 1fr;gap:2rem;height:24rem;overflow:auto\">\n        <ngcc-section-nav [sections]=\"sections\" />\n        <div>\n          <section id=\"sn-basics\" style=\"min-height:18rem\"><h2>Basics</h2></section>\n          <section id=\"sn-network\" style=\"min-height:18rem\"><h2>Network</h2></section>\n          <section id=\"sn-storage\" style=\"min-height:18rem\"><h2>Storage</h2></section>\n          <section id=\"sn-review\" style=\"min-height:18rem\"><h2>Review</h2></section>\n        </div>\n      </div>`,\n  }),\n}"
+                },
+                {
+                    "name": "meta",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Meta<NgccSectionNav>",
+                    "defaultValue": "{\n  title: 'Components/Section Nav',\n  component: NgccSectionNav,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccSectionNav] })],\n}"
+                }
+            ],
             "projects/carbideui/src/lib/ngcc-skeleton/ngcc-skeleton.stories.ts": [
                 {
                     "name": "Default",
@@ -9567,6 +10245,38 @@
                     "defaultValue": "{\n  render: (args) => ({\n    props: args,\n    template: `\n      <ngcc-stepper #s [steps]=\"steps\" [(current)]=\"current\" [ariaLabel]=\"ariaLabel\" />\n      <p style=\"margin:1rem 0\">{{ s.summary() }}</p>\n      <button class=\"cds--btn cds--btn--secondary\" type=\"button\" (click)=\"s.previous()\">Back</button>\n      <button class=\"cds--btn cds--btn--primary\" type=\"button\" (click)=\"s.next()\">Next</button>`,\n  }),\n}"
                 }
             ],
+            "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts": [
+                {
+                    "name": "Default",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: (args) => ({\n    props: args,\n    template: `\n      <div style=\"max-width:24rem\">\n        <ngcc-summary-tile [heading]=\"heading\" [items]=\"items\" [columns]=\"columns\">\n          <ngcc-tag ngccSummaryStatus type=\"green\" size=\"sm\">Valid</ngcc-tag>\n        </ngcc-summary-tile>\n      </div>`,\n  }),\n}"
+                },
+                {
+                    "name": "meta",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Meta<NgccSummaryTile>",
+                    "defaultValue": "{\n  title: 'Components/Summary Tile',\n  component: NgccSummaryTile,\n  tags: ['autodocs'],\n  decorators: [moduleMetadata({ imports: [NgccSummaryTile, NgccTag] })],\n  args: {\n    heading: 'Plan',\n    columns: 1,\n    items: [\n      { label: 'Region', value: 'eu-west-1' },\n      { label: 'Disk', value: '100 GB' },\n      { label: 'Owner', value: null },\n    ],\n  },\n  argTypes: { items: { control: 'object' }, columns: { control: 'number' } },\n}"
+                },
+                {
+                    "name": "TwoColumns",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{ ...Default, args: { columns: 2 } }"
+                }
+            ],
             "projects/carbideui/src/lib/ngcc-table/ngcc-table.stories.ts": [
                 {
                     "name": "Default",
@@ -9587,6 +10297,18 @@
                     "deprecationMessage": "",
                     "type": "Story",
                     "defaultValue": "{\n  args: {\n    columns: sampleColumns,\n    rows: sampleRows,\n    loading: false,\n    config: {\n      pagination: false,\n      pageSize: 10,\n      rowSelection: 'none',\n      search: { enabled: true, mode: 'dynamic' },\n    },\n  },\n  render: (args) => ({\n    props: {\n      ...args,\n      onSearchChange: (term: string) => {\n        console.log('Dynamic search triggered:', term);\n      },\n    },\n    template: `\n      <div style=\"padding: 20px;\">\n        <p>Dynamic search emits query string to parent (console logs it).</p>\n\n        <ngcc-table-toolbar\n  [totalRows]=\"rows.length\"\n  searchMode=\"remote\"\n  (searchChanged)=\"onSearchChange($event)\"\n>\n  <button ngcc-toolbar-actions class=\"cds--btn cds--btn--primary\">Add User</button>\n</ngcc-table-toolbar>\n\n<ngcc-table\n   [columns]=\"columns\"\n           [rows]=\"rows\"\n           [loading]=\"loading\"\n           [config]=\"config\"\n></ngcc-table>\n\n      </div>\n    `,\n  }),\n}"
+                },
+                {
+                    "name": "Editable",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "projects/carbideui/src/lib/ngcc-table/ngcc-table.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story",
+                    "defaultValue": "{\n  render: () => ({\n    props: {\n      columns: [\n        {\n          key: 'name',\n          header: 'Volume',\n          editor: 'text',\n          validate: (v: unknown) => (String(v).trim() ? null : 'Name is required'),\n        },\n        {\n          key: 'size',\n          header: 'Size (GB)',\n          editor: 'number',\n          min: 1,\n          validate: (v: unknown) => (typeof v === 'number' && v >= 1 ? null : 'At least 1 GB'),\n        },\n        {\n          key: 'tier',\n          header: 'Tier',\n          editor: 'select',\n          options: [\n            { value: 'hot', label: 'Hot' },\n            { value: 'cold', label: 'Cold' },\n          ],\n        },\n      ],\n      rows: [\n        { name: 'data-a', size: 10, tier: 'hot' },\n        { name: 'data-b', size: 80, tier: 'cold' },\n      ],\n      config: { pagination: false, rowSelection: 'none' },\n      rowValidator: (r: { tier: string; size: number }) =>\n        r.tier === 'cold' && r.size > 50 ? 'Cold storage is limited to 50 GB' : null,\n    },\n    template: `<ngcc-table #t [columns]=\"columns\" [rows]=\"rows\" [config]=\"config\" [rowValidator]=\"rowValidator\" />\n      <button type=\"button\" class=\"cds--btn cds--btn--secondary\" (click)=\"t.validate()\">Validate all</button>`,\n  }),\n}",
+                    "rawdescription": "Inline editors per row, with cell validation, a row-level rule and a custom cell template.",
+                    "description": "<p>Inline editors per row, with cell validation, a row-level rule and a custom cell template.</p>\n"
                 },
                 {
                     "name": "ExpandableRow",
@@ -10303,6 +11025,19 @@
             ]
         },
         "groupedFunctions": {
+            "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts": [
+                {
+                    "name": "buildGroups",
+                    "file": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                    "ctype": "miscellaneous",
+                    "subtype": "function",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "args": [],
+                    "returnType": "IconGroup[]"
+                }
+            ],
             "projects/carbideui/src/lib/ngcc-color-theme/ngcc-color-theme-guide.stories.ts": [
                 {
                     "name": "toTs",
@@ -10424,19 +11159,6 @@
                     "kind": 184
                 }
             ],
-            "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts": [
-                {
-                    "name": "Story",
-                    "ctype": "miscellaneous",
-                    "subtype": "typealias",
-                    "rawtype": "StoryObj<NgccAvatar>",
-                    "file": "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "description": "",
-                    "kind": 184
-                }
-            ],
             "projects/carbideui/src/lib/ngcc-activity-feed/ngcc-activity-feed.stories.ts": [
                 {
                     "name": "Story",
@@ -10444,6 +11166,32 @@
                     "subtype": "typealias",
                     "rawtype": "StoryObj<NgccActivityFeed>",
                     "file": "projects/carbideui/src/lib/ngcc-activity-feed/ngcc-activity-feed.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccActionBar>",
+                    "file": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccAvatar>",
+                    "file": "projects/carbideui/src/lib/ngcc-avatar/ngcc-avatar.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "description": "",
@@ -10710,6 +11458,19 @@
                     "kind": 184
                 }
             ],
+            "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccMultiSelect>",
+                    "file": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
             "projects/carbideui/src/lib/ngcc-notification/ngcc-notification.stories.ts": [
                 {
                     "name": "Story",
@@ -10814,6 +11575,32 @@
                     "kind": 184
                 }
             ],
+            "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccRadioTileGroup>",
+                    "file": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccSectionNav>",
+                    "file": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
             "projects/carbideui/src/lib/ngcc-side-nav/ngcc-side-nav.stories.ts": [
                 {
                     "name": "Story",
@@ -10886,6 +11673,19 @@
                     "subtype": "typealias",
                     "rawtype": "StoryObj<NgccStructuredList>",
                     "file": "projects/carbideui/src/lib/ngcc-structured-list/ngcc-structured-list.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccSummaryTile>",
+                    "file": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "description": "",
@@ -11009,19 +11809,6 @@
                     "kind": 184
                 }
             ],
-            "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts": [
-                {
-                    "name": "Story",
-                    "ctype": "miscellaneous",
-                    "subtype": "typealias",
-                    "rawtype": "StoryObj<NgccInputNumber>",
-                    "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "description": "",
-                    "kind": 184
-                }
-            ],
             "projects/carbideui/src/lib/ngcc-input/ngcc-input-text/ngcc-input.stories.ts": [
                 {
                     "name": "Story",
@@ -11029,6 +11816,19 @@
                     "subtype": "typealias",
                     "rawtype": "StoryObj<NgccInput>",
                     "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-text/ngcc-input.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "kind": 184
+                }
+            ],
+            "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts": [
+                {
+                    "name": "Story",
+                    "ctype": "miscellaneous",
+                    "subtype": "typealias",
+                    "rawtype": "StoryObj<NgccInputNumber>",
+                    "file": "projects/carbideui/src/lib/ngcc-input/ngcc-input-number/ngcc-input-number.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "description": "",
@@ -11131,6 +11931,36 @@
             },
             {
                 "filePath": "projects/carbideui/src/lib/ngcc-accordion/ngcc-accordion.stories.ts",
+                "type": "type alias",
+                "linktype": "miscellaneous",
+                "linksubtype": "typealias",
+                "name": "Story",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Default",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "meta",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-action-bar/ngcc-action-bar.stories.ts",
                 "type": "type alias",
                 "linktype": "miscellaneous",
                 "linksubtype": "typealias",
@@ -13125,10 +13955,48 @@
             },
             {
                 "filePath": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "IconBrowser",
+                "coveragePercent": 0,
+                "coverageCount": "0/6",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "IconGroup",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "type": "function",
+                "linktype": "miscellaneous",
+                "linksubtype": "function",
+                "name": "buildGroups",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
                 "name": "AllIcons",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "CATEGORY_TITLES",
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"
@@ -13142,6 +14010,16 @@
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "CORE_PLACEMENT",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
             },
             {
                 "filePath": "projects/carbideui/src/lib/ngcc-icons/ngcc-icons.stories.ts",
@@ -13733,6 +14611,106 @@
                 "status": "low"
             },
             {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "CreatableWithOptions",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Default",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Disabled",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Invalid",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "LoadingAndError",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "meta",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "REGIONS",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "SelectAll",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TagInput",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-multi-select/ngcc-multi-select.stories.ts",
+                "type": "type alias",
+                "linktype": "miscellaneous",
+                "linksubtype": "typealias",
+                "name": "Story",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
                 "filePath": "projects/carbideui/src/lib/ngcc-notification-list/ngcc-notification-list.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
@@ -14143,6 +15121,66 @@
                 "status": "low"
             },
             {
+                "filePath": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Default",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "meta",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "PLANS",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "RequiredAndEmpty",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ThreeColumns",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-radio-tile/ngcc-radio-tile-group.stories.ts",
+                "type": "type alias",
+                "linktype": "miscellaneous",
+                "linksubtype": "typealias",
+                "name": "Story",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
                 "filePath": "projects/carbideui/src/lib/ngcc-radio/ngcc-radio.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
@@ -14274,6 +15312,36 @@
             },
             {
                 "filePath": "projects/carbideui/src/lib/ngcc-radio/ngcc-radio.stories.ts",
+                "type": "type alias",
+                "linktype": "miscellaneous",
+                "linksubtype": "typealias",
+                "name": "Story",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Default",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "meta",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-section-nav/ngcc-section-nav.stories.ts",
                 "type": "type alias",
                 "linktype": "miscellaneous",
                 "linksubtype": "typealias",
@@ -14742,6 +15810,46 @@
                 "status": "low"
             },
             {
+                "filePath": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Default",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "meta",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "TwoColumns",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-summary-tile/ngcc-summary-tile.stories.ts",
+                "type": "type alias",
+                "linktype": "miscellaneous",
+                "linksubtype": "typealias",
+                "name": "Story",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
                 "filePath": "projects/carbideui/src/lib/ngcc-table/ngcc-table.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
@@ -14760,6 +15868,16 @@
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"
+            },
+            {
+                "filePath": "projects/carbideui/src/lib/ngcc-table/ngcc-table.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Editable",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
             },
             {
                 "filePath": "projects/carbideui/src/lib/ngcc-table/ngcc-table.stories.ts",
