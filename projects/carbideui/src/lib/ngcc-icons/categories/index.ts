@@ -1,0 +1,10 @@
+export { cloudInfrastructureIcons } from './cloud-infrastructure';
+export { computeIcons } from './compute';
+export { networkingIcons } from './networking';
+export { storageIcons } from './storage';
+export { kubernetesIcons } from './kubernetes';
+export { securityIcons } from './security';
+export { monitoringIcons } from './monitoring';
+export { billingIcons } from './billing';
+export { operationsIcons } from './operations';
+export { commonUiIcons } from './common-ui';

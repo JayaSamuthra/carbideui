@@ -19,6 +19,7 @@ export * from './lib/ngcc-contained-list/public-api';
 // Icons
 export * from './lib/ngcc-icons/ngcc-icon';
 export * from './lib/ngcc-icons/icons';
+export * from './lib/ngcc-icons/categories';
 
 // Checkbox
 export * from './lib/ngcc-checkbox/ngcc-checkbox';
