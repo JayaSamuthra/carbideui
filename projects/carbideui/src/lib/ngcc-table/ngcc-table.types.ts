@@ -1,4 +1,5 @@
 import type { NgccTagType } from '../ngcc-tag/ngcc-tag';
+import type { NgccOverflowMenuItem } from '../ngcc-overflow-menu/ngcc-overflow-menu';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -44,14 +45,49 @@ export interface NgccTableCellEdit<T = unknown> {
   error: string | null;
 }
 
+/** A row action shown in the row's overflow menu. */
+export interface NgccTableRowAction<T = unknown> extends Omit<NgccOverflowMenuItem, 'disabled'> {
+  /** Return `true` to disable the action for a row. */
+  disabled?: boolean | ((row: T) => boolean);
+  /** Return `false` to hide the action for a row. */
+  visible?: (row: T) => boolean;
+}
+
+/** Emitted when a row action is chosen. */
+export interface NgccTableRowActionEvent<T = unknown> {
+  action: NgccTableRowAction<T>;
+  row: T;
+  /** Position of the row in the `rows` input. */
+  rowIndex: number;
+}
+
+/** What the server needs to return the next set of rows (`config.serverSide`). */
+export interface NgccTableQuery {
+  /** Zero-based page. */
+  page: number;
+  pageSize: number;
+  sort: { key: string; dir: SortDirection } | null;
+  search: string;
+}
+
 export interface NgccTableConfig {
   pagination?: boolean;
   pageSize?: number;
+  /**
+   * Server-driven table. `rows` holds only the current page, and the table does not sort, filter
+   * or slice it. Paging, sorting and search emit `queryChange`; set `loading` while fetching and
+   * `totalItems` to the full row count.
+   */
+  serverSide?: boolean;
+  /** Total number of rows on the server (server-side mode). Defaults to `rows.length`. */
+  totalItems?: number;
+  /** Row action menu column. Choosing an item emits `rowAction`. */
+  rowActions?: NgccTableRowAction[];
   rowSelection?: 'single' | 'multiple' | 'none';
   /** Set to `false` to hide the expand column even when an expanded-row template is provided. */
   expandable?: boolean;
   search?: {
     enabled?: boolean;
-    mode?: 'static' | 'dynamic'; // static filters locally, dynamic emits event
+    mode?: 'static' | 'dynamic'; // static filters locally, dynamic emits event (always dynamic when serverSide)
   };
 }

@@ -21,7 +21,15 @@ import {
   input,
 } from '@angular/core';
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { NgccTableCellEdit, NgccTableColumn, NgccTableConfig } from './ngcc-table.types';
+import {
+  NgccTableCellEdit,
+  NgccTableColumn,
+  NgccTableConfig,
+  NgccTableQuery,
+  NgccTableRowAction,
+  NgccTableRowActionEvent,
+} from './ngcc-table.types';
+import { NgccOverflowMenu, NgccOverflowMenuItem } from '../ngcc-overflow-menu/ngcc-overflow-menu';
 import { NgccTableService } from './ngcc-table.service';
 import { NgccCheckbox } from '../ngcc-checkbox/ngcc-checkbox';
 import { NgccIcon } from '../ngcc-icons/ngcc-icon';
@@ -62,6 +70,7 @@ let nextTableId = 0;
     NgTemplateOutlet,
     NgccCheckbox,
     NgccIcon,
+    NgccOverflowMenu,
     NgccPagination,
     NgccSkeleton,
     NgccTag,
@@ -92,6 +101,13 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
   // @Output events
   @Output() rowSelect = new EventEmitter<T[]>();
   @Output() searchChange = new EventEmitter<string>();
+  /**
+   * Server-side mode (`config.serverSide`): emits whenever the page, page size, sort or search
+   * changes, so the app can fetch the matching rows.
+   */
+  @Output() queryChange = new EventEmitter<NgccTableQuery>();
+  /** A row action menu item was chosen. */
+  @Output() rowAction = new EventEmitter<NgccTableRowActionEvent<T>>();
   /** Emits when a row is expanded or collapsed. */
   @Output() rowExpand = new EventEmitter<{ row: T; expanded: boolean }>();
 
@@ -184,6 +200,8 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
 
   // derived computed view of rows (sorting + filtering + pagination)
   protected readonly processedRows = computed(() => {
+    // Server-side: the app already filtered, sorted and sliced; show exactly what it gave us.
+    if (this.isServerSide()) return this.getRows() || [];
     const rows = (this.getRows() || []).slice();
     const sort = this.getSortStateValue();
     const q = this.searchService.query().trim().toLowerCase();
@@ -213,7 +231,7 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
     // pagination
     const cfg = this.getConfig();
     if (cfg?.pagination) {
-      const pageSize = cfg.pageSize ?? 10;
+      const pageSize = this.pageSize();
       const page = Math.max(0, this.currentPage());
       const start = page * pageSize;
       return filtered.slice(start, start + pageSize);
@@ -225,8 +243,31 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
   protected readonly totalPages = computed(() => {
     const cfg = this.getConfig();
     if (!cfg?.pagination) return 1;
-    const total = (this.getRows() || []).length;
-    return Math.max(1, Math.ceil(total / (cfg.pageSize ?? 10)));
+    return Math.max(1, Math.ceil(this.totalCount() / this.pageSize()));
+  });
+
+  protected isServerSide(): boolean {
+    return this.getConfig().serverSide === true;
+  }
+
+  /** Page size chosen in the pagination control; falls back to `config.pageSize`. */
+  private readonly pageSizeOverride = signal<number | null>(null);
+  protected readonly pageSize = computed(
+    () => this.pageSizeOverride() ?? this._config().pageSize ?? 10,
+  );
+
+  /** Rows the pager counts: the server's total, or everything after local search. */
+  protected readonly totalCount = computed(() => {
+    const cfg = this._config();
+    if (cfg.serverSide) return Math.max(cfg.totalItems ?? 0, (this._rows() || []).length);
+    const q = this.searchService.query().trim();
+    const rows = this._rows() || [];
+    return q
+      ? this.searchService.filterLocal(
+          rows,
+          this._columns().map((c) => c.key),
+        ).length
+      : rows.length;
   });
 
   constructor() {
@@ -281,8 +322,38 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
   /** Columns the body spans: data + selection + expand. */
   protected columnCount(): number {
     return (
-      this.getColumns().length + (this.allowSelection() ? 1 : 0) + (this.isExpandable() ? 1 : 0)
+      this.getColumns().length +
+      (this.allowSelection() ? 1 : 0) +
+      (this.isExpandable() ? 1 : 0) +
+      (this.hasRowActions() ? 1 : 0)
     );
+  }
+
+  protected hasRowActions(): boolean {
+    return (this.getConfig().rowActions?.length ?? 0) > 0;
+  }
+
+  /** Menu items for one row: hidden actions dropped, `disabled` resolved. */
+  protected actionItems(row: T): NgccOverflowMenuItem[] {
+    return (this.getConfig().rowActions ?? [])
+      .filter((a) => !a.visible || a.visible(row))
+      .map((a) => ({
+        id: a.id,
+        label: a.label,
+        danger: a.danger,
+        divider: a.divider,
+        disabled: typeof a.disabled === 'function' ? a.disabled(row) : a.disabled,
+      }));
+  }
+
+  protected onActionSelected(row: T, item: NgccOverflowMenuItem): void {
+    const action = (this.getConfig().rowActions ?? []).find((a) => a.id === item.id);
+    if (action)
+      this.rowAction.emit({
+        action: action as NgccTableRowAction<T>,
+        row,
+        rowIndex: this.absIndex(row),
+      });
   }
 
   protected statusType(col: NgccTableColumn<T>, value: unknown): NgccTagType {
@@ -421,7 +492,26 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
   protected goToPage(idx: number): void {
     const pages = this.totalPages();
     const next = Math.max(0, Math.min(idx, pages - 1));
+    if (next === this.currentPage()) return;
     this.currentPage.set(next);
+    this.emitQuery();
+  }
+
+  protected onPageSizeChange(size: number): void {
+    this.pageSizeOverride.set(size);
+    this.currentPage.set(0);
+    this.emitQuery();
+  }
+
+  /** Server-side mode only: tells the app what to fetch. */
+  private emitQuery(): void {
+    if (!this.isServerSide()) return;
+    this.queryChange.emit({
+      page: this.currentPage(),
+      pageSize: this.pageSize(),
+      sort: this.getSortStateValue(),
+      search: this.searchQuery(),
+    });
   }
   protected getSortIcon(colKey: string): NgccIconNameType {
     const cur = this.getSortStateValue();
@@ -456,13 +546,22 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
     }
     this.sortState = newSort;
     this.sortStateChange.emit(newSort);
+    if (this.isServerSide()) {
+      this.currentPage.set(0);
+      this.emitQuery();
+    }
   }
   protected toggleSearchExpand(): void {
     this.searchExpanded.update((s) => !s);
   }
   protected handleSearchInput(value: string): void {
     const cfg = this.getConfig();
-    if (cfg.search?.mode === 'dynamic') {
+    if (cfg.serverSide) {
+      this.searchQuery.set(value);
+      this.searchChange.emit(value);
+      this.currentPage.set(0);
+      this.emitQuery();
+    } else if (cfg.search?.mode === 'dynamic') {
       this.searchChange.emit(value);
     } else {
       this.searchService.query.set(value);
@@ -473,7 +572,7 @@ export class NgccTable<T = unknown> implements OnInit, OnChanges {
   }
 
   get loadingRows(): unknown[] {
-    return Array(this.getConfig()?.pageSize || 0);
+    return Array(this.pageSize() || 0);
   }
 
   get columnPlaceholders(): unknown[] {

@@ -20,7 +20,7 @@
     display: flex;
     align-items: center;
     height: 2.5rem;
-    border: 1px solid var(--cds-border-subtle, #e0e0e0);
+    border: 1px solid var(--cds-border-subtle);
 
     // &.cds--data-table__row--zebra {
     //   background-color: var(--cds-layer-hover, #f4f4f4);
@@ -38,8 +38,7 @@
     width: 70%;
     height: 0.75rem;
     border-radius: 3px;
-    background-color: var(--cds-layer-accent, #e0e0e0);
-    opacity: 0.85;
+    background-color: var(--cds-skeleton-background);
   }
 
   /* Shimmer effect */
@@ -50,7 +49,12 @@
     left: -150%;
     width: 150%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--cds-skeleton-element) 60%, transparent),
+      transparent
+    );
     animation: ngcc-table-skeleton-shimmer 1.8s ease-in-out infinite;
     pointer-events: none;
   }

@@ -153,3 +153,20 @@ describe('content-switcher', () => {
     expect(css).not.toContain('!important');
   });
 });
+
+describe('theme-table', () => {
+  const css = compile('_theme-table.scss');
+
+  it('colors rows, cells and loading from Carbon tokens only', () => {
+    expect(css).toContain('var(--cds-layer-hover-01');
+    expect(css).toContain('var(--cds-layer-selected-01');
+    expect(css).toContain('var(--cds-skeleton-background)');
+    expect(css).toContain('var(--cds-skeleton-element)');
+  });
+
+  it('hard-codes no colors and keys nothing to a theme name', () => {
+    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i);
+    expect(css).not.toMatch(/rgba?\(/);
+    expect(css).not.toContain('data-carbon-theme');
+  });
+});

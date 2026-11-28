@@ -68,10 +68,19 @@
               </button>
             </th>
           }
+          @if (hasRowActions()) {
+            <th scope="col" class="ngcc--table-actions">
+              <span class="cds--visually-hidden">Actions</span>
+            </th>
+          }
         </tr>
       </thead>
 
-      <tbody class="cds--data-table__body" [attr.aria-hidden]="getLoading() ? 'true' : null">
+      <tbody
+        class="cds--data-table__body"
+        [class.ngcc--table-loading]="getLoading()"
+        [attr.aria-hidden]="getLoading() ? 'true' : null"
+      >
         @if (getLoading()) {
           @for (_ of loadingRows; track $index) {
             <tr class="cds--data-table__row">
@@ -191,6 +200,20 @@
                   }
                 </td>
               }
+              @if (hasRowActions()) {
+                <td class="ngcc--table-actions">
+                  @if (actionItems(row); as items) {
+                    @if (items.length) {
+                      <ngcc-overflow-menu
+                        size="sm"
+                        [items]="items"
+                        [ariaLabel]="'Actions for row ' + (i + 1)"
+                        (itemSelected)="onActionSelected(row, $event)"
+                      />
+                    }
+                  }
+                </td>
+              }
             </tr>
             @if (rowError(row); as msg) {
               <tr class="ngcc--table-row-error">
@@ -226,9 +249,10 @@
     </table>
     <ngcc-pagination
       [page]="currentPage() + 1"
-      [totalItems]="getRows().length"
-      [pageSize]="getConfig().pageSize || 10"
+      [totalItems]="totalCount()"
+      [pageSize]="pageSize()"
       (pageChange)="goToPage($event - 1)"
+      (pageSizeChange)="onPageSizeChange($event)"
     />
   </div>
 </div>

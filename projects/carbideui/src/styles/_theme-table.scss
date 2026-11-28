@@ -1,0 +1,60 @@
+// Table row, cell and loading colors.
+// Everything reads Carbon tokens (`--cds-*`), which the color theme (white/g10/g90/g100) and the
+// customized surface colors already redefine, so the table follows any theme with no per-theme rules.
+
+.cds--data-table-wrapper {
+  // Zebra: a faint step from the layer toward the accent, so it works on light and dark surfaces.
+  .cds--data-table tbody tr.cds--data-table__row--zebra:not(.cds--data-table--selected) td {
+    background-color: color-mix(
+      in srgb,
+      var(--cds-layer-accent-01, var(--cds-layer-01)) 40%,
+      var(--cds-layer-01)
+    );
+  }
+
+  .cds--data-table tbody tr.cds--data-table__row:hover td {
+    background-color: var(--cds-layer-hover-01, var(--cds-layer-hover));
+    color: var(--cds-text-primary);
+  }
+
+  .cds--data-table tbody tr.cds--data-table--selected td {
+    background-color: var(--cds-layer-selected-01, var(--cds-layer-selected));
+    color: var(--cds-text-primary);
+  }
+
+  .cds--data-table tbody tr.cds--data-table--selected:hover td {
+    background-color: var(--cds-layer-selected-hover-01, var(--cds-layer-selected-hover));
+  }
+
+  .cds--data-table tbody td,
+  .cds--data-table tbody td .cds--overflow-menu__icon {
+    color: var(--cds-text-primary);
+    border-block-color: var(--cds-border-subtle-01, var(--cds-border-subtle));
+  }
+
+  .cds--data-table tbody td .cds--overflow-menu__icon {
+    fill: var(--cds-icon-primary);
+  }
+
+  // Row action column hugs its button.
+  .ngcc--table-actions {
+    inline-size: 3rem;
+    text-align: end;
+    padding-inline: 0.25rem;
+    overflow: visible;
+  }
+
+  // Loading: placeholders sit on the row color, not on a fixed gray.
+  .ngcc--table-loading td {
+    background-color: var(--cds-layer-01);
+  }
+
+  .ngcc--table-loading .cds--skeleton__text,
+  .ngcc--table-loading .ngcc--skeleton__visual {
+    background: var(--cds-skeleton-background);
+
+    &::before {
+      background: var(--cds-skeleton-element);
+    }
+  }
+}
