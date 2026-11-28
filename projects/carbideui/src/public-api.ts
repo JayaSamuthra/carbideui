@@ -36,6 +36,7 @@ export * from './lib/ngcc-datepicker/ngcc-date-picker-calendar';
 // Input
 export * from './lib/ngcc-input/ngcc-input-text/ngcc-input';
 export * from './lib/ngcc-input/ngcc-input-text/ngcc-input.types';
+export * from './lib/ngcc-input/ngcc-input-number/ngcc-input-number';
 export * from './lib/ngcc-input/ngcc-input-number/ngcc-input-number.types';
 export * from './lib/ngcc-input/ngcc-textarea/ngcc-text-area';
 export * from './lib/ngcc-input/ngcc-textarea/ngcc-text-area.types';
