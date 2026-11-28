@@ -196,7 +196,20 @@ export function isCarbonThemeName(value: unknown): value is CarbonThemeName {
 }
 
 // Carbon's hover layers are a translucent gray over the surface.
-const hover = (color: string): string => `color-mix(in srgb, #8d8d8d 12%, ${color})`;
+const tint =
+  (pct: number) =>
+  (color: string): string =>
+    `color-mix(in srgb, #8d8d8d ${pct}%, ${color})`;
+const hover = tint(12);
+// Carbon steps each surface through accent/selected (≈20%), selected-hover (≈30%) and
+// active (≈40%) grays. Deriving them from the customized surface keeps tables, tiles and
+// selected rows on-palette instead of falling back to Carbon's neutral grays.
+const accent = tint(20);
+const selectedHover = tint(30);
+const active = tint(40);
+// Translucent mixes follow whatever surface they sit on (text-helper, disabled, …).
+const fade = (color: string, pct: number): string =>
+  `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 
 /**
  * CSS custom properties a *static* color writes verbatim; related tokens move together.
@@ -208,26 +221,65 @@ export function themeColorCssVars(
 ): Record<string, string> {
   switch (token) {
     case 'background':
-      return { '--cds-background': color, '--cds-background-hover': hover(color) };
+      return {
+        '--cds-background': color,
+        '--cds-background-hover': hover(color),
+        '--cds-background-active': active(color),
+        '--cds-background-selected': accent(color),
+        '--cds-background-selected-hover': selectedHover(color),
+        '--cds-skeleton-background': accent(color),
+        '--cds-skeleton-element': tint(40)(color),
+      };
     case 'layer-01':
       return {
         '--cds-layer': color,
         '--cds-layer-01': color,
         '--cds-field': color,
         '--cds-field-01': color,
+        '--cds-field-hover': hover(color),
+        '--cds-field-hover-01': hover(color),
         '--cds-layer-hover': hover(color),
         '--cds-layer-hover-01': hover(color),
+        '--cds-layer-active': active(color),
+        '--cds-layer-active-01': active(color),
+        '--cds-layer-selected': accent(color),
+        '--cds-layer-selected-01': accent(color),
+        '--cds-layer-selected-hover': selectedHover(color),
+        '--cds-layer-selected-hover-01': selectedHover(color),
+        '--cds-layer-accent': accent(color),
+        '--cds-layer-accent-01': accent(color),
+        '--cds-layer-accent-hover': selectedHover(color),
+        '--cds-layer-accent-hover-01': selectedHover(color),
+        '--cds-layer-accent-active': active(color),
+        '--cds-layer-accent-active-01': active(color),
       };
     case 'layer-02':
       return {
         '--cds-layer-02': color,
         '--cds-field-02': color,
+        '--cds-field-hover-02': hover(color),
         '--cds-layer-hover-02': hover(color),
+        '--cds-layer-active-02': active(color),
+        '--cds-layer-selected-02': accent(color),
+        '--cds-layer-selected-hover-02': selectedHover(color),
+        '--cds-layer-accent-02': accent(color),
+        '--cds-layer-accent-hover-02': selectedHover(color),
+        '--cds-layer-accent-active-02': active(color),
       };
     case 'text-primary':
-      return { '--cds-text-primary': color, '--cds-icon-primary': color };
+      return {
+        '--cds-text-primary': color,
+        '--cds-icon-primary': color,
+        '--cds-text-disabled': fade(color, 25),
+        '--cds-icon-disabled': fade(color, 25),
+      };
     case 'text-secondary':
-      return { '--cds-text-secondary': color, '--cds-icon-secondary': color };
+      return {
+        '--cds-text-secondary': color,
+        '--cds-icon-secondary': color,
+        '--cds-text-helper': fade(color, 75),
+        '--cds-text-placeholder': fade(color, 55),
+      };
     case 'border-subtle':
       return {
         '--cds-border-subtle': color,
